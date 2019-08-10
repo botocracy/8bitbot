@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  prefix="og: http://ogp.me/ns#"
+  lang="en-US"
+  xml:lang="en-US"
+>
+  <head>
+    <title>8 Bit Bot</title>
+
+    <meta charset="UTF-8"/>
+
+    <!-- Open Graph metadata -->
+    <meta property="og:type" content="game"/>
+
+    <!--
+      TODO: Implement viewporting
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no minimal-ui"/>
+    -->
+
+    <!--
+      Link the favicon
+    -->
+    <link rel="icon" type="image/png" href="static/favicon.png"/>
+
+    <!--
+      Link the web app manifest for usage as a Progressive Web App (PWA)
+    -->
+    <link rel="manifest" type="application/manifest+json" href="manifest.json"/>
+
+    <!--
+      In Safari, float the status bar on top of full screen content, rather
+      than pushing it down
+    -->
+    <meta name="apple-mobile-web-app-style" content="black-translucent"/>
+
+    <script type="text/javascript">
+      //////////////////////////////////////////////////////////////////////////
+      // Application parameters
+      //////////////////////////////////////////////////////////////////////////
+
+      // World semver is defined here. Bump this when world changes.
+      // Major - incompatible with existing APIs
+      // Minor - backwards-compatible features and functionality
+      // Patch - backwards-compatible fixes
+      WORLD_VERSION = '1.0.0'
+
+      // World Content Identifier
+      WORLD_CID = 'QmUHi5kmNvVanFJh3EapKHXiDHy8VSi9AatUs6UDkH8odD';
+
+      // IPFS parameters
+      IPFS_GATEWAYS = [
+        'https://cloudflare-ipfs.com',
+        'https://gateway.ipfs.io',
+        'https://ipfs.infura.io',
+        'https://ipfs.io',
+      ];
+
+      IPFS_GATEWAY = IPFS_GATEWAYS[Math.floor(Math.random() * IPFS_GATEWAYS.length)];
+
+      // TODO
+      DATABASE_NAME = '8bitbot'
+
+      // Logging prefixes
+      LOG_IPFS = 'IPFS  ';
+      LOG_UI = 'UI    ';
+      LOG_MARKET = 'MARKET';
+
+      //////////////////////////////////////////////////////////////////////////
+      // External libraries
+      //////////////////////////////////////////////////////////////////////////
+
+      // CID for external libraries
+      DISTRO_CID = 'QmXzBzsLzZ1kQDbxwd18CqMkrBipiLZ5K7woMeFN7Ca8BT';
+
+      // IPFS libraries
+      JS_IPFS_VERSION = '0.37.0';
+      ORBIT_DB_VERSION = '0.21.4'
+
+      // UI libraries
+      HLS_JS_VERSION = '0.12.4';
+      JSONLD_VERSION = '1.6.2';
+
+      // Marketplace libraries
+      BIG_NUMBER_VERSION = '9.0.0';
+      CONTRACT_ADDRESSES_VERSION = '3.0.3';
+      SUBPROVIDERS_VERSION = '5.0.1';
+      WEB3_WRAPPER_VERSION = '6.0.10';
+      ZEROX_JS_VERSION = '6.0.15';
+
+      // URIs
+      JS_IPFS_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/ipfs_${JS_IPFS_VERSION}/index.min.js`;
+      ORBIT_DB_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/orbit-db_${ORBIT_DB_VERSION}/orbitdb.min.js`;
+      HLS_JS_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/hls.js_${HLS_JS_VERSION}/hls.min.js`;
+      JSONLD_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/jsonld_${JSONLD_VERSION}/jsonld.min.js`;
+      BIG_NUMBER_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/bignumber.js_${BIG_NUMBER_VERSION}/bignumber.min.js`;
+      CONTRACT_ADDRESSES_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/contract-addresses_${CONTRACT_ADDRESSES_VERSION}/index.js`;
+      SUBPROVIDERS_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/subproviders_${SUBPROVIDERS_VERSION}/index.js`;
+      WEB3_WRAPPER_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/web3-wrapper_${WEB3_WRAPPER_VERSION}/index.js`;
+      ZEROX_JS_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/0x.js_${ZEROX_JS_VERSION}/index.min.js`;
+
+      //////////////////////////////////////////////////////////////////////////
+      // Application info
+      //////////////////////////////////////////////////////////////////////////
+
+      console.log('-------------------------------------');
+      console.log(`${document.title}`);
+      console.log(`js-ipfs version: ${JS_IPFS_VERSION}`);
+      console.log(`OrbitDB version: ${ORBIT_DB_VERSION}`)
+      console.log(`0x.js version: ${ZEROX_JS_VERSION}`);
+      console.log(`hls.js version: ${HLS_JS_VERSION}`);
+      console.log(`Gateway: ${IPFS_GATEWAY}`);
+      console.log(`World version: ${WORLD_VERSION}`);
+      console.log(`World: ${WORLD_CID}`);
+      console.log(`Libraries: ${DISTRO_CID}`);
+      console.log('-------------------------------------');
+
+      //////////////////////////////////////////////////////////////////////////
+      // Application logic
+      //////////////////////////////////////////////////////////////////////////
+
+      // Bootstraps IPFS and transfers control to our entry points
+      async function bootstrapIpfs() {
+        console.log(`[${LOG_IPFS}] Bootstrapping IPFS`);
+
+        console.log(`[${LOG_IPFS}] Downloading IPFS libraries`);
+        await Promise.all([
+          loadScript(JS_IPFS_SRC),
+          loadScript(ORBIT_DB_SRC),
+        ]);
+        console.log(`[${LOG_IPFS}] Finished downloading IPFS libraries`)
+
+        // IPFS options
+        const options = {
+          repo: 'ipfs-' + Math.random(),
+          EXPERIMENTAL: {
+            pubsub: true,
+            sharding: true,
+          },
+        };
+
+        // Create IPFS node
+        const node = await window.Ipfs.create(options);
+        window.node = node; // For debugging
+
+        node.on('error', error => {
+          console.error(`[${LOG_IPFS}] IPFS error: ${error.message}`);
+        });
+
+        node.on('start', async () => {
+          // Log node status
+          const status = node.isOnline() ? 'online' : 'offline';
+          console.log(`[${LOG_IPFS}] IPFS node status: ${status}`);
+
+          //
+          // IPFS is ready to use!
+          // See https://github.com/ipfs/js-ipfs#core-api
+          //
+
+          // Load OrbitDB
+          await loadOrbitDB(node);
+        });
+      }
+
+      // Publish an object to OrbitDB
+      async function publishMessage(message) {
+        console.log(`[${LOG_IPFS}] Publishing message:`);
+        console.log(message)
+
+        // TODO: Fix global dependency
+        window.sellOrder = message
+
+        // TODO
+        runBuyerAction(window.web3Wrapper);
+      }
+
+      // Handle an object received by OrbitDB
+      async function handleMessage(message) {
+        // Recover the sell order
+        //sellOrder = decodeMessage(message);
+
+        // Expose the sell order to the user
+        window.sellOrder = sellOrder
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      // OrbitDB (TODO)
+      //////////////////////////////////////////////////////////////////////////
+
+      async function loadOrbitDB(ipfsNode) {
+        // Create the database
+        console.log(`[${LOG_IPFS}] Creating OrbitDB database`);
+        const orbitdb = await window.OrbitDB.createInstance(ipfsNode);
+
+        console.log(`[${LOG_IPFS}]    DB name: ${DATABASE_NAME}`);
+        const db = await orbitdb.log(DATABASE_NAME);
+
+        console.log(`[${LOG_IPFS}]    DB address: ${db.address.toString()}`);
+
+        /* TODO
+        dbAddress = db.address.toString();
+
+        db2 = await orbitdb.log(dbAddress);
+
+        db2.events.on('replicated', () => {
+          const result = db2.iterator({limit: -1}).collect().map(e => e.payload.value);
+          console.log(`[${LOG_IPFS}] Result:`);
+          console.log(result);
+        });
+        */
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      // UI logic
+      //
+      // TODO: Move to IPFS
+      //////////////////////////////////////////////////////////////////////////
+
+      // Constants
+      HLS_BUFFER_LENGTH = 5 * 60; // 5 minutes
+      HLS_BUFFER_SIZE = 1 * 1024 * 1024 * 1024; // 1 GB
+
+      // Entry point after bootstrapping IPFS
+      async function loadUserInterface(node) {
+        // Load UI libraries
+        console.log(`[${LOG_UI}] Downloading UI libraries`);
+        await Promise.all([
+          loadScript(HLS_JS_SRC),
+          loadScript(JSONLD_SRC),
+        ]);
+        console.log(`[${LOG_UI}] Finished downloading UI libraries`);
+
+        // Check HLS video playback
+        console.log(`[${LOG_UI}]   HLS support: ${Hls.isSupported()}`);
+
+        // TODO: Add fallback
+        if (!Hls.isSupported()) {
+          console.error(`[${LOG_UI}] HLS support is required`);
+          return;
+        }
+
+        WORLD_URI = `${IPFS_GATEWAY}/ipfs/${WORLD_CID}/graph.json`;
+
+        // Load world
+        console.log(`[${LOG_UI}] Loading world`);
+        console.log(`[${LOG_UI}]    URI: ${WORLD_URI}`);
+
+        response = await fetch(`${WORLD_URI}`);
+        responseJson = await response.json();
+
+        // Parse JSON-LD. The JSON-LD document looks like:
+        //
+        //   {
+        //     "@context": ...,
+        //     "@graph": [
+        //       ...
+        //     ]
+        //   }
+        //
+        // This is called "compacted form". The graph is a list of JSON-LD
+        // objects. An object looks like:
+        //
+        //   {
+        //     "@type": "VideoObject",
+        //     "title": {
+        //         "en": "Dubai Downtown Panorama"
+        //     },
+        //     "creator": "Swedrone",
+        //     "license": "CC-BY-3.0",
+        //     ...
+        //  }
+        //
+        // When the JSON-LD document is expanded, the context is used to
+        // reconstruct full URIs for each subject, predicate and object.
+        // For the example above, when expanded, it looks like:
+        //
+        //   {
+        //     "@type": [
+        //       "http://schema.org/VideoObject"
+        //     ],
+        //     "http://purl.org/dc/terms/creator": [
+        //       {
+        //         "@value": "Swedrone"
+        //       }
+        //     ],
+        //     "http://purl.org/dc/terms/title": [
+        //       {
+        //         "@language": "en",
+        //         "@value": "Dubai Downtown Panorama"
+        //       }
+        //     ],
+        //     "http://spdx.org/rdf/terms#licenseId": [
+        //       {
+        //         "@value": "Swedrone"
+        //       }
+        //     ],
+        //     ...
+        //    }
+        //
+        // When the document is expanded, fields that don't appear in the
+        // context are dropped. We can expand the document and recompact,
+        // which sanitizes data in the document.
+
+        // Context is retrieved from the "@context" field of the JSON document
+        context = responseJson;
+
+        // Expand the graph, dropping invalid fields
+        expanded = await jsonld.expand(responseJson);
+
+        // Compact the graph, shortening the long URIs to field names for the
+        // compacted document
+        compacted = await jsonld.compact(expanded, context);
+
+        // The world is the list of objects in the "@graph" field
+        world = compacted['@graph'];
+
+        // Extract video URIs
+        videos = [];
+        for (index in world) {
+          obj = world[index];
+          if (obj['@type'] == 'VideoObject') {
+            videos.push(obj.mediaStream[0].fileUrl);
+          }
+        }
+
+        await handleVideos(videos);
+      }
+
+      // Do something with the known videos
+      async function handleVideos(videos) {
+        // Choose a random video
+        fileName = videos[Math.floor(Math.random() * videos.length)];
+
+        videoUri = `${IPFS_GATEWAY}/ipfs/${WORLD_CID}/${fileName}`;
+
+        const hls = new Hls({
+          maxBufferLength: HLS_BUFFER_LENGTH,
+          maxBufferSize: HLS_BUFFER_SIZE,
+          maxMaxBufferSize: HLS_BUFFER_SIZE,
+        });
+
+        hls.loadSource(videoUri);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          console.log(`[${LOG_UI}] Parsed HLS manifest`);
+
+          var video = document.getElementById('backgroundVideo');
+          hls.attachMedia(video);
+
+          // Video will start soon, so show the volume indicator
+          var volumeIcon = video.muted
+            ? document.getElementById('volumeMuteIcon')
+            : document.getElementById('volumeMuteIcon');
+
+          volumeIcon.style.display = 'block';
+        });
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      // Marketplace logic
+      //
+      // TODO: Move to IPFS
+      //
+      // TODO: Token tracking (https://github.com/vsergeev/0xtrades.info/blob/master/client/src/model.ts)
+      //////////////////////////////////////////////////////////////////////////
+
+      // Test accounts
+      // Provide mnemonic here to bypass MetaMask
+      //const MNEMONIC = 'like ocean fall stock mammal approve woman sausage survey hat remember target auction obey envelope';
+
+      // Constants
+      const ONE_SECOND_MS = 1000;
+      const ONE_MINUTE_MS = ONE_SECOND_MS * 60;
+      const TEN_MINUTES_MS = ONE_MINUTE_MS * 10;
+      const DECIMALS = 18;
+      const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
+      const ROPSTEN_NETWORK_ID = 3;
+      const RINKEBY_NETWORK_ID = 4;
+      const KOVAN_NETWORK_ID = 42;
+      const GANACHE_NETWORK_ID = 50;
+
+      // Config
+      const TX_DEFAULTS = {
+        gas: 400000,
+      };
+      const GANACHE_CONFIGS = {
+        rpcUrl: 'http://127.0.0.1:8545',
+        networkId: GANACHE_NETWORK_ID,
+      };
+      const KOVAN_CONFIGS = {
+        rpcUrl: 'https://kovan.infura.io/',
+        networkId: KOVAN_NETWORK_ID,
+      };
+      const ROPSTEN_CONFIGS = {
+        rpcUrl: 'https://ropsten.infura.io/v3/bd1da1ddceef40ec9c0d3101e43b3ae6',
+        networkId: ROPSTEN_NETWORK_ID,
+      };
+      const RINKEBY_CONFIGS = {
+        rpcUrl: 'https://rinkeby.infura.io/',
+        networkId: RINKEBY_NETWORK_ID,
+      };
+      const NETWORK_CONFIGS = ROPSTEN_CONFIGS; // or KOVAN_CONFIGS or ROPSTEN_CONFIGS or RINKEBY_CONFIGS
+
+      // Utilities
+      function getNetworkName(networkId) {
+        switch (networkId) {
+          case ROPSTEN_NETWORK_ID:
+            return 'Ropsten';
+          case RINKEBY_NETWORK_ID:
+            return "Rinkeby";
+          case KOVAN_NETWORK_ID:
+            return 'Kovan';
+          case GANACHE_NETWORK_ID:
+            return 'Ganache';
+        }
+        return `Unknown (${networkId})`;
+      }
+
+      // Entry point
+      window.addEventListener('load', async () => {
+        // Detect if Web3 is found, if not, ask the user to install MetaMask
+        if (typeof web3 === 'undefined') {
+          // Show MetaMask install dialog
+          console.log(`[${LOG_MARKET}] Web 3 not detected, showing MetaMask install dialog`);
+
+          var dialog = document.getElementById('metamaskDialog');
+          var dialogBody = document.getElementById('metamaskDialogForegroundInstall');
+
+          dialog.style.display = 'block';
+          dialogBody.style.display = 'block';
+
+          // Require a page refresh
+          return;
+        } else {
+          console.log(`[${LOG_MARKET}] Web 3 support detected`);
+        }
+
+        const dialogLogin = document.getElementById('metamaskDialogForegroundLogin');
+
+        // Called on MetaMask login UI interaction
+        dialogLogin.onclick = async () => {
+          ethereum.enable();
+        };
+
+        // Run the marketplace
+        runMarketplace();
+      });
+
+      // Load the marketplace
+      async function loadMarketplace() {
+        console.log(`[${LOG_MARKET}] Downloading marketplace`);
+
+        await Promise.all([
+          loadScript(ZEROX_JS_SRC),
+          loadScript(CONTRACT_ADDRESSES_SRC),
+          loadScript(WEB3_WRAPPER_SRC),
+          loadScript(BIG_NUMBER_SRC),
+          loadScript(SUBPROVIDERS_SRC),
+        ]);
+
+        console.log(`[${LOG_MARKET}] Finished downloading marketplace`)
+      }
+
+      // Wait until the user connects with MetaMask
+      async function waitForLogin() {
+        if (typeof web3 === 'undefined' || web3.eth.accounts.length == 0) {
+          // Show metamask login dialog
+          console.log(`[${LOG_MARKET}] Showing MetaMask login dialog`);
+
+          var dialog = document.getElementById('metamaskDialog');
+          var dialogBody = document.getElementById('metamaskDialogForegroundLogin');
+
+          dialog.style.display = 'block';
+          dialogBody.style.display = 'block';
+
+          console.log(`[${LOG_MARKET}] Checking for Web 3`);
+
+          if (typeof web3 === 'undefined') {
+            console.log(`[${LOG_MARKET}] Web 3 not found`);
+            return false;
+          }
+
+          // Check the connection
+          if (!web3.isConnected()) {
+            console.error("Web 3 is not connected");
+            return false;
+          }
+
+          // Check accounts
+          if (web3.eth.accounts.length == 0) {
+            ethereum.enable();
+
+            while (web3.eth.accounts.length == 0) {
+              console.log(`[${LOG_MARKET}] Waiting 1s for MetaMask connection`);
+              await sleep(1000);
+            }
+          }
+
+          dialog.style.display = 'none';
+          dialogBody.style.display = 'none';
+        }
+
+        console.log(`[${LOG_MARKET}] Connected to accounts ${web3.eth.accounts}`);
+
+        return true;
+      }
+
+      // Run the marketplace logic
+      async function runMarketplace() {
+        // Load the marketplace
+        await loadMarketplace();
+
+        // Wait for a Web 3 account
+        if (!await waitForLogin()) {
+          return;
+        }
+
+        console.log(`[${LOG_MARKET}] Running marketplace`);
+
+        // Create the exchange
+        web3Wrapper = await createExchange();
+
+        // TODO: Order match callback needs access to web3Wrapper
+        window.web3Wrapper = web3Wrapper;
+
+        botIcon.onclick = async () => {
+          await runSellerAction(web3Wrapper);
+        }
+
+        parachuteIcon.onclick = async () => {
+          // Run the auction
+          await runBuyerAction(web3Wrapper);
+        }
+
+        // TODO: Close the exchange when we're done with it
+        //await closeExchange(web3Wrapper);
+      }
+
+      // Create an 0x exchange
+      async function createExchange() {
+        console.log(`[${LOG_MARKET}] Creating exchange`);
+
+        // Create Web 3 provider engine
+        const providerEngine = new ZeroEx.Web3ProviderEngine();
+
+        // Compose our providers, order matters
+        // All account based and signing requests will go through the first provider
+        if (typeof MNEMONIC !== 'undefined') {
+          providerEngine.addProvider(new Subproviders.MnemonicWalletSubprovider({
+            mnemonic: MNEMONIC,
+          }));
+        } else if (window.ethereum.isMetaMask) {
+          providerEngine.addProvider(new Subproviders.MetamaskSubprovider(window.ethereum));
+        } else {
+          providerEngine.addProvider(new Subproviders.SignerSubprovider(window.ethereum));
+        }
+
+        // Add RPC provider
+        providerEngine.addProvider(new ZeroEx.RPCSubprovider(NETWORK_CONFIGS.rpcUrl));
+
+        // Start provider engine
+        console.log(`[${LOG_MARKET}] Starting Web 3 provider`);
+        await providerEngine.start();
+
+        // Create Web 3 wrapper
+        console.log(`[${LOG_MARKET}] Creating Web 3 wrapper`);
+        const web3Wrapper = new Web3Wrapper.Web3Wrapper(providerEngine);
+
+        // Fetch the network ID (TODO)
+        var networkId;
+
+        try {
+          networkId = await web3Wrapper.getNetworkIdAsync();
+        } catch (err) {
+          console.log(`[${LOG_MARKET}] Error determining network version:`);
+          console.error(err);
+        }
+
+        console.log(`[${LOG_MARKET}]    Ethereum network: ${getNetworkName(networkId)}`);
+
+        // TODO: Check ZEROEX_GENESIS_BLOCK for unsupported network IDs
+
+        /*
+        zeroEx = new ZeroEx(web3Wrapper.getProvider(), {
+          networkId: networkId,
+        });
+        */
+
+        // Set global exchange address (FIXME read-only override)
+        //ZEROEX_EXCHANGE_ADDRESS = zeroEx.exchange.getContractAddress();
+
+        // Determine block height
+        var blockHeight;
+
+        try {
+          blockHeight = await web3Wrapper.getBlockNumberAsync();
+        } catch (err) {
+          console.log(`[${LOG_MARKET}] Error determining block height:`);
+          console.error(err);
+        }
+
+        console.log(`[${LOG_MARKET}]    Block height: ${blockHeight}`);
+
+        // TODO: Fetch token registry
+        // See https://github.com/vsergeev/0xtrades.info/blob/master/client/src/model.ts
+
+        await subscribeToExchange(web3Wrapper);
+
+        return web3Wrapper;
+      }
+
+      // Subscribe to the exchange
+      async function subscribeToExchange(web3Wrapper) {
+        console.log(`[${LOG_MARKET}] Subscribing to exchange`)
+
+        // Initialize contracts
+        const contractWrappers = new ZeroEx.ContractWrappers(web3Wrapper.getProvider(), {
+          networkId: NETWORK_CONFIGS.networkId,
+        });
+
+        // No filter, get all of the Fill Events
+        const filterValues = {};
+
+        // Subscribe to the Fill Events on the exchange
+        contractWrappers.exchange.subscribe(
+          ZeroEx.ExchangeEvents.Fill,
+          filterValues,
+          handleFillOrder
+        );
+
+        // Show the marketplace UI
+        // TODO: Move me
+        const botIcon = document.getElementById('botIcon');
+        const parachuteIcon = document.getElementById('parachuteIcon');
+
+        botIcon.style.display = 'block';
+        parachuteIcon.style.display = 'block';
+      }
+
+      // Handle a fill order from an exchange
+      async function handleFillOrder(err, decodedLogEvent) {
+        if (err) {
+          console.log(`[${LOG_MARKET}] Error:`);
+          console.error(err);
+          //providerEngine.stop();
+        } else if (decodedLogEvent) {
+          const fillLog = decodedLogEvent.log;
+          const makerAssetData = ZeroEx.assetDataUtils.decodeERC20AssetData(fillLog.args.makerAssetData);
+          const takerAssetData = ZeroEx.assetDataUtils.decodeERC20AssetData(fillLog.args.takerAssetData);
+
+          console.log(`[${LOG_MARKET}] New Fill Event`)
+          console.log(`[${LOG_MARKET}]    Order hash: ${fillLog.args.orderHash}`);
+          console.log(`[${LOG_MARKET}]    Maker address: ${fillLog.args.makerAddress}`);
+          console.log(`[${LOG_MARKET}]    Taker address: ${fillLog.args.takerAddress}`);
+          console.log(`[${LOG_MARKET}]    Maker asset filled amount: ${fillLog.args.makerAssetFilledAmount.toString()}`);
+          console.log(`[${LOG_MARKET}]    Taker asset filled amount: ${fillLog.args.takerAssetFilledAmount.toString()}`);
+          console.log(`[${LOG_MARKET}]    Maker token address: ${makerAssetData.tokenAddress}`);
+          console.log(`[${LOG_MARKET}]    Taker token address: ${takerAssetData.tokenAddress}`);
+
+          // TODO: Is this message for us?
+          const makerAddress = fillLog.args.makerAddress;
+          if (makerAddress != '0x8f06beb40cac1bbd540770ee32f47b6d91139456')
+            return;
+
+          // TODO: Assume taker address is important?
+          const takerAddress = fillLog.args.takerAddress;
+          if (takerAddress != '0xe5f862f7811af180990025b6259b02feb0a0b8dc')
+            return;
+
+          // TODO: This is horrible
+          if (typeof window.hasFillEvent === 'undefined') {
+            window.hasFillEvent = false;
+          }
+          if (!hasFillEvent) {
+            hasFillEvent = true;
+            return;
+          } else {
+            hasFillEvent = false;
+          }
+
+          // TODO: Remove global dependency
+          web3Wrapper = window.web3Wrapper;
+
+          // Glory to the while(true) loop!
+          while (true) {
+            if (await runSellerAction(web3Wrapper))
+              break;
+          }
+        }
+      }
+
+      // Run the Dutch auction for the seller
+      async function runSellerAction(web3Wrapper) {
+        console.log(`[${LOG_MARKET}] Running action for seller`)
+        const web3Addresses = await web3Wrapper.getAvailableAddressesAsync();
+        const sellMaker = web3Addresses[0];
+        console.log(`[${LOG_MARKET}]    Sell maker: ${sellMaker}`);
+
+        // Query contract addresses
+        const contractAddresses = ContractAddresses.getContractAddressesForNetworkOrThrow(NETWORK_CONFIGS.networkId);
+        const zrxTokenAddress = contractAddresses.zrxToken;
+        const etherTokenAddress = contractAddresses.etherToken;
+
+        // Initialize contracts
+        const contractWrappers = new ZeroEx.ContractWrappers(web3Wrapper.getProvider(), {
+          networkId: NETWORK_CONFIGS.networkId,
+        });
+
+        // Approve the 0x ERC20 Proxy to move ZRX on behalf of sellMaker
+        console.log(`[${LOG_MARKET}] Authorizing ERC20 proxy contract...`);
+        var sellMakerZRXApprovalTxHash;
+        try {
+          sellMakerZRXApprovalTxHash = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(
+            zrxTokenAddress,
+            sellMaker
+          );
+        } catch (err) {
+          console.log(`[${LOG_MARKET}] Authorization error:`);
+          console.error(err);
+          return false;
+        }
+
+        console.log(`[${LOG_MARKET}]    Sell maker ZRX approval: ${sellMakerZRXApprovalTxHash}`);
+
+        // The amount the maker is selling of maker asset
+        const makerAssetAmount = Web3Wrapper.Web3Wrapper.toBaseUnitAmount(new BigNumber(1), DECIMALS);
+
+        // The initial opening price of the auction
+        const auctionBeginAmount = Web3Wrapper.Web3Wrapper.toBaseUnitAmount(new BigNumber(1), DECIMALS);
+
+        // The final amount at the end of the auction
+        const auctionEndAmount = Web3Wrapper.Web3Wrapper.toBaseUnitAmount(new BigNumber(0.001), DECIMALS);
+
+        // 0x v2 uses hex encoded asset data strings to encode all the information needed to identify an asset
+        const makerAssetData = ZeroEx.assetDataUtils.encodeERC20AssetData(zrxTokenAddress);
+        const takerAssetData = ZeroEx.assetDataUtils.encodeERC20AssetData(etherTokenAddress);
+
+        // Begin the auction ten minutes ago (TODO)
+        const auctionBeginTimeSeconds = new BigNumber(Date.now() - TEN_MINUTES_MS)
+          .div(ONE_SECOND_MS)
+          .integerValue(BigNumber.ROUND_CEIL);
+
+        // Encode the asset data
+        const dutchAuctionEncodedAssetData = ZeroEx.DutchAuctionWrapper.encodeDutchAuctionAssetData(
+          makerAssetData,
+          auctionBeginTimeSeconds,
+          auctionBeginAmount
+        );
+
+        // Set up the Order and fill it
+        const randomExpiration = getRandomFutureDateInSeconds();
+        const exchangeAddress = contractAddresses.exchange;
+
+        // Create the order
+        const sellOrder = {
+          exchangeAddress: exchangeAddress,
+          makerAddress: sellMaker,
+          // taker address is specified to ensure ONLY the dutch auction contract
+          // can fill this order (ensuring the price given the block time)
+          takerAddress: contractWrappers.dutchAuction.address,
+          senderAddress: NULL_ADDRESS,
+          feeRecipientAddress: NULL_ADDRESS,
+          expirationTimeSeconds: randomExpiration,
+          salt: ZeroEx.generatePseudoRandomSalt(),
+          makerAssetAmount: makerAssetAmount,
+          // taker asset amount is the auction end price. The Dutch Auction
+          // contract ensures this is filled at the correct amount
+          takerAssetAmount: auctionEndAmount,
+          // maker asset data is encoded with additional data used by
+          // the Dutch Auction contract
+          makerAssetData: dutchAuctionEncodedAssetData,
+          takerAssetData: takerAssetData,
+          makerFee: BigNumber(0),
+          takerFee: BigNumber(0),
+        };
+        const sellOrderHashHex = ZeroEx.orderHashUtils.getOrderHashHex(sellOrder);
+
+        console.log(`[${LOG_MARKET}]    Sell order: ${sellOrderHashHex}`);
+
+        // Sign the order hash
+        console.log(`[${LOG_MARKET}] Signing sell order...`)
+        const sellOrderSignature = await ZeroEx.signatureUtils.ecSignHashAsync(
+          web3Wrapper.getProvider(),
+          sellOrderHashHex,
+          sellMaker
+        );
+        console.log(`[${LOG_MARKET}]    Sell order signature: ${sellOrderSignature}`);
+
+        var sellSignedOrder = sellOrder;
+        sellSignedOrder.signature = sellOrderSignature;
+
+        console.log(`[${LOG_MARKET}] Sell order complete`)
+
+        // Publish to OrbitDB
+        publishMessage(sellSignedOrder);
+
+        return true;
+      }
+
+      // Run the Dutch auction for the buyer
+      async function runBuyerAction(web3Wrapper) {
+        // TODO
+        if (typeof window.sellOrder === 'undefined') {
+          alert('Create sell order first');
+          return;
+        }
+
+        console.log(`[${LOG_MARKET}] Running action for buyer`)
+
+        const web3Addresses = await web3Wrapper.getAvailableAddressesAsync();
+        const buyMaker = web3Addresses[0];
+        console.log(`[${LOG_MARKET}]    Buy maker: ${buyMaker}`);
+
+        // Query contract addresses
+        const contractAddresses = ContractAddresses.getContractAddressesForNetworkOrThrow(NETWORK_CONFIGS.networkId);
+        const zrxTokenAddress = contractAddresses.zrxToken;
+        const etherTokenAddress = contractAddresses.etherToken;
+
+        // Initialize contracts
+        const contractWrappers = new ZeroEx.ContractWrappers(web3Wrapper.getProvider(), {
+          networkId: NETWORK_CONFIGS.networkId,
+        });
+
+        // Approve the 0x ERC20 Proxy to move WETH on behalf of buyMaker
+        console.log(`[${LOG_MARKET}] Authorizing ERC20 proxy contract...`);
+        const buyMakerWETHApprovalTxHash = await contractWrappers.erc20Token.setUnlimitedProxyAllowanceAsync(
+          etherTokenAddress,
+          buyMaker
+        );
+        console.log(`[${LOG_MARKET}]    Buy maker WETH approval: ${buyMakerWETHApprovalTxHash}`);
+
+        // TODO
+        sellOrder = window.sellOrder;
+
+        // Create the buy order
+        const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetailsAsync(sellOrder);
+        const currentAuctionAmount = auctionDetails.currentAmount;
+        console.log(`[${LOG_MARKET}]    Current auction amount: ${currentAuctionAmount}`);
+
+        // Convert ETH into WETH for taker by depositing ETH into the WETH contract
+        console.log(`[${LOG_MARKET}] Depositing current price (${currentAuctionAmount})...`);
+        const buyMakerWETHDepositTxHash = await contractWrappers.etherToken.depositAsync(
+          etherTokenAddress,
+          currentAuctionAmount,
+          buyMaker
+        );
+        console.log(`[${LOG_MARKET}]    Buy maker WETH deposit: ${buyMakerWETHDepositTxHash}`);
+
+        // The buyer creates a matching order, specifying the current auction amount
+        var buyOrder = {
+          exchangeAddress: sellOrder.exchangeAddress,
+          makerAddress: buyMaker,
+          takerAddress: contractWrappers.dutchAuction.address,
+          senderAddress: NULL_ADDRESS,
+          feeRecipientAddress: NULL_ADDRESS,
+          expirationTimeSeconds: sellOrder.expirationTimeSeconds,
+          salt: ZeroEx.generatePseudoRandomSalt(),
+          makerAssetAmount: currentAuctionAmount,
+          takerAssetAmount: sellOrder.makerAssetAmount,
+          makerAssetData: sellOrder.takerAssetData,
+          takerAssetData: sellOrder.makerAssetData,
+          makerFee: new BigNumber(0),
+          takerFee: new BigNumber(0),
+        };
+        const buyOrderHashHex = ZeroEx.orderHashUtils.getOrderHashHex(buyOrder);
+
+        console.log(`[${LOG_MARKET}]    Buy order: ${buyOrderHashHex}`);
+
+        // Sign the order hash
+        console.log(`[${LOG_MARKET}] Signing buy order...`)
+        const buyOrderSignature = await ZeroEx.signatureUtils.ecSignHashAsync(
+          web3Wrapper.getProvider(),
+          buyOrderHashHex,
+          buyMaker
+        );
+        console.log(`[${LOG_MARKET}]    Buy order signature: ${buyOrderSignature}`);
+
+        var buySignedOrder = buyOrder;
+        buyOrder.signature = buyOrderSignature;
+
+        // Match the orders
+        console.log(`[${LOG_MARKET}] Matching orders...`)
+        txHash = await contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, sellOrder, buyMaker, {
+          gasLimit: TX_DEFAULTS.gas,
+        });
+        console.log(`[${LOG_MARKET}]    Transaction hash: ${txHash}`);
+
+        // Wait for transaction to be mined
+        console.log(`[${LOG_MARKET}] Waiting for transaction to be mined...`);
+        var start = performance.now();
+        var txReceipt;
+        try {
+          txReceipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
+        } catch (err) {
+          console.log(`Transaction failed: ${err.message}`)
+        }
+        var end = performance.now();
+        console.log(`[${LOG_MARKET}]    Waited for ${(end - start) / 1000.0} seconds`);
+
+        // Success!
+        console.log(`[${LOG_MARKET}] Transaction complete`)
+        console.log(`[${LOG_MARKET}]    Transaction status: ${txReceipt.status === 1 ? 'Success' : 'Failure'}`);
+        console.log(`[${LOG_MARKET}]    Gas used: ${txReceipt.gasUsed}`);
+      }
+
+      // Close the exchange
+      async function closeExchange(web3Wrapper) {
+        // TODO: Stop the Provider Engine
+        //web3Wrapper.getProvider().stop();
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      // Utilities
+      //////////////////////////////////////////////////////////////////////////
+
+      // Load a script asynchronously
+      function loadScript(src) {
+        return new Promise(function(resolve, reject) {
+          var script;
+          script = document.createElement('script');
+          script.src = src;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+
+      function getRandomFutureDateInSeconds() {
+        return new BigNumber(Date.now() + TEN_MINUTES_MS)
+          .div(ONE_SECOND_MS)
+          .integerValue(BigNumber.ROUND_CEIL);
+      }
+
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      //////////////////////////////////////////////////////////////////////////
+      // Entry points
+      //////////////////////////////////////////////////////////////////////////
+
+      bootstrapIpfs();
+
+      // TODO: Move UI to IPFS
+      loadUserInterface(null);
+
+    </script>
+
+    <style type="text/css">
+      /*
+       * Geometry
+       */
+      body {
+        margin: 0;
+      }
+      #backgroundVideo {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        min-width: 100%;
+        min-height: 100%;
+      }
+      #metamaskDialog {
+        /* TODO: Responsive dimensions */
+        position: absolute;
+        height: 260px;
+        width: 500px;
+        top: 50%;
+        left: 50%;
+        margin-top: -130px; /* Margin is -1/2 dimension */
+        margin-left: -250px; /* Margin is -1/2 dimension */
+      }
+      #metamaskDialogBackground {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      #metamaskDialogForegroundInstall,
+      #metamaskDialogForegroundLogin {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      #botIcon {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 256px;
+        height: 256px;
+      }
+      #parachuteIcon {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        width: 256px;
+        height: 256px;
+      }
+      #volumeDownIcon,
+      #volumeMuteIcon,
+      #volumeOffIcon,
+      #volumeUpIcon {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        width: 128px;
+        height: 128px;
+      }
+
+      /*
+       * Presentation
+       */
+      body {
+        background-color: black;
+      }
+      #backgroundVideo {
+        object-fit: cover;
+      }
+      #metamaskDialog {
+        display: none;
+      }
+      #metamaskDialogBackground {
+        opacity: 0.6;
+        background-color: #000000;
+      }
+      #metamaskDialogForegroundInstall,
+      #metamaskDialogForegroundLogin {
+        display: none;
+        color: #ffffff;
+        text-align: center;
+        text-decoration: none;
+        line-height: 1.5;
+        outline : none;
+      }
+      #botIcon {
+        display: none;
+      }
+      #parachuteIcon {
+        display: none;
+      }
+      #volumeDownIcon,
+      #volumeMuteIcon,
+      #volumeOffIcon,
+      #volumeUpIcon {
+        display: none;
+        opacity: 0.4;
+      }
+
+      /*
+       * Interaction
+       */
+      #metamaskDialogForegroundInstall,
+      #metamaskDialogForegroundLogin {
+        cursor: pointer;
+      }
+      #botIcon {
+        cursor: pointer;
+      }
+      #parachuteIcon {
+        cursor: pointer;
+      }
+      #volumeDownIcon,
+      #volumeMuteIcon,
+      #volumeOffIcon,
+      #volumeUpIcon {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      Floating dust video credit Treedo Footage
+      SPDX-License-Identifier: CC-BY-3.0
+      https://vimeo.com/346085933
+    -->
+    <video id="backgroundVideo"
+      autoplay
+      muted
+      loop
+    >
+      <source src="static/Floating_dust.mp4" type="video/mp4"/>
+    </video>
+
+    <!--
+      UI
+    -->
+    <img id="botIcon"
+      src ="static/Green_bot_sprite_256.png"
+      alt="Green Bot"
+      width="256"
+      height="256"
+    />
+    <img id="parachuteIcon"
+      src ="static/parachute_256.png"
+      alt="Parachute"
+      width="256"
+      height="256"
+    />
+    <img id="volumeDownIcon"
+      src="static/volume-down-solid.svg"
+      alt="Low volume"
+    />
+    <img id="volumeMuteIcon"
+      src="static/volume-mute-solid.svg"
+      alt="Muted"
+    />
+    <img id="volumeOffIcon"
+      src="static/volume-off-solid.svg"
+      alt="Volume off"
+    />
+    <img id="volumeUpIcon"
+      src="static/volume-up-solid.svg"
+      alt="High volume"
+    />
+
+    <!--
+      MetaMask dialogs
+    -->
+    <div id="metamaskDialog">
+      <div>
+        <div id="metamaskDialogBackground"></div>
+      </div>
+      <a id="metamaskDialogForegroundInstall"
+        href="https://metamask.io"
+        target="_blank"
+      >
+        <h1>Please install MetaMask</h1>
+        <img id="metamaskDownload"
+          src="static/DownloadMetaMask.png"
+          width="200"
+          height="60"
+          alt="Download MetaMask"
+        />
+        <h3>Once metamask is installed, please refresh this page</h3>
+      </a>
+      <div id="metamaskDialogForegroundLogin">
+        <h1>Connect with MetaMask</h1>
+        <img id="metamaskLogin"
+          src="static/MetaMaskLogin.png"
+          width="270"
+          height="83"
+          alt="Connect with MetaMask"
+        />
+      </div>
+    </div>
+
+    <!--
+      UI logic
+    -->
+    <script type="text/javascript">
+      const video = document.getElementById('backgroundVideo');
+
+      const volumeDownIcon = document.getElementById('volumeDownIcon');
+      const volumeMuteIcon = document.getElementById('volumeMuteIcon');
+      const volumeOffIcon = document.getElementById('volumeOffIcon');
+      const volumeUpIcon = document.getElementById('volumeUpIcon');
+
+      volumeDownIcon.onclick =
+      volumeMuteIcon.onclick =
+      volumeOffIcon.onclick =
+      volumeUpIcon.onclick =
+        function() {
+          if (video.muted) {
+            // Unmute video
+            video.muted = false;
+
+            volumeMuteIcon.style.display = 'none';
+            volumeUpIcon.style.display = 'block';
+          } else {
+            // Mute video
+            video.muted = true;
+
+            volumeUpIcon.style.display = 'none';
+            volumeMuteIcon.style.display = 'block';
+          }
+        };
+    </script>
+
+    <!--
+      Media metadata
+    -->
+    <script id="mediaMetadata" type="application/ld+json">
+    {
+        "@context": {
+            "dc": "http://purl.org/dc/terms/",
+            "nfo": "http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#",
+            "schema": "http://schema.org/",
+            "spdx": "http://spdx.org/rdf/terms#",
+
+            "Image": "schema:VideoObject",
+            "Video": "schema:VideoObject",
+
+            "title": {
+                "@id": "dc:title",
+                "@container": "@language"
+            },
+            "creator": "dc:creator",
+            "license": "spdx:licenseId",
+            "url": "nfo:fileUrl",
+        },
+        "@graph": [
+            {
+                "@type": "Video",
+                "title": {
+                    "en": "4K Free Footage. Floating Dust Particles On Black"
+                },
+                "creator": "Treedeo Footage",
+                "license": "CC-BY-3.0",
+                "url": "static/Floating_dust.mp4"
+            },
+            {
+                "@type": "Image",
+                "title": {
+                    "en": "Green Robot"
+                },
+                "creator": "DezrasDragons",
+                "license": "CC-BY-SA-3.0",
+                "url": "static/Green_bot_sprite_256.png"
+            },
+            {
+                "@type": "Image",
+                "title": {
+                    "en": "Parachute"
+                },
+                "creator": "DezrasDragons",
+                "license": "CC-BY-SA-3.0",
+                "url": "static/parachute_256.png"
+            },
+            {
+                "@type": "Image",
+                "title": {
+                    "en": "volume-down"
+                },
+                "creator": "Font Awesome",
+                "license": "CC-BY-4.0",
+                "url": "volume-down-solid.svg"
+            },
+            {
+                "@type": "Image",
+                "title": {
+                    "en": "volume-mute"
+                },
+                "creator": "Font Awesome",
+                "license": "CC-BY-4.0",
+                "url": "volume-mute-solid.svg"
+            },
+            {
+                "@type": "Image",
+                "title": {
+                    "en": "volume-off"
+                },
+                "creator": "Font Awesome",
+                "license": "CC-BY-4.0",
+                "url": "volume-off-solid.svg"
+            },
+            {
+                "@type": "Image",
+                "title": {
+                    "en": "volume-up"
+                },
+                "creator": "Font Awesome",
+                "license": "CC-BY-4.0",
+                "url": "volume-up-solid.svg"
+            }
+        ]
+    }
+    </script>
+  </body>
+</html>
