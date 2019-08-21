@@ -1,0 +1,176 @@
+{
+    "@context": {
+        "dc": "http://purl.org/dc/terms/",
+        "nfo": "http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#",
+        "schema": "http://schema.org/",
+        "spdx": "http://spdx.org/rdf/terms#",
+
+        "FileDataObject": "nfo:FileDataObject",
+        "FileHash": "nfo:FileHash",
+        "VideoObject": "schema:VideoObject",
+
+        "title": {
+            "@id": "dc:title",
+            "@container": "@language"
+        },
+        "creator": "dc:creator",
+        "license": "spdx:licenseId",
+        "mediaStream": {
+            "@id": "nfo:hasMediaStream",
+            "@container": "@set"
+        },
+        "fileUrl": "nfo:fileUrl",
+        "fileSize": "nfo:fileSize",
+        "hash": {
+            "@id": "nfo:hasHash",
+            "@container": "@set"
+        },
+        "hashAlgorithm": "nfo:hashAlgorithm",
+        "hashValue": "nfo:hashValue"
+    },
+    "@graph": [
+        {
+            "@type": "VideoObject",
+            "title": {
+                "en": "Dubai Downtown Panorama"
+            },
+            "creator": "Swedrone",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Dubai_Downtown_Panorama/index.m3u8"
+                },
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Dubai_Downtown_Panorama.mp4",
+                    "fileSize": 103178919,
+                    "hash": [
+                        {
+                            "@type": "FileHash",
+                            "hashAlgorithm": "MD5",
+                            "hashValue": "23a6608a8dd3bd8988b45916fce39d5d"
+                        },
+                        {
+                            "@type": "FileHash",
+                            "hashAlgorithm": "SHA2-256",
+                            "hashValue": "091d11d2b4046a136c2cc6f4d262bb2089e3f759e15407d03491ae33ff2b9407"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "@type": "VideoObject",
+            "title": {
+                "en": "Vik in Sogn - Norway"
+            },
+            "creator": "Swedrone",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Vik_in_Sogn_Norway/index.m3u8"
+                }
+            ]
+        },
+        {
+            "@type": "VideoObject",
+            "title": {
+                "en": "Stockholm during sunrise"
+            },
+            "creator": "Swedrone",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Stockholm_during_sunrise/index.m3u8"
+                }
+            ]
+        },
+        {
+            "@type": "VideoObject",
+            "title": {
+                "en": "Stockholm epic morning drone flight"
+            },
+            "creator": "Swedrone",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Stockholm_epic_morning_drone_flight/index.m3u8"
+                }
+            ]
+        },
+        {
+            "@type": "VideoObject",
+            "title": {
+                "en": "Dubai Creek by Drone"
+            },
+            "creator": "Swedrone",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Dubai_Creek/index.m3u8"
+                }
+            ]
+        },
+        {
+            "@type": "VideoObject",
+            "title": {
+                "en": "Långe Jan (“Tall John”) Swedish Lighthouse at Öland 4K"
+            },
+            "creator": "Swedrone",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Tall_John_Swedish_Lighthouse/index.m3u8"
+                }
+            ]
+        },
+        {
+            "@type": "VideoObject",
+            "title": {
+                "en": "Tropea in Calabria Italy"
+            },
+            "creator": "Swedrone",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Tropea_in_Calabria_Italy/index.m3u8"
+                }
+            ]
+        },
+        {
+            "@type": "VideoObject",
+            "title": {
+                "en": "Beelitz Heilstätten abandoned hospital 4K"
+            },
+            "creator": "Swedrone",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Beelitz_Heilstatten_abandoned_hospital/index.m3u8"
+                }
+            ]
+        },
+        {
+            "@type": "VideoObject",
+            "title": {
+                "en": "Winter Stockholm in Blue II"
+            },
+            "creator": "Swedrone",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "Winter_Stockholm_in_Blue/index.m3u8"
+                }
+            ]
+        }
+    ]
+}
