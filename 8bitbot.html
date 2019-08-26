@@ -43,7 +43,7 @@
       // Major - incompatible with existing APIs
       // Minor - backwards-compatible features and functionality
       // Patch - backwards-compatible fixes
-      WORLD_VERSION = '1.0.0'
+      WORLD_VERSION = '1.0.0';
 
       // World Content Identifier
       WORLD_CID = 'QmUHi5kmNvVanFJh3EapKHXiDHy8VSi9AatUs6UDkH8odD';
@@ -165,10 +165,10 @@
       // Publish an object to OrbitDB
       async function publishMessage(message) {
         console.log(`[${LOG_IPFS}] Publishing message:`);
-        console.log(message)
+        console.log(message);
 
         // TODO: Fix global dependency
-        window.sellOrder = message
+        window.sellOrder = message;
 
         // TODO
         runBuyerAction(window.web3Wrapper);
@@ -180,7 +180,7 @@
         //sellOrder = decodeMessage(message);
 
         // Expose the sell order to the user
-        window.sellOrder = sellOrder
+        window.sellOrder = sellOrder;
       }
 
       //////////////////////////////////////////////////////////////////////////
@@ -278,15 +278,15 @@
         //     "@type": [
         //       "http://schema.org/VideoObject"
         //     ],
-        //     "http://purl.org/dc/terms/creator": [
-        //       {
-        //         "@value": "Swedrone"
-        //       }
-        //     ],
         //     "http://purl.org/dc/terms/title": [
         //       {
         //         "@language": "en",
         //         "@value": "Dubai Downtown Panorama"
+        //       }
+        //     ],
+        //     "http://purl.org/dc/terms/creator": [
+        //       {
+        //         "@value": "Swedrone"
         //       }
         //     ],
         //     "http://spdx.org/rdf/terms#licenseId": [
@@ -350,7 +350,7 @@
           // Video will start soon, so show the volume indicator
           var volumeIcon = video.muted
             ? document.getElementById('volumeMuteIcon')
-            : document.getElementById('volumeMuteIcon');
+            : document.getElementById('volumeUpIcon');
 
           volumeIcon.style.display = 'block';
         });
@@ -611,7 +611,7 @@
 
       // Subscribe to the exchange
       async function subscribeToExchange(web3Wrapper) {
-        console.log(`[${LOG_MARKET}] Subscribing to exchange`)
+        console.log(`[${LOG_MARKET}] Subscribing to exchange`);
 
         // Initialize contracts
         const contractWrappers = new ZeroEx.ContractWrappers(web3Wrapper.getProvider(), {
@@ -691,7 +691,7 @@
 
       // Run the Dutch auction for the seller
       async function runSellerAction(web3Wrapper) {
-        console.log(`[${LOG_MARKET}] Running action for seller`)
+        console.log(`[${LOG_MARKET}] Running action for seller`);
         const web3Addresses = await web3Wrapper.getAvailableAddressesAsync();
         const sellMaker = web3Addresses[0];
         console.log(`[${LOG_MARKET}]    Sell maker: ${sellMaker}`);
@@ -789,7 +789,7 @@
         var sellSignedOrder = sellOrder;
         sellSignedOrder.signature = sellOrderSignature;
 
-        console.log(`[${LOG_MARKET}] Sell order complete`)
+        console.log(`[${LOG_MARKET}] Sell order complete`);
 
         // Publish to OrbitDB
         publishMessage(sellSignedOrder);
@@ -805,7 +805,7 @@
           return;
         }
 
-        console.log(`[${LOG_MARKET}] Running action for buyer`)
+        console.log(`[${LOG_MARKET}] Running action for buyer`);
 
         const web3Addresses = await web3Wrapper.getAvailableAddressesAsync();
         const buyMaker = web3Addresses[0];
@@ -892,13 +892,13 @@
         try {
           txReceipt = await web3Wrapper.awaitTransactionMinedAsync(txHash);
         } catch (err) {
-          console.log(`Transaction failed: ${err.message}`)
+          console.log(`Transaction failed: ${err.message}`);
         }
         var end = performance.now();
         console.log(`[${LOG_MARKET}]    Waited for ${(end - start) / 1000.0} seconds`);
 
         // Success!
-        console.log(`[${LOG_MARKET}] Transaction complete`)
+        console.log(`[${LOG_MARKET}] Transaction complete`);
         console.log(`[${LOG_MARKET}]    Transaction status: ${txReceipt.status === 1 ? 'Success' : 'Failure'}`);
         console.log(`[${LOG_MARKET}]    Gas used: ${txReceipt.gasUsed}`);
       }
