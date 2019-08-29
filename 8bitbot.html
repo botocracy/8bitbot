@@ -128,7 +128,7 @@
           loadScript(JS_IPFS_SRC),
           loadScript(ORBIT_DB_SRC),
         ]);
-        console.log(`[${LOG_IPFS}] Finished downloading IPFS libraries`)
+        console.log(`[${LOG_IPFS}] Finished downloading IPFS libraries`);
 
         // IPFS options
         const options = {
@@ -648,7 +648,7 @@
           const makerAssetData = ZeroEx.assetDataUtils.decodeERC20AssetData(fillLog.args.makerAssetData);
           const takerAssetData = ZeroEx.assetDataUtils.decodeERC20AssetData(fillLog.args.takerAssetData);
 
-          console.log(`[${LOG_MARKET}] New Fill Event`)
+          console.log(`[${LOG_MARKET}] New Fill Event`);
           console.log(`[${LOG_MARKET}]    Order hash: ${fillLog.args.orderHash}`);
           console.log(`[${LOG_MARKET}]    Maker address: ${fillLog.args.makerAddress}`);
           console.log(`[${LOG_MARKET}]    Taker address: ${fillLog.args.takerAddress}`);
@@ -681,7 +681,6 @@
           // TODO: Remove global dependency
           web3Wrapper = window.web3Wrapper;
 
-          // Glory to the while(true) loop!
           while (true) {
             if (await runSellerAction(web3Wrapper))
               break;
