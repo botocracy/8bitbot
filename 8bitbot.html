@@ -157,6 +157,8 @@
           // See https://github.com/ipfs/js-ipfs#core-api
           //
 
+          console.log(node._peerInfo.id._privKey)
+
           // Load OrbitDB
           await loadOrbitDB(node);
         });
