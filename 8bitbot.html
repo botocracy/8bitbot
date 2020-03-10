@@ -1078,79 +1078,81 @@
     </style>
   </head>
   <body>
-    <!--
-      Floating dust video credit Treedo Footage
-      SPDX-License-Identifier: CC-BY-3.0
-      https://vimeo.com/346085933
-    -->
-    <video id="backgroundVideo"
-      autoplay
-      muted
-      loop
-    >
-      <source src="static/Floating_dust.mp4" type="video/mp4"/>
-    </video>
-
-    <!--
-      UI
-    -->
-    <img id="botIcon"
-      src ="static/Green_bot_sprite_256.png"
-      alt="Green Bot"
-      width="256"
-      height="256"
-    />
-    <img id="parachuteIcon"
-      src ="static/parachute_256.png"
-      alt="Parachute"
-      width="256"
-      height="256"
-    />
-    <img id="volumeDownIcon"
-      src="static/volume-down-solid.svg"
-      alt="Low volume"
-    />
-    <img id="volumeMuteIcon"
-      src="static/volume-mute-solid.svg"
-      alt="Muted"
-    />
-    <img id="volumeOffIcon"
-      src="static/volume-off-solid.svg"
-      alt="Volume off"
-    />
-    <img id="volumeUpIcon"
-      src="static/volume-up-solid.svg"
-      alt="High volume"
-    />
-
-    <!--
-      MetaMask dialogs
-    -->
-    <div id="metamaskDialog">
-      <div>
-        <div id="metamaskDialogBackground"></div>
-      </div>
-      <a id="metamaskDialogForegroundInstall"
-        href="https://metamask.io"
-        target="_blank"
+    <div id="gameCanvas"/>
+      <!--
+        Floating dust video credit Treedo Footage
+        SPDX-License-Identifier: CC-BY-3.0
+        https://vimeo.com/346085933
+      -->
+      <video id="backgroundVideo"
+        autoplay
+        muted
+        loop
       >
-        <h1>Please install MetaMask</h1>
-        <img id="metamaskDownload"
-          src="static/DownloadMetaMask.png"
-          width="200"
-          height="60"
-          alt="Download MetaMask"
-        />
-        <p>Once metamask is installed, please refresh this page</p>
-      </a>
-      <div id="metamaskDialogForegroundLogin">
-        <h1>Connect with MetaMask</h1>
-        <img id="metamaskLogin"
-          src="static/MetaMaskLogin.png"
-          width="270"
-          height="83"
-          alt="Connect with MetaMask"
-        />
+        <source src="static/Floating_dust.mp4" type="video/mp4"/>
+      </video>
+
+      <!--
+        UI
+      -->
+      <img id="botIcon"
+        src ="static/Green_bot_sprite_256.png"
+        alt="Green Bot"
+        width="256"
+        height="256"
+      />
+      <img id="parachuteIcon"
+        src ="static/parachute_256.png"
+        alt="Parachute"
+        width="256"
+        height="256"
+      />
+      <img id="volumeDownIcon"
+        src="static/volume-down-solid.svg"
+        alt="Low volume"
+      />
+      <img id="volumeMuteIcon"
+        src="static/volume-mute-solid.svg"
+        alt="Muted"
+      />
+      <img id="volumeOffIcon"
+        src="static/volume-off-solid.svg"
+        alt="Volume off"
+      />
+      <img id="volumeUpIcon"
+        src="static/volume-up-solid.svg"
+        alt="High volume"
+      />
+
+      <!--
+        MetaMask dialogs
+      -->
+      <div id="metamaskDialog">
+        <div>
+          <div id="metamaskDialogBackground"></div>
+        </div>
+        <a id="metamaskDialogForegroundInstall"
+          href="https://metamask.io"
+          target="_blank"
+        >
+          <h1>Please install MetaMask</h1>
+          <img id="metamaskDownload"
+            src="static/DownloadMetaMask.png"
+            width="200"
+            height="60"
+            alt="Download MetaMask"
+          />
+          <p>Once metamask is installed, please refresh this page</p>
+        </a>
+        <div id="metamaskDialogForegroundLogin">
+          <h1>Connect with MetaMask</h1>
+          <img id="metamaskLogin"
+            src="static/MetaMaskLogin.png"
+            width="270"
+            height="83"
+            alt="Connect with MetaMask"
+          />
+        </div>
       </div>
     </div>
 
