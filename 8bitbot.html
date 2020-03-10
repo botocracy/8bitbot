@@ -963,6 +963,13 @@
       body {
         margin: 0;
       }
+      #gameCanvas {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        min-width: 100%;
+        min-height: 100%;
+      }
       #backgroundVideo {
         position: fixed;
         width: 100%;
@@ -1015,6 +1022,14 @@
         width: 128px;
         height: 128px;
       }
+      #enterFullscreenIcon,
+      #leaveFullscreenIcon {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        width: 128px;
+        height: 128px;
+      }
 
       /*
        * Presentation
@@ -1053,7 +1068,12 @@
       #volumeOffIcon,
       #volumeUpIcon {
         display: none;
-        opacity: 0.4;
+        opacity: 0.5;
+      }
+      #enterFullscreenIcon,
+      #leaveFullscreenIcon {
+        display: none;
+        opacity: 0.5;
       }
 
       /*
@@ -1073,6 +1093,10 @@
       #volumeMuteIcon,
       #volumeOffIcon,
       #volumeUpIcon {
+        cursor: pointer;
+      }
+      #enterFullscreenIcon,
+      #leaveFullscreenIcon {
         cursor: pointer;
       }
     </style>
@@ -1123,6 +1147,14 @@
         src="static/volume-up-solid.svg"
         alt="High volume"
       />
+      <img id="enterFullscreenIcon"
+        src="static/arrows-alt-solid.svg"
+        alt="Enter fullscreen"
+      />
+      <img id="leaveFullscreenIcon"
+        src="static/compress-arrows-alt-solid.svg"
+        alt="Leave fullscreen"
+      />
 
       <!--
         MetaMask dialogs
@@ -1160,12 +1192,17 @@
       UI logic
     -->
     <script type="text/javascript">
+      const gameCanvas = document.getElementById('gameCanvas');
+
       const video = document.getElementById('backgroundVideo');
 
       const volumeDownIcon = document.getElementById('volumeDownIcon');
       const volumeMuteIcon = document.getElementById('volumeMuteIcon');
       const volumeOffIcon = document.getElementById('volumeOffIcon');
       const volumeUpIcon = document.getElementById('volumeUpIcon');
+
+      const enterFullscreenIcon = document.getElementById('enterFullscreenIcon');
+      const leaveFullscreenIcon = document.getElementById('leaveFullscreenIcon');
 
       volumeDownIcon.onclick =
       volumeMuteIcon.onclick =
@@ -1186,6 +1223,61 @@
             volumeMuteIcon.style.display = 'block';
           }
         };
+
+      // full-screen available?
+      var fullscreenAvailable =
+        document.fullscreenEnabled ||
+        document.webkitFullscreenEnabled ||
+        document.mozFullScreenEnabled ||
+        document.msFullscreenEnabled
+
+      if (fullscreenAvailable) {
+        enterFullscreenIcon.onclick = function() {
+          // Go full-screen
+          e = gameCanvas
+          if (e.requestFullscreen) {
+            e.requestFullscreen();
+          } else if (e.webkitRequestFullscreen) {
+            e.webkitRequestFullscreen();
+          } else if (e.mozRequestFullScreen) {
+            e.mozRequestFullScreen();
+          } else if (e.msRequestFullscreen) {
+            e.msRequestFullscreen();
+          }
+        }
+
+        leaveFullscreenIcon.onclick = function() {
+          // Exit full-screen
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+
+        fullscreenHandler = function() {
+          // Are we full-screen?
+          inFullscreen =
+            document.fullscreenElement ||
+            document.webkitFullscreenElement ||
+            document.mozFullScreenElement ||
+            document.msFullscreenElement;
+
+          if (inFullscreen) {
+            enterFullscreenIcon.style.display = 'none';
+            leaveFullscreenIcon.style.display = 'block';
+          } else {
+            enterFullscreenIcon.style.display = 'block';
+            leaveFullscreenIcon.style.display = 'none';
+          }
+        }
+        fullscreenHandler();
+        document.addEventListener("fullscreenchange", fullscreenHandler);
+      }
     </script>
 
     <!--
@@ -1269,6 +1361,24 @@
                 "@type": "Image",
                 "title": {
                     "en": "volume-up"
+                },
+                "creator": "Font Awesome",
+                "license": "CC-BY-4.0",
+                "url": "volume-up-solid.svg"
+            },
+            {
+                "@type": "Image",
+                "title": {
+                    "en": "arrows-alt"
+                },
+                "creator": "Font Awesome",
+                "license": "CC-BY-4.0",
+                "url": "arrows-alt-solid.svg"
+            },
+            {
+                "@type": "Image",
+                "title": {
+                    "en": "compress-arrows-alt"
                 },
                 "creator": "Font Awesome",
                 "license": "CC-BY-4.0",
