@@ -143,7 +143,7 @@
         window.node = node; // For debugging
 
         node.on('error', error => {
-          console.error(`[${LOG_IPFS}] IPFS error: ${error.message}`);
+          log_ipfs(`IPFS error: ${error.message}`)
         });
 
         node.on('start', async () => {
@@ -234,7 +234,7 @@
 
         // TODO: Add fallback
         if (!Hls.isSupported()) {
-          console.error(`[${LOG_UI}] HLS support is required`);
+          log_ui('HLS support is required')
           return;
         }
 
