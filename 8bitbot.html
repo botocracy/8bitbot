@@ -50,12 +50,14 @@
 
       // IPFS parameters
       IPFS_GATEWAYS = [
-        'https://gateway.ipfs.io',
         'https://ipfs.infura.io',
+        'https://gateway.ipfs.io',
         'https://ipfs.io',
       ];
 
-      IPFS_GATEWAY = IPFS_GATEWAYS[Math.floor(Math.random() * IPFS_GATEWAYS.length)];
+      // TODO
+      //IPFS_GATEWAY = IPFS_GATEWAYS[Math.floor(Math.random() * IPFS_GATEWAYS.length)];
+      IPFS_GATEWAY = IPFS_GATEWAYS[0];
 
       // TODO
       DATABASE_NAME = '8bitbot';
@@ -327,8 +329,11 @@
 
       // Do something with the known videos
       async function handleVideos(videos) {
-        // Choose a random video
-        fileName = videos[Math.floor(Math.random() * videos.length)];
+        // Index of the the background video from all videos in the world
+        WORLD_VIDEO_INDEX = Math.floor(Math.random() * videos.length)
+
+        // Choose a video
+        fileName = videos[WORLD_VIDEO_INDEX];
 
         videoUri = `${IPFS_GATEWAY}/ipfs/${WORLD_CID}/${fileName}`;
 
@@ -850,6 +855,7 @@
           makerAddress: buyMaker,
           takerAddress: contractWrappers.dutchAuction.address,
           senderAddress: NULL_ADDRESS,
+
           feeRecipientAddress: NULL_ADDRESS,
           expirationTimeSeconds: sellOrder.expirationTimeSeconds,
           salt: ZeroEx.generatePseudoRandomSalt(),
@@ -906,6 +912,18 @@
         // TODO: Stop the Provider Engine
         //web3Wrapper.getProvider().stop();
       }
+
+      //////////////////////////////////////////////////////////////////////////
+      // Menu logic
+      //////////////////////////////////////////////////////////////////////////
+
+      // TODO
+
+      //////////////////////////////////////////////////////////////////////////
+      // Game logic
+      //////////////////////////////////////////////////////////////////////////
+
+      // TODO
 
       //////////////////////////////////////////////////////////////////////////
       // Utilities

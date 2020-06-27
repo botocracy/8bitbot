@@ -40,3 +40,47 @@ cp mp4/* "${BUILD_PATH}"
 ################################################################################
 
 cp graph.json "${BUILD_PATH}"
+
+################################################################################
+# Avatars
+################################################################################
+
+# TODO: Clone and update https://github.com/kodi-game/OpenGameArt.org.git
+
+# Run generate step
+#python3 OpenGameArt.org/generate.py
+
+# Avatars:
+
+cat <<EOF
+Android: Good
+Cat Ninja: Good, not bot
+Chef: Good, not bot, 3 skin tones
+Dark Elf: Good, not bot
+Enemies: 4 good, not bots
+Gentleman Spy: Good, not bot
+Green Robot: Good
+Gum Bot: Bad, 32x32
+Hero and Baddies: Good, 2 bots
+JellyBot: Good, 3 bots
+Mage: Good, not bot
+Mechanic: Wrong size
+Mr. Man: Good, not bot
+Ninja: Bad size, has sword
+Pirate: Bad size
+Princess Sera and Bushly: 1 good enemy, princess is wrong size
+Rabbit: Bad size
+Ranger: Maybe good, needs cropping
+Raven: Good, not bot
+Samurai: Bad size
+Viking Maiden: Bad size
+
+Bots:
+Android (1)
+Green Robot (1)
+Hero and Baddies (2 meh)
+JellyBot (3 meh)
+
+
+EOF
+
