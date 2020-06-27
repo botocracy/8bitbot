@@ -1,1 +1,142 @@
-/* Placeholder for CSS */
+/*
+ * Geometry
+ */
+body {
+  margin: 0;
+}
+#gameCanvas {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+}
+#backgroundVideo {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+}
+#metamaskDialog {
+  /* TODO: Responsive dimensions */
+  position: absolute;
+  height: 260px;
+  width: 500px;
+  top: 50%;
+  left: 50%;
+  margin-top: -130px; /* Margin is -1/2 dimension */
+  margin-left: -250px; /* Margin is -1/2 dimension */
+}
+#metamaskDialogBackground {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+#metamaskDialogForegroundInstall,
+#metamaskDialogForegroundLogin {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+#botIcon {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 256px;
+  height: 256px;
+}
+#parachuteIcon {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 256px;
+  height: 256px;
+}
+#volumeDownIcon,
+#volumeMuteIcon,
+#volumeOffIcon,
+#volumeUpIcon {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: 128px;
+  height: 128px;
+}
+#enterFullscreenIcon,
+#leaveFullscreenIcon {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 128px;
+  height: 128px;
+}
+
+/*
+ * Presentation
+ */
+body {
+  background-color: black;
+  font-family: Sans-Serif;
+}
+#backgroundVideo {
+  object-fit: cover;
+}
+#metamaskDialog {
+  display: none;
+}
+#metamaskDialogBackground {
+  opacity: 0.6;
+  background-color: #000000;
+}
+#metamaskDialogForegroundInstall,
+#metamaskDialogForegroundLogin {
+  display: none;
+  color: #ffffff;
+  text-align: center;
+  text-decoration: none;
+  line-height: 1.5;
+  outline : none;
+}
+#botIcon {
+  display: none;
+}
+#parachuteIcon {
+  display: none;
+}
+#volumeDownIcon,
+#volumeMuteIcon,
+#volumeOffIcon,
+#volumeUpIcon {
+  display: none;
+  opacity: 0.5;
+}
+#enterFullscreenIcon,
+#leaveFullscreenIcon {
+  display: none;
+  opacity: 0.5;
+}
+
+/*
+ * Interaction
+ */
+#metamaskDialogForegroundInstall,
+#metamaskDialogForegroundLogin {
+  cursor: pointer;
+}
+#botIcon {
+  cursor: pointer;
+}
+#parachuteIcon {
+  cursor: pointer;
+}
+#volumeDownIcon,
+#volumeMuteIcon,
+#volumeOffIcon,
+#volumeUpIcon {
+  cursor: pointer;
+}
+#enterFullscreenIcon,
+#leaveFullscreenIcon {
+  cursor: pointer;
+}

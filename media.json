@@ -1,0 +1,102 @@
+{
+    "@context": {
+        "dc": "http://purl.org/dc/terms/",
+        "nfo": "http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#",
+        "schema": "http://schema.org/",
+        "spdx": "http://spdx.org/rdf/terms#",
+
+        "Image": "schema:VideoObject",
+        "Video": "schema:VideoObject",
+
+        "title": {
+            "@id": "dc:title",
+            "@container": "@language"
+        },
+        "creator": "dc:creator",
+        "license": "spdx:licenseId",
+        "url": "nfo:fileUrl"
+    },
+    "@graph": [
+        {
+            "@type": "Video",
+            "title": {
+                "en": "4K Free Footage. Floating Dust Particles On Black"
+            },
+            "creator": "Treedeo Footage",
+            "license": "CC-BY-3.0",
+            "url": "static/Floating_dust.mp4"
+        },
+        {
+            "@type": "Image",
+            "title": {
+                "en": "Green Robot"
+            },
+            "creator": "DezrasDragons",
+            "license": "CC-BY-SA-3.0",
+            "url": "static/Green_bot_sprite_256.png"
+        },
+        {
+            "@type": "Image",
+            "title": {
+                "en": "Parachute"
+            },
+            "creator": "DezrasDragons",
+            "license": "CC-BY-SA-3.0",
+            "url": "static/parachute_256.png"
+        },
+        {
+            "@type": "Image",
+            "title": {
+                "en": "volume-down"
+            },
+            "creator": "Font Awesome",
+            "license": "CC-BY-4.0",
+            "url": "volume-down-solid.svg"
+        },
+        {
+            "@type": "Image",
+            "title": {
+                "en": "volume-mute"
+            },
+            "creator": "Font Awesome",
+            "license": "CC-BY-4.0",
+            "url": "volume-mute-solid.svg"
+        },
+        {
+            "@type": "Image",
+            "title": {
+                "en": "volume-off"
+            },
+            "creator": "Font Awesome",
+            "license": "CC-BY-4.0",
+            "url": "volume-off-solid.svg"
+        },
+        {
+            "@type": "Image",
+            "title": {
+                "en": "volume-up"
+            },
+            "creator": "Font Awesome",
+            "license": "CC-BY-4.0",
+            "url": "volume-up-solid.svg"
+        },
+        {
+            "@type": "Image",
+            "title": {
+                "en": "arrows-alt"
+            },
+            "creator": "Font Awesome",
+            "license": "CC-BY-4.0",
+            "url": "arrows-alt-solid.svg"
+        },
+        {
+            "@type": "Image",
+            "title": {
+                "en": "compress-arrows-alt"
+            },
+            "creator": "Font Awesome",
+            "license": "CC-BY-4.0",
+            "url": "volume-up-solid.svg"
+        }
+    ]
+}

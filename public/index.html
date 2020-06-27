@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  prefix="og: http://ogp.me/ns#"
+  lang="en-US"
+  xml:lang="en-US"
+>
+  <head>
+    <title>8 Bit Bot</title>
+
+    <meta charset="UTF-8"/>
+
+    <!-- Open Graph metadata -->
+    <meta property="og:type" content="game"/>
+
+    <!--
+      TODO: Implement viewporting
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no minimal-ui"/>
+    -->
+
+    <!--
+      In Safari, float the status bar on top of full screen content, rather
+      than pushing it down
+    -->
+    <meta name="apple-mobile-web-app-style" content="black-translucent"/>
+
+    <!--
+      Link the favicon
+    -->
+    <link rel="icon" type="image/png" href="favicon.png"/>
+
+    <!--
+      Link the web app manifest for usage as a Progressive Web App (PWA)
+    -->
+    <link rel="manifest" type="application/manifest+json" href="manifest.json"/>
+
+    <!--
+      Import CSS
+    -->
+    <link rel="stylesheet" type="text/css" href="index.css">
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+
+    <div id="gameCanvas"/>
+      <!--
+        Floating dust video credit Treedo Footage
+        SPDX-License-Identifier: CC-BY-3.0
+        https://vimeo.com/346085933
+      -->
+      <video id="backgroundVideo"
+        autoplay
+        muted
+        loop
+      >
+        <source src="static/Floating_dust.mp4" type="video/mp4"/>
+      </video>
+
+      <!--
+        UI
+      -->
+      <img id="botIcon"
+        src ="static/Green_bot_sprite_256.png"
+        alt="Green Bot"
+        width="256"
+        height="256"
+      />
+      <img id="parachuteIcon"
+        src ="static/parachute_256.png"
+        alt="Parachute"
+        width="256"
+        height="256"
+      />
+      <img id="volumeDownIcon"
+        src="static/volume-down-solid.svg"
+        alt="Low volume"
+      />
+      <img id="volumeMuteIcon"
+        src="static/volume-mute-solid.svg"
+        alt="Muted"
+      />
+      <img id="volumeOffIcon"
+        src="static/volume-off-solid.svg"
+        alt="Volume off"
+      />
+      <img id="volumeUpIcon"
+        src="static/volume-up-solid.svg"
+        alt="High volume"
+      />
+      <img id="enterFullscreenIcon"
+        src="static/arrows-alt-solid.svg"
+        alt="Enter fullscreen"
+      />
+      <img id="leaveFullscreenIcon"
+        src="static/compress-arrows-alt-solid.svg"
+        alt="Leave fullscreen"
+      />
+
+      <!--
+        MetaMask dialogs
+      -->
+      <div id="metamaskDialog">
+        <div>
+          <div id="metamaskDialogBackground"></div>
+        </div>
+        <a id="metamaskDialogForegroundInstall"
+          href="https://metamask.io"
+          target="_blank"
+        >
+          <h1>Please install MetaMask</h1>
+          <img id="metamaskDownload"
+            src="static/DownloadMetaMask.png"
+            width="200"
+            height="60"
+            alt="Download MetaMask"
+          />
+          <p>Once metamask is installed, please refresh this page</p>
+        </a>
+        <div id="metamaskDialogForegroundLogin">
+          <h1>Connect with MetaMask</h1>
+          <img id="metamaskLogin"
+            src="static/MetaMaskLogin.png"
+            width="270"
+            height="83"
+            alt="Connect with MetaMask"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./_dist_/index.js"></script>
+
+  </body>
+</html>
