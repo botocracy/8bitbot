@@ -1,0 +1,53 @@
+{
+  "name": "8bitbot",
+  "version": "1.0.0",
+  "description": "8BitBot",
+  "license": "MIT",
+  "keywords": [
+    "bittorrent",
+    "hls",
+    "hlsjs",
+    "mse",
+    "p2p",
+    "peer-to-peer",
+    "torrent",
+    "video",
+    "webrtc",
+    "webtorrent"
+  ],
+  "target": "web",
+  "bundleDependencies": false,
+  "main": "./src/index.js",
+  "browser": "./src/index.js",
+  "scripts": {
+    "start": "snowpack dev",
+    "build": "snowpack build",
+    "bundle:*": "@snowpack/plugin-webpack",
+    "audit": "npm audit fix --force",
+    "test": "npm run lint",
+    "format": "prettier --write \"src/**/*.js\" clean.js",
+    "lint": "prettier --check \"src/**/*.js\" clean.js",
+    "clean": "node clean.js"
+  },
+  "engines": {
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
+  },
+  "devDependencies": {
+    "prettier": ">=2.0.0",
+    "rollup-plugin-node-polyfills": ">=0.2.1",
+    "snowpack": ">=2.6.0",
+    "@snowpack/plugin-babel": ">=1.4.0",
+    "@snowpack/plugin-webpack": ">=1.4.0"
+  },
+  "dependencies": {
+    "hls.js": "^0.13.2"
+  },
+  "chromeapp": {
+    "fs-chunk-store": "memory-chunk-store",
+    "http": "http-node",
+    "load-ip-set": false,
+    "net": "chrome-net",
+    "os": false
+  }
+}
