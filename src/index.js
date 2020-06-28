@@ -11,6 +11,9 @@
  **/
 
 import Hls from 'hls.js';
+import WebTorrent from 'webtorrent';
+
+import { getRtcConfig } from './utils';
 
 import { IPFS_GATEWAY } from './ipfs';
 import { MotionTracker } from './motiontracker';
