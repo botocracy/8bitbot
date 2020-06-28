@@ -3,6 +3,9 @@
  **/
 
 import Hls from 'hls.js';
+import WebTorrent from 'webtorrent';
+
+import { getRtcConfig } from './utils';
 
 //////////////////////////////////////////////////////////////////////////
 // Application parameters

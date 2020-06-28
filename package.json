@@ -25,7 +25,7 @@
     "bundle:*": "@snowpack/plugin-webpack",
     "audit": "npm audit fix",
     "pretest": "npm run lint",
-    "test": "mocha --require esm --require jsdom-global/register",
+    "test": "ts-mocha --require esm --require jsdom-global/register",
     "format": "prettier --write .",
     "lint": "prettier --check .",
     "clean": "node clean.js"
@@ -43,10 +43,13 @@
     "mocha": ">=8.0.1",
     "prettier": ">=2.0.0",
     "rollup-plugin-node-polyfills": ">=0.2.1",
-    "snowpack": ">=2.6.0"
+    "snowpack": ">=2.6.0",
+    "ts-mocha": ">=7.0.0",
+    "typescript": "^3.9.6"
   },
   "dependencies": {
-    "hls.js": "^0.13.2"
+    "hls.js": "^0.13.2",
+    "webtorrent": "^0.108.6"
   },
   "chromeapp": {
     "fs-chunk-store": "memory-chunk-store",

@@ -19,7 +19,7 @@ module.exports = {
   devOptions: {
     bundle: false,
   },
-  install: ['hls.js'],
+  install: ['hls.js', 'webtorrent'],
   installOptions: {
     sourceMap: true,
     treeshake: true,
