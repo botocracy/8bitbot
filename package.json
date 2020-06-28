@@ -23,7 +23,7 @@
     "start": "snowpack dev",
     "build": "snowpack build",
     "bundle:*": "@snowpack/plugin-webpack",
-    "audit": "npm audit fix --force",
+    "audit": "npm audit fix",
     "test": "npm run lint",
     "format": "prettier --write \"src/**/*.js\" clean.js",
     "lint": "prettier --check \"src/**/*.js\" clean.js",
