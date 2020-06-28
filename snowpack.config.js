@@ -23,7 +23,7 @@ module.exports = {
     minify: false,
   },
   plugins: ['@snowpack/plugin-typescript'],
-  install: ['hls.js', 'jsonld', 'three'],
+  install: ['hls.js', 'jsonld', 'three', 'webtorrent'],
   installOptions: {
     sourceMap: true,
     treeshake: true,
