@@ -47,6 +47,18 @@ function dispatch() {
   postinstall)
     postinstall
     ;;
+  depends)
+    depends
+    ;;
+  depends-checkout)
+    depends-checkout
+    ;;
+  depends-build)
+    depends-build
+    ;;
+  depends-install)
+    depends-install
+    ;;
   build)
     build
     ;;
@@ -82,6 +94,31 @@ function postinstall() {
   "${SCRIPT_DIR}/npm-install.sh" postinstall
 }
 
+function depends() {
+  # Dependencies to build
+  BUILD_DEPENDS="emscripten "
+
+  # Build OpenCV
+  if [ ! -f "${GENERATED_SOURCE_DIR}/opencv.js" ]; then
+    rm -f "${STAMP_DIR}/build-opencv"
+    BUILD_DEPENDS+="opencv "
+  fi
+
+  make -C "${TOOL_DIR}" -j$(getconf _NPROCESSORS_ONLN) ${BUILD_DEPENDS}
+}
+
+function depends-checkout() {
+  make -C "${TOOL_DIR}" checkout -j10
+}
+
+function depends-build() {
+  make -C "${TOOL_DIR}" build -j$(getconf _NPROCESSORS_ONLN)
+}
+
+function depends-install() {
+  make -C "${TOOL_DIR}" install
+}
+
 function build() {
   # Build snowpack package
   snowpack build
@@ -96,11 +133,21 @@ function audit() {
 function lint() {
   # Lint JavaScript package files
   prettier --check .
+
+  # Lint Python language files
+  if command -v black &>/dev/null; then
+    black --check "${DEPENDS_DIR}"
+  fi
 }
 
 function format() {
   # Format JavaScript package files
   prettier --write .
+
+  # Format Python language files
+  if command -v black &>/dev/null; then
+    black "${DEPENDS_DIR}"
+  fi
 }
 
 function test() {
