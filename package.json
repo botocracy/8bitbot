@@ -22,6 +22,10 @@
   "scripts": {
     "postinstall": "bash tools/npm-scripts.sh postinstall",
     "start": "bash tools/npm-scripts.sh start",
+    "depends": "bash tools/npm-scripts.sh depends",
+    "depends-checkout": "bash tools/npm-scripts.sh depends-checkout",
+    "depends-build": "bash tools/npm-scripts.sh depends-build",
+    "depends-install": "bash tools/npm-scripts.sh depends-install",
     "build": "bash tools/npm-scripts.sh build",
     "audit": "bash tools/npm-scripts.sh audit",
     "lint": "bash tools/npm-scripts.sh lint",
@@ -30,8 +34,8 @@
     "clean": "bash tools/npm-scripts.sh clean"
   },
   "engines": {
-    "node": ">=10.0.0",
-    "npm": ">=6.0.0"
+    "node": ">=12.0.0",
+    "npm": ">=6.1.0"
   },
   "devDependencies": {
     "@snowpack/plugin-webpack": ">=1.4.0",
