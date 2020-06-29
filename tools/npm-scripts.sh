@@ -21,7 +21,26 @@ function postinstall() {
   done
 }
 
+function depends() {
+  make -C tools -j$(getconf _NPROCESSORS_ONLN)
+}
+
+function depends-checkout() {
+  make -C tools checkout -j10
+}
+
+function depends-build() {
+  make -C tools build
+}
+
+function depends-install() {
+  make -C tools install
+}
+
 function build() {
+  # Build depends
+  [ -f "src/generated/opencv.js" ] || depends
+
   # Build snowpack package
   snowpack build
 }
@@ -34,6 +53,11 @@ function audit() {
 function lint() {
   # Lint JavaScript package files
   prettier --check .
+
+  # Lint Python language files
+  if command -v black &>/dev/null; then
+    black --check tools/depends
+  fi
 }
 
 function test() {
@@ -49,6 +73,11 @@ function test() {
 function format() {
   # Format JavaScript package files
   prettier --write .
+
+  # Format Python language files
+  if command -v black &>/dev/null; then
+    black --check tools/depends
+  fi
 }
 
 function clean() {
@@ -62,6 +91,18 @@ case $1 in
     ;;
   postinstall)
     postinstall
+    ;;
+  depends)
+    depends
+    ;;
+  depends-checkout)
+    depends-checkout
+    ;;
+  depends-build)
+    depends-build
+    ;;
+  depends-install)
+    depends-install
     ;;
   build)
     build
