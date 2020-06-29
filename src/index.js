@@ -2,10 +2,43 @@
  * Application logic
  **/
 
+import cv from './generated/opencv';
 import Hls from 'hls.js';
 import WebTorrent from 'webtorrent';
 
 import { getRtcConfig } from './utils';
+
+// Promise that is resolved when OpenCV is initialized
+let openCvLoaded;
+
+// Run OpenCV code, deferring until after open OpenCV is initialized
+async function runcv(callback) {
+  openCvLoaded.then(callback);
+  await openCvLoaded;
+}
+
+// Promose for OpenCV runtime initialization
+let resolveOpenCv;
+openCvLoaded = new Promise((resolve, reject) => {
+  resolveOpenCv = resolve;
+});
+
+// Install OpenCV runtime initialization handler
+cv['onRuntimeInitialized'] = () => {
+  resolveOpenCv();
+};
+
+// Get the OpenCV version
+async function getOpenCvVersion() {
+  let version;
+
+  await runcv(() => {
+    const versionRegex = /Version control: +([0-9a-zA-Z.-]+)/;
+    version = cv.getBuildInformation().match(versionRegex)[1];
+  });
+
+  return version;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Application parameters
@@ -84,6 +117,11 @@ console.log(`World version: ${WORLD_VERSION}`);
 console.log(`World: ${WORLD_CID}`);
 console.log(`Libraries: ${DISTRO_CID}`);
 console.log('-------------------------------------');
+
+// Log the OpenCV version after runtime initialization
+runcv(async function () {
+  console.log(`OpenCV version: ${await getOpenCvVersion()}`);
+});
 
 //////////////////////////////////////////////////////////////////////////
 // Application logic

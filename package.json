@@ -21,9 +21,14 @@
   "browser": "./src/index.js",
   "scripts": {
     "start": "snowpack dev",
+    "depends": "make -C tools",
+    "depends-checkout": "make -C tools checkout",
+    "depends-build": "make -C tools build",
+    "depends-install": "make -C tools install",
+    "prebuild": "[ -f src/generated/opencv.js ] || npm run depends",
     "build": "snowpack build",
     "bundle:*": "@snowpack/plugin-webpack",
-    "audit": "npm audit fix",
+    "audit": "audit-ci --moderate --package-manager npm",
     "pretest": "npm run lint",
     "test": "ts-mocha --require esm --require jsdom-global/register",
     "format": "prettier --write .",
@@ -31,12 +36,13 @@
     "clean": "node clean.js"
   },
   "engines": {
-    "node": ">=10.0.0",
-    "npm": ">=6.0.0"
+    "node": ">=12.0.0",
+    "npm": ">=6.1.0"
   },
   "devDependencies": {
     "@snowpack/plugin-babel": ">=1.4.0",
     "@snowpack/plugin-webpack": ">=1.4.0",
+    "audit-ci": ">=3.1.0",
     "chai": ">=4.2.0",
     "esm": ">=3.2.25",
     "jsdom-global": ">=3.0.2",
