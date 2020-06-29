@@ -45,7 +45,7 @@ jobs:
       - name: Build environment information
         run: 'echo "Matrix OS: ${{ matrix.os }} on $HOSTNAME with $(getconf _NPROCESSORS_ONLN) cores"'
 
-        # Checks-out the repository under $GITHUB_WORKSPACE, so the job can
+        # Check-out the repository under $GITHUB_WORKSPACE, so the job can
         # access it
       - name: Checkout main repo
         uses: actions/checkout@v2
@@ -70,6 +70,35 @@ jobs:
 
       - name: npm run audit
         run: npm run audit
+
+      - name: Restore OpenCV library
+        id: restore-opencv
+        uses: actions/cache@v2
+        with:
+          path: |
+            src/generated/opencv.js
+          key: build-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/opencv/*') }}-${{ hashFiles('tools/depends/emscripten/*') }}
+
+      - name: Checkout OpenCV repo
+        uses: actions/checkout@v2
+        if: steps.restore-opencv.outputs.cache-hit != 'true'
+        with:
+          repository: 'opencv/opencv'
+          ref: '4.3.0'
+          path: tools/repos/opencv
+
+      - name: Restore OpenCV build files
+        id: restore-runtime-build
+        uses: actions/cache@v2
+        if: steps.restore-opencv.outputs.cache-hit != 'true'
+        with:
+          path: |
+            tools/build/opencv
+          key: build-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/emscripten/*') }}
+
+      - name: Build depends
+        if: steps.restore-opencv.outputs.cache-hit != 'true'
+        run: npm run depends
 
       - name: npm run build
         run: npm run build
