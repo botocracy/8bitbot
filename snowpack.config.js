@@ -1,34 +1,30 @@
 // Plugin: https://github.com/ionic-team/rollup-plugin-node-polyfills
 
-polyfills = require("rollup-plugin-node-polyfills");
+polyfills = require('rollup-plugin-node-polyfills');
 
 module.exports = {
-  "scripts": {
-    "mount:public": "mount public --to /",
-    "mount:src": "mount src --to /_dist_"
+  scripts: {
+    'mount:public': 'mount public --to /',
+    'mount:src': 'mount src --to /_dist_',
   },
   plugins: [
     [
-      "@snowpack/plugin-babel",
-      "@snowpack/plugin-webpack",
+      '@snowpack/plugin-babel',
+      '@snowpack/plugin-webpack',
       {
-        sourceMap: true
-      }
-    ]
+        sourceMap: true,
+      },
+    ],
   ],
   devOptions: {
-    bundle: false
+    bundle: false,
   },
-  install: [
-    "hls.js"
-  ],
+  install: ['hls.js'],
   installOptions: {
     sourceMap: true,
     treeshake: true,
     rollup: {
-      plugins: [
-        polyfills()
-      ]
-    }
-  }
+      plugins: [polyfills()],
+    },
+  },
 };
