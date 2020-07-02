@@ -4,6 +4,7 @@
 
 import cv from './generated/opencv';
 import Hls from 'hls.js';
+import HlsjsIpfsLoader from 'hlsjs-ipfs-loader';
 import WebTorrent from 'webtorrent';
 
 import { getRtcConfig } from './utils';
@@ -155,6 +156,9 @@ async function bootstrapIpfs() {
   // IPFS is ready to use!
   // See https://github.com/ipfs/js-ipfs#core-api
   //
+
+  // TODO: Move UI to IPFS
+  loadUserInterface(node);
 
   // Load OrbitDB
   await loadOrbitDB(node);
@@ -318,18 +322,22 @@ async function loadUserInterface(node) {
     }
   }
 
-  await handleVideos(videos);
+  await handleVideos(node, videos);
 }
 
 // Do something with the known videos
-async function handleVideos(videos) {
+async function handleVideos(node, videos) {
   // Index of the the background video from all videos in the world
   const WORLD_VIDEO_INDEX = Math.floor(Math.random() * videos.length);
 
   // Choose a video
-  const fileName = videos[WORLD_VIDEO_INDEX];
+  //const fileName = videos[WORLD_VIDEO_INDEX];
+  const fileName = 'Dubai_Creek/index.m3u8'; // TODO
 
   const videoUri = `${IPFS_GATEWAY}/ipfs/${WORLD_CID}/${fileName}`;
+
+  Hls.DefaultConfig.loader = HlsjsIpfsLoader;
+  Hls.DefaultConfig.debug = true;
 
   const hls = new Hls({
     maxBufferLength: HLS_BUFFER_LENGTH,
@@ -337,7 +345,10 @@ async function handleVideos(videos) {
     maxMaxBufferSize: HLS_BUFFER_SIZE,
   });
 
-  hls.loadSource(videoUri);
+  hls.config.ipfs = node;
+  hls.config.ipfsHash = 'QmXGnhirDP523RKWYTaBQtjvkDc8w59H6XzCrhJQSAYKQb'; // TODO
+
+  hls.loadSource(fileName);
 
   hls.on(Hls.Events.MANIFEST_PARSED, () => {
     log_ui(`Parsed HLS manifest`);
@@ -1112,6 +1123,3 @@ if (fullscreenAvailable()) {
 //////////////////////////////////////////////////////////////////////////
 
 bootstrapIpfs();
-
-// TODO: Move UI to IPFS
-loadUserInterface(null);

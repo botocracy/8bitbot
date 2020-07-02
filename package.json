@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "hls.js": "^0.13.2",
+    "hlsjs-ipfs-loader": "^0.2.3",
     "ipfs": "^0.47.0",
     "orbit-db": "^0.24.2",
     "webtorrent": "^0.108.6"
