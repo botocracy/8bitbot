@@ -1,14 +1,10 @@
 import chai from 'chai';
-import MediaElementWrapper from 'mediasource';
-import videostream from 'videostream';
 import WebTorrent from 'webtorrent';
 
 import { getRtcConfig } from '../src/utils';
 
 const BIG_BUCK_BUNNY_URI =
   'magnet:?xt=urn:btih:DD8255ECDC7CA55FB0BBF81323D87062DB1F6D1C';
-
-const VIDEOSTREAM_EXTS = ['.m4a', '.m4v', '.mp4'];
 
 // SI file size strings
 function fileSizeSI(size) {
@@ -66,26 +62,6 @@ describe('WebTorrent', function () {
           `Torrent has file "${file.path}" (${fileSizeSI(file.length)})`
         );
       });
-
-      // Torrents can contain many files. Let's use the .mp4 file
-      let file = torrent.files.find(function (file) {
-        return file.name.endsWith('.mp4');
-      });
-
-      /*
-      const extension = '.mp4'; // TODO
-      var element = {}; // TODO
-
-      if (VIDEOSTREAM_EXTS.indexOf(extension) >= 0) {
-        renderer = new videostream(file, element);
-      } else {
-        const wrapper = new MediaElementWrapper(element);
-        const writable = wrapper.createWriteStream(codecs);
-        file.createReadStream().pipe(writable);
-
-        renderer = wrapper;
-      }
-      */
 
       done();
     });
