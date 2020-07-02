@@ -34,30 +34,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Restore dependency repos
-        id: cache-repos
-        uses: actions/cache@v2
-        with:
-          path: |
-            tools/repos
-          key: checkout-${{ hashFiles('tools/manifest.mk') }}
-
-      - name: Checkout Emscripten SDK repo
-        uses: actions/checkout@v2
-        if: steps.cache-repos.outputs.cache-hit != 'true'
-        with:
-          repository: 'emscripten-core/emsdk'
-          ref: '1.39.18'
-          path: tools/repos/emsdk
-
-      - name: Checkout OpenCV repo
-        uses: actions/checkout@v2
-        if: steps.cache-repos.outputs.cache-hit != 'true'
-        with:
-          repository: 'opencv/opencv'
-          ref: '4.3.0'
-          path: tools/repos/opencv
-
       - name: Restore node modules
         id: cache-modules
         uses: actions/cache@v2
@@ -73,22 +49,6 @@ jobs:
 
       - name: npm run audit
         run: npm run audit
-
-      - name: Download remaining dependencies
-        run: npm run depends-checkout -- -j10
-
-      - name: Restore dependency build files
-        uses: actions/cache@v2
-        with:
-          path: |
-            tools/build
-          key: build-${{ matrix.os }}-${{ hashFiles('tools/manifest.mk') }}
-
-      - name: Build dependencies
-        run: npm run depends-build -- -j2
-
-      - name: Install dependencies
-        run: npm run depends-install
 
       - name: npm run build
         run: npm run build
