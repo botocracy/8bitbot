@@ -72,9 +72,6 @@ const LOG_IPFS = 'IPFS  ';
 const LOG_UI = 'UI    ';
 const LOG_MARKET = 'MARKET';
 
-const BIG_BUCK_BUNNY_URI =
-  'magnet:?xt=urn:btih:DD8255ECDC7CA55FB0BBF81323D87062DB1F6D1C';
-
 //////////////////////////////////////////////////////////////////////////
 // External libraries
 //////////////////////////////////////////////////////////////////////////
@@ -230,56 +227,6 @@ const HLS_BUFFER_SIZE = 1 * 1024 * 1024 * 1024; // 1 GB
 
 // Entry point after bootstrapping IPFS
 async function loadUserInterface(node) {
-  log_ui(`Loading UI`);
-
-  let client = new WebTorrent({
-    tracker: {
-      rtcConfig: getRtcConfig(),
-    },
-  });
-
-  client.on('error', function (err) {
-    console.error(err);
-  });
-  client.on('warning', function (err) {
-    // We don't support HTTP tracker but we don't care -> we use the web socket tracker
-    if (err.message.indexOf('Unsupported tracker protocol') !== -1) return;
-
-    // Users don't care about issues with WebRTC, but developers do so log it in the console
-    if (err.message.indexOf('Ice connection failed') !== -1) {
-      console.log(err);
-      return;
-    }
-
-    console.warn(err);
-  });
-
-  // Start torrent
-  log_ui(`Starting torrent`);
-  client.add(BIG_BUCK_BUNNY_URI, function (torrent) {
-    log_ui(`Got torrent metadata (size is ${fileSizeSI(torrent.length)})`);
-
-    // Torrents can contain many files. Let's use the .mp4 file
-    let file = torrent.files.find(function (file) {
-      return file.name.endsWith('.mp4');
-    });
-
-    log_ui(`Starting to play "${file.name}" (${fileSizeSI(file.length)})`);
-
-    // Render the video into the <video> element
-    let video = document.getElementById('backgroundVideo');
-    file.renderTo(video);
-
-    // Video will start soon, so show the volume indicator
-    let volumeIcon = video.muted
-      ? document.getElementById('volumeMuteIcon')
-      : document.getElementById('volumeUpIcon');
-
-    volumeIcon.style.display = 'block';
-  });
-
-  return;
-
   // Load UI libraries
   log_ui(`Downloading UI libraries`);
   await Promise.all([loadScript(JSONLD_SRC)]);
@@ -1122,17 +1069,6 @@ function loadScript(src) {
     script.onerror = reject;
     document.head.appendChild(script);
   });
-}
-
-// SI file size strings
-function fileSizeSI(size) {
-  let exp = (Math.log(size) / Math.log(1e3)) | 0;
-
-  return (
-    (size / Math.pow(1e3, exp)).toFixed(0) +
-    ' ' +
-    (exp ? 'kMGTPEZY'[--exp] + 'B' : 'Bytes')
-  );
 }
 
 function getRandomFutureDateInSeconds() {
