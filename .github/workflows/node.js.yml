@@ -64,6 +64,7 @@ jobs:
         with:
           path: |
             node_modules
+            package-lock.json
           key: npm-install-${{ matrix.node-version }}-${{ hashFiles('package.json') }}
 
       - name: npm install
