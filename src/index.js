@@ -77,10 +77,10 @@ const LOG_MARKET = 'MARKET';
 //////////////////////////////////////////////////////////////////////////
 
 // CID for external libraries
-const DISTRO_CID = 'QmXzBzsLzZ1kQDbxwd18CqMkrBipiLZ5K7woMeFN7Ca8BT';
+const DISTRO_CID = 'QmZyHviUtgbwck1VSPH7yoWWoZcAHPhDYA3ce7Bo5hNfvU';
 
 // IPFS libraries
-const JS_IPFS_VERSION = '0.37.0';
+const JS_IPFS_VERSION = '0.47.0';
 const ORBIT_DB_VERSION = '0.21.4';
 
 // UI libraries
@@ -137,34 +137,27 @@ async function bootstrapIpfs() {
 
   // IPFS options
   const options = {
-    repo: 'ipfs-' + Math.random(),
+    repo: `ipfs-${Math.random()}`,
     EXPERIMENTAL: {
-      pubsub: true,
+      ipnsPubsub: true,
       sharding: true,
     },
   };
 
   // Create IPFS node
-  const node = await window.Ipfs.create(options);
-  window.node = node; // For debugging
+  const node = await Ipfs.create(options);
 
-  node.on('error', (error) => {
-    log_ipfs(`IPFS error: ${error.message}`);
-  });
+  // Log node status
+  const status = node.isOnline() ? 'online' : 'offline';
+  log_ipfs(`IPFS node status: ${status}`);
 
-  node.on('start', async () => {
-    // Log node status
-    const status = node.isOnline() ? 'online' : 'offline';
-    log_ipfs(`IPFS node status: ${status}`);
+  //
+  // IPFS is ready to use!
+  // See https://github.com/ipfs/js-ipfs#core-api
+  //
 
-    //
-    // IPFS is ready to use!
-    // See https://github.com/ipfs/js-ipfs#core-api
-    //
-
-    // Load OrbitDB
-    await loadOrbitDB(node);
-  });
+  // Load OrbitDB
+  await loadOrbitDB(node);
 }
 
 // Publish an object to OrbitDB
