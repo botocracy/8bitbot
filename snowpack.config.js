@@ -20,7 +20,7 @@ module.exports = {
   devOptions: {
     bundle: false,
   },
-  install: ['hls.js', 'ipfs', 'orbit-db', 'webtorrent'],
+  install: ['hls.js', 'ipfs', 'orbit-db', 'videostream', 'webtorrent'],
   installOptions: {
     sourceMap: true,
     treeshake: true,
