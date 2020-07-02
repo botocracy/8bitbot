@@ -1,0 +1,54 @@
+From 0b3e41b6201d043f9b8c8dffb92abcdbde4fd482 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Tue, 30 Jun 2020 15:16:34 -0700
+Subject: [PATCH] Unexpected token building libp2p
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This fixes an "Unexpected token" error building libp2p >= 0.27.0.
+
+Error was:
+
+    Snowpack
+
+      ./build Building your application...
+
+      mount:*.................[DONE] mount . --to /
+      build:.js,.jsx,.ts,.tsx.[DONE] (default) esbuild
+      bundle:*................[SKIP]
+
+    ▼ Console
+
+      [log] ! optimizing dependencies...
+
+    ⠼ snowpack installing... libp2p
+    ✖ snowpack failed to load node_modules/libp2p/src/index.js
+      Unexpected token (161:88) in node_modules/libp2p/src/index.js
+    npm ERR! code ELIFECYCLE
+    npm ERR! errno 1
+    npm ERR! libp2p-test@ build: `snowpack build`
+    npm ERR! Exit status 1
+    npm ERR!
+    npm ERR! Failed at the libp2p-test@ build script.
+    npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+---
+ node_modules/libp2p/src/index.js | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/node_modules/libp2p/src/index.js b/node_modules/libp2p/src/index.js
+index ad7a782..78c5e69 100644
+--- a/node_modules/libp2p/src/index.js
++++ b/node_modules/libp2p/src/index.js
+@@ -158,8 +158,6 @@ class Libp2p extends EventEmitter {
+     // Attach private network protector
+     if (this._modules.connProtector) {
+       this.upgrader.protector = this._modules.connProtector
+-    } else if (globalThis.process !== undefined && globalThis.process.env && globalThis.process.env.LIBP2P_FORCE_PNET) {
+-      throw new Error('Private network is enforced, but no protector was provided')
+     }
+ 
+     // dht provided components (peerRouting, contentRouting, dht)
+-- 
+2.20.1
+

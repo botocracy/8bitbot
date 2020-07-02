@@ -1,5 +1,6 @@
 // Plugin: https://github.com/ionic-team/rollup-plugin-node-polyfills
 
+globals = require('rollup-plugin-node-globals');
 polyfills = require('rollup-plugin-node-polyfills');
 
 module.exports = {
@@ -19,12 +20,12 @@ module.exports = {
   devOptions: {
     bundle: false,
   },
-  install: ['hls.js', 'webtorrent'],
+  install: ['hls.js', 'ipfs', 'orbit-db', 'webtorrent'],
   installOptions: {
     sourceMap: true,
     treeshake: true,
     rollup: {
-      plugins: [polyfills()],
+      plugins: [globals(), polyfills()],
     },
   },
 };
