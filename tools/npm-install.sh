@@ -56,6 +56,9 @@ function postinstall() {
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
+
+  # Patch Threads library
+  patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
 }
 
 # Perform the dispatch
