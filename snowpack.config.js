@@ -13,6 +13,7 @@ const resolve = require('@rollup/plugin-node-resolve').nodeResolve;
 module.exports = {
   scripts: {
     'mount:public': 'mount public --to /',
+    'mount:lib': 'mount lib --to /lib',
     'mount:src': 'mount src --to /_dist_',
   },
   devOptions: {
@@ -22,7 +23,7 @@ module.exports = {
     minify: false,
   },
   plugins: ['@snowpack/plugin-typescript'],
-  install: ['hls.js', 'jsonld'],
+  install: ['hls.js', 'jsonld', 'three'],
   installOptions: {
     sourceMap: true,
     treeshake: true,

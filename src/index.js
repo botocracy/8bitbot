@@ -9,6 +9,7 @@
 import Hls from 'hls.js';
 
 import { IPFS_GATEWAY } from './ipfs';
+import { MotionTracker } from './motiontracker';
 import { World } from './world';
 
 const world = new World();
@@ -71,8 +72,13 @@ async function loadHls(videoUri) {
       : document.getElementById('volumeUpIcon');
 
     volumeIcon.style.display = 'block';
+
+    // Start OpenCV processing
+    motionTracker.start(video);
   });
 }
+
+const motionTracker = new MotionTracker(window);
 
 //////////////////////////////////////////////////////////////////////////
 // Menu logic
@@ -169,6 +175,31 @@ function fullscreenAvailable() {
   return fullscreenAvailable;
 }
 
+// UI state
+window.showOverlay = false;
+
+// Toggle overlay
+function toggleOverlay() {
+  const viewOverlayIcon = document.getElementById('viewOverlayIcon');
+  const hideOverlayIcon = document.getElementById('hideOverlayIcon');
+  const overlayCanvas2D = document.getElementById('overlayCanvas2D');
+  const overlayCanvas3D = document.getElementById('overlayCanvas3D');
+
+  if (window.showOverlay) {
+    window.showOverlay = false;
+    viewOverlayIcon.style.display = 'block';
+    hideOverlayIcon.style.display = 'none';
+    overlayCanvas2D.style.display = 'none';
+    overlayCanvas3D.style.display = 'none';
+  } else {
+    window.showOverlay = true;
+    viewOverlayIcon.style.display = 'none';
+    hideOverlayIcon.style.display = 'block';
+    overlayCanvas2D.style.display = 'block';
+    overlayCanvas3D.style.display = 'block';
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Utilities
 //////////////////////////////////////////////////////////////////////////
@@ -197,6 +228,11 @@ if (fullscreenAvailable()) {
   // Initialize async
   onFullscreenSelect();
 }
+
+const viewOverlayIcon = document.getElementById('viewOverlayIcon');
+const hideOverlayIcon = document.getElementById('hideOverlayIcon');
+
+viewOverlayIcon.onclick = hideOverlayIcon.onclick = toggleOverlay;
 
 //////////////////////////////////////////////////////////////////////////
 // Async entry points
