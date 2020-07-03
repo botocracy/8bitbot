@@ -9,6 +9,8 @@
 import chai from 'chai';
 import cv from '../src/generated/opencv';
 
+import { MotionTracker } from '../src/motiontracker';
+
 describe('opencv.js', function () {
   before(async function () {
     this.cv = await cv;

@@ -422,6 +422,9 @@ calib3d = {
         "getDefaultNewCameraMatrix",
         "initUndistortRectifyMap",
         "Rodrigues",
+        "findEssentialMat",
+        "recoverPose",
+        "recoverPoseDNE",
     ]
 }
 

@@ -64,7 +64,7 @@ function test() {
   lint
 
   # Run test suite
-  mocha \
+  ts-mocha \
     --require esm \
     --require isomorphic-fetch \
     --require jsdom-global/register

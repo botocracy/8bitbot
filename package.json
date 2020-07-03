@@ -50,11 +50,14 @@
     "prettier": ">=2.0.0",
     "rollup-plugin-node-globals": ">=1.4.0",
     "rollup-plugin-node-polyfills": ">=0.2.1",
-    "snowpack": ">=2.6.0"
+    "snowpack": ">=2.6.0",
+    "ts-mocha": ">=7.0.0",
+    "typescript": "^3.9.6"
   },
   "dependencies": {
     "hls.js": "^0.13.2",
-    "jsonld": "^3.1.1"
+    "jsonld": "^3.1.1",
+    "three": "^0.118.3"
   },
   "chromeapp": {
     "fs-chunk-store": "memory-chunk-store",
