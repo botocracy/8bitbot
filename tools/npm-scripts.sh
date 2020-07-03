@@ -99,12 +99,16 @@ function depends() {
   BUILD_DEPENDS="emscripten "
 
   # Build OpenCV
-  if [ ! -f "${GENERATED_SOURCE_DIR}/opencv.js" ]; then
+  if [ ! -f "${GENERATED_SOURCE_DIR}/opencv.js" ] \
+    || [ ! -f "${DISTRIBUTION_LIB_DIR}/libopencv_core.a" ]; then
     rm -f "${STAMP_DIR}/build-opencv"
     BUILD_DEPENDS+="opencv "
   fi
 
   make -C "${TOOL_DIR}" -j$(getconf _NPROCESSORS_ONLN) ${BUILD_DEPENDS}
+
+  # Build C++ libraries
+  "${CPP_LIBRARY_DIR}/build-ci.sh"
 }
 
 function depends-checkout() {
