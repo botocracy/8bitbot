@@ -32,6 +32,9 @@ SOURCE_DIR="src"
 # Directory for generated source
 GENERATED_SOURCE_DIR="${SOURCE_DIR}/generated"
 
+# C++ libraries directory
+CPP_LIBRARY_DIR="lib"
+
 # Tooling directory
 TOOL_DIR="tools"
 
@@ -40,3 +43,9 @@ DEPENDS_DIR="${TOOL_DIR}/depends"
 
 # Build system stamp directory
 STAMP_DIR="${TOOL_DIR}/stamps"
+
+# Location of installed dependency files
+DISTRIBUTION_DIR="${TOOL_DIR}/dist"
+
+# Location of installed dependency libraries
+DISTRIBUTION_LIB_DIR="${DISTRIBUTION_DIR}/lib"
