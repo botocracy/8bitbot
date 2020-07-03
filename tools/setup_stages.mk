@@ -75,5 +75,6 @@ $(S)/.preinstall: \
   manifest.mk
 	mkdir -p "$(S)"
 	mkdir -p "$(INSTALL_DIR)"
+	mkdir -p "$(TEST_DIR)"
 
 	touch "$@"

@@ -28,6 +28,7 @@ console.log('Cleaning working tree...');
 // Dependency directories
 deleteFolderRecursive('./tools/stamps');
 deleteFolderRecursive('./src/generated');
+deleteFolderRecursive('./test/generated');
 
 // Snowpack directories
 deleteFolderRecursive('./.build');

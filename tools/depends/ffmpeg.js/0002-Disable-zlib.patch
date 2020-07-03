@@ -1,0 +1,28 @@
+From ded17bce2a88dac649c352011492a32f8a927379 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Tue, 7 Jul 2020 16:17:46 -0700
+Subject: [PATCH 2/3] Disable zlib
+
+Build error was:
+
+    ERROR: zlib requested but not found
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 585405d..12633d8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -185,7 +185,7 @@ FFMPEG_COMMON_ARGS = \
+ 	--disable-sdl2 \
+ 	--disable-securetransport \
+ 	--disable-xlib \
+-	--enable-zlib
++	--disable-zlib
+ 
+ build/ffmpeg-webm/ffmpeg.bc: $(WEBM_SHARED_DEPS)
+ 	cd build/ffmpeg-webm && \
+-- 
+2.20.1
+

@@ -1,0 +1,47 @@
+From 79123915350097f66972254448ab9dd563d77fd1 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 9 Jul 2020 15:07:13 -0700
+Subject: [PATCH 3/3] Modify .gitmodules for hard-linking
+
+---
+ .gitmodules | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/.gitmodules b/.gitmodules
+index c5aa371..6b8b6c6 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -1,24 +1,24 @@
+ [submodule "build/libvpx"]
+ 	path = build/libvpx
+-	url = https://chromium.googlesource.com/webm/libvpx
++	url = @REPO_DIR_FFMPEG_JS@/build/libvpx
+ 	ignore = dirty
+ [submodule "build/opus"]
+ 	path = build/opus
+-	url = https://github.com/xiph/opus.git
++	url = @REPO_DIR_FFMPEG_JS@/build/opus
+ 	ignore = dirty
+ [submodule "build/lame"]
+ 	path = build/lame
+-	url = https://github.com/Kagami/lame-svn.git
++	url = @REPO_DIR_FFMPEG_JS@/build/lame
+ 	ignore = dirty
+ [submodule "build/x264"]
+ 	path = build/x264
+-	url = https://code.videolan.org/videolan/x264.git
++	url = @REPO_DIR_FFMPEG_JS@/build/x264
+ 	ignore = dirty
+ [submodule "build/ffmpeg-webm"]
+ 	path = build/ffmpeg-webm
+-	url = https://git.ffmpeg.org/ffmpeg.git
++	url = @REPO_DIR_FFMPEG_JS@/build/ffmpeg-webm
+ 	ignore = dirty
+ [submodule "build/ffmpeg-mp4"]
+ 	path = build/ffmpeg-mp4
+-	url = https://git.ffmpeg.org/ffmpeg.git
++	url = @REPO_DIR_FFMPEG_JS@/build/ffmpeg-mp4
+ 	ignore = dirty
+-- 
+2.20.1
+

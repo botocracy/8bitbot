@@ -39,10 +39,15 @@ function depends-install() {
 
 function build() {
   # Build depends
-  [ -f "src/generated/opencv.js" ] || depends
+  ( \
+    [ -f "src/generated/ffmpeg-worker-webm.js" ] && \
+    [ -f "src/generated/opencv.js" ] && \
+    [ -f "test/generated/ffmpeg-mp4.js" ] \
+  ) || depends
 
   # Build snowpack package
-  snowpack build
+  NODE_OPTIONS="--max-old-space-size=5120" \
+    snowpack build
 }
 
 function audit() {
@@ -64,7 +69,7 @@ function test() {
   lint
 
   # Run test suite
-  ts-mocha \
+  NODE_OPTIONS="--max-old-space-size=5120" ts-mocha \
     --require esm \
     --require isomorphic-fetch \
     --require jsdom-global/register

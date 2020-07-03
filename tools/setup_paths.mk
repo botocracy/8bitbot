@@ -32,6 +32,9 @@ BUILD_DIR = $(TOOL_DIR)/build
 # Directory to place generated files
 INSTALL_DIR = $(TOOL_DIR)/../src/generated
 
+# Directory to place generated files for testing
+TEST_DIR = $(TOOL_DIR)/../test/generated
+
 # Stamp files for build system stages
 CHECKOUT_DONE = $(STAMP_DIR)/.checkout-done
 BUILD_DONE = $(STAMP_DIR)/.build-done
