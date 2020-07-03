@@ -21,7 +21,7 @@ module.exports = {
     minify: false,
   },
   plugins: ['@snowpack/plugin-typescript'],
-  install: ['hls.js', 'jsonld'],
+  install: ['hls.js', 'jsonld', 'three'],
   installOptions: {
     sourceMap: true,
     treeshake: true,
