@@ -14,7 +14,7 @@ module.exports = {
   buildOptions: {
     minify: false,
   },
-  install: ['hls.js', 'jsonld', 'webtorrent'],
+  install: ['hls.js', 'jsonld', 'three', 'webtorrent'],
   installOptions: {
     sourceMap: true,
     treeshake: true,
