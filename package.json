@@ -20,15 +20,15 @@
   "main": "./src/index.js",
   "browser": "./src/index.js",
   "scripts": {
-    "start": "snowpack dev",
-    "build": "snowpack build",
+    "postinstall": "bash tools/npm-scripts.sh postinstall",
+    "start": "bash tools/npm-scripts.sh start",
+    "build": "bash tools/npm-scripts.sh build",
     "bundle:*": "@snowpack/plugin-webpack",
-    "audit": "npm audit fix",
-    "pretest": "npm run lint",
-    "test": "mocha --require esm --require jsdom-global/register",
-    "format": "prettier --write .",
-    "lint": "prettier --check .",
-    "clean": "node clean.js"
+    "audit": "bash tools/npm-scripts.sh audit",
+    "lint": "bash tools/npm-scripts.sh lint",
+    "test": "bash tools/npm-scripts.sh test",
+    "format": "bash tools/npm-scripts.sh format",
+    "clean": "bash tools/npm-scripts.sh clean"
   },
   "engines": {
     "node": ">=10.0.0",
@@ -37,16 +37,20 @@
   "devDependencies": {
     "@snowpack/plugin-babel": ">=1.4.0",
     "@snowpack/plugin-webpack": ">=1.4.0",
+    "audit-ci": ">=3.1.0",
     "chai": ">=4.2.0",
     "esm": ">=3.2.25",
+    "isomorphic-fetch": "^2.2.1",
     "jsdom-global": ">=3.0.2",
     "mocha": ">=8.0.1",
     "prettier": ">=2.0.0",
+    "rollup-plugin-node-globals": ">=1.4.0",
     "rollup-plugin-node-polyfills": ">=0.2.1",
     "snowpack": ">=2.6.0"
   },
   "dependencies": {
-    "hls.js": "^0.13.2"
+    "hls.js": "^0.13.2",
+    "jsonld": "^3.1.1"
   },
   "chromeapp": {
     "fs-chunk-store": "memory-chunk-store",

@@ -4,29 +4,14 @@
 
 import Hls from 'hls.js';
 
+import { IPFS_GATEWAY } from './ipfs';
+import { World } from './world';
+
+const world = new World();
+
 //////////////////////////////////////////////////////////////////////////
 // Application parameters
 //////////////////////////////////////////////////////////////////////////
-
-// World semver is defined here. Bump this when world changes.
-// Major - incompatible with existing APIs
-// Minor - backwards-compatible features and functionality
-// Patch - backwards-compatible fixes
-const WORLD_VERSION = '1.0.0';
-
-// World Content Identifier
-const WORLD_CID = 'QmUHi5kmNvVanFJh3EapKHXiDHy8VSi9AatUs6UDkH8odD';
-
-// IPFS parameters
-const IPFS_GATEWAYS = [
-  'https://ipfs.infura.io',
-  'https://gateway.ipfs.io',
-  'https://ipfs.io',
-];
-
-// TODO
-//const IPFS_GATEWAY = IPFS_GATEWAYS[Math.floor(Math.random() * IPFS_GATEWAYS.length)];
-const IPFS_GATEWAY = IPFS_GATEWAYS[0];
 
 // TODO
 const DATABASE_NAME = '8bitbot';
@@ -47,13 +32,9 @@ const DISTRO_CID = 'QmUATZDVu9A4m9kn2uNDgFafiDpkUKyPWdiunp1zNZ4NFs';
 const JS_IPFS_VERSION = '0.47.0';
 const ORBIT_DB_VERSION = '0.24.2';
 
-// UI libraries
-const JSONLD_VERSION = '1.6.2';
-
 // URIs
 const JS_IPFS_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/ipfs_${JS_IPFS_VERSION}/index.min.js`;
 const ORBIT_DB_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/orbit-db_${ORBIT_DB_VERSION}/orbitdb.min.js`;
-const JSONLD_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/jsonld_${JSONLD_VERSION}/jsonld.min.js`;
 
 //////////////////////////////////////////////////////////////////////////
 // Application info
@@ -64,8 +45,8 @@ console.log(`${document.title}`);
 console.log(`js-ipfs version: ${JS_IPFS_VERSION}`);
 console.log(`OrbitDB version: ${ORBIT_DB_VERSION}`);
 console.log(`Gateway: ${IPFS_GATEWAY}`);
-console.log(`World version: ${WORLD_VERSION}`);
-console.log(`World: ${WORLD_CID}`);
+console.log(`World version: ${world.version}`);
+console.log(`World: ${world.cid}`);
 console.log(`Libraries: ${DISTRO_CID}`);
 console.log('-------------------------------------');
 
@@ -166,11 +147,6 @@ const HLS_BUFFER_SIZE = 1 * 1024 * 1024 * 1024; // 1 GB
 
 // Entry point after bootstrapping IPFS
 async function loadUserInterface(node) {
-  // Load UI libraries
-  log_ui(`Downloading UI libraries`);
-  await Promise.all([loadScript(JSONLD_SRC)]);
-  log_ui(`Finished downloading UI libraries`);
-
   // Check HLS video playback
   log_ui(`  HLS support: ${Hls.isSupported()}`);
 
@@ -180,103 +156,12 @@ async function loadUserInterface(node) {
     return;
   }
 
-  const WORLD_URI = `${IPFS_GATEWAY}/ipfs/${WORLD_CID}/graph.json`;
+  const videoUri = await world.getVideoHlsUri();
 
-  // Load world
-  log_ui(`Loading world`);
-  log_ui(`   URI: ${WORLD_URI}`);
-
-  const response = await fetch(`${WORLD_URI}`);
-  const responseJson = await response.json();
-
-  // Parse JSON-LD. The JSON-LD document looks like:
-  //
-  //   {
-  //     "@context": ...,
-  //     "@graph": [
-  //       ...
-  //     ]
-  //   }
-  //
-  // This is called "compacted form". The graph is a list of JSON-LD
-  // objects. An object looks like:
-  //
-  //   {
-  //     "@type": "VideoObject",
-  //     "title": {
-  //         "en": "Dubai Downtown Panorama"
-  //     },
-  //     "creator": "Swedrone",
-  //     "license": "CC-BY-3.0",
-  //     ...
-  //  }
-  //
-  // When the JSON-LD document is expanded, the context is used to
-  // reconstruct full URIs for each subject, predicate and object.
-  // For the example above, when expanded, it looks like:
-  //
-  //   {
-  //     "@type": [
-  //       "http://schema.org/VideoObject"
-  //     ],
-  //     "http://purl.org/dc/terms/title": [
-  //       {
-  //         "@language": "en",
-  //         "@value": "Dubai Downtown Panorama"
-  //       }
-  //     ],
-  //     "http://purl.org/dc/terms/creator": [
-  //       {
-  //         "@value": "Swedrone"
-  //       }
-  //     ],
-  //     "http://spdx.org/rdf/terms#licenseId": [
-  //       {
-  //         "@value": "Swedrone"
-  //       }
-  //     ],
-  //     ...
-  //    }
-  //
-  // When the document is expanded, fields that don't appear in the
-  // context are dropped. We can expand the document and recompact,
-  // which sanitizes data in the document.
-
-  // Context is retrieved from the "@context" field of the JSON document
-  const context = responseJson;
-
-  // Expand the graph, dropping invalid fields
-  const expanded = await jsonld.expand(responseJson);
-
-  // Compact the graph, shortening the long URIs to field names for the
-  // compacted document
-  const compacted = await jsonld.compact(expanded, context);
-
-  // The world is the list of objects in the "@graph" field
-  const world = compacted['@graph'];
-
-  // Extract video URIs
-  const videos = [];
-  for (const index in world) {
-    const obj = world[index];
-    if (obj['@type'] == 'VideoObject') {
-      videos.push(obj.mediaStream[0].fileUrl);
-    }
-  }
-
-  await handleVideos(videos);
+  await loadHls(videoUri);
 }
 
-// Do something with the known videos
-async function handleVideos(videos) {
-  // Index of the the background video from all videos in the world
-  const WORLD_VIDEO_INDEX = Math.floor(Math.random() * videos.length);
-
-  // Choose a video
-  const fileName = videos[WORLD_VIDEO_INDEX];
-
-  const videoUri = `${IPFS_GATEWAY}/ipfs/${WORLD_CID}/${fileName}`;
-
+async function loadHls(videoUri) {
   const hls = new Hls({
     maxBufferLength: HLS_BUFFER_LENGTH,
     maxBufferSize: HLS_BUFFER_SIZE,

@@ -1,0 +1,68 @@
+From e875895881b302357cbde3e8f72962319d6c908c Mon Sep 17 00:00:00 2001
+From: Nilesh <npatra974@gmail.com>
+Date: Sun, 2 Feb 2020 15:14:38 +0000
+Subject: [PATCH 2/3] Switch to core-js@3
+
+---
+ lib/index.js      |  2 +-
+ package.json      |  2 +-
+ webpack.config.js | 18 +++++++++---------
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/lib/index.js b/lib/index.js
+index ffa4c3e..ba83252 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -14,6 +14,6 @@ if(!Object.fromEntries) {
+ if(require('semver').gte(process.version, '8.6.0')) {
+   module.exports = require('./jsonld');
+ } else {
+-  require('core-js/fn/object/entries');
++  require('core-js/features/object/entries');
+   module.exports = require('../dist/node6/lib/jsonld');
+ }
+diff --git a/package.json b/package.json
+index 0aa651e..8cbacef 100644
+--- a/package.json
++++ b/package.json
+@@ -52,7 +52,7 @@
+     "browserify": "^16.2.3",
+     "chai": "^4.2.0",
+     "commander": "^2.19.0",
+-    "core-js": "^2.6.5",
++    "core-js": "3.x",
+     "cors": "^2.7.1",
+     "cross-env": "^5.2.0",
+     "eslint": "^6.8.0",
+diff --git a/webpack.config.js b/webpack.config.js
+index feda9b8..25fba39 100644
+--- a/webpack.config.js
++++ b/webpack.config.js
+@@ -18,15 +18,15 @@ const outputs = [
+   {
+     entry: [
+       // 'babel-polyfill' is very large, list features explicitly
+-      'core-js/fn/array/from',
+-      'core-js/fn/array/includes',
+-      'core-js/fn/map',
+-      'core-js/fn/object/assign',
+-      'core-js/fn/object/entries',
+-      'core-js/fn/promise',
+-      'core-js/fn/set',
+-      'core-js/fn/string/starts-with',
+-      'core-js/fn/symbol',
++      'core-js/features/array/from',
++      'core-js/features/array/includes',
++      'core-js/features/map',
++      'core-js/features/object/assign',
++      'core-js/features/object/entries',
++      'core-js/features/promise',
++      'core-js/features/set',
++      'core-js/features/string/starts-with',
++      'core-js/features/symbol',
+       // main lib
+       './lib/index.js'
+     ],
+-- 
+2.20.1
+

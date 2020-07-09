@@ -1,0 +1,29 @@
+From 57bde8f01cea2eb4f32824b84f6716f4fde396f5 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 9 Jul 2020 08:20:47 -0700
+Subject: [PATCH 3/3] Fix exception with empty process.version
+
+process.version can be the empty string in a browser. Comparing against the
+semver will give the error:
+
+    Uncaught TypeError: Invalid Version:
+---
+ lib/index.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/index.js b/lib/index.js
+index ba83252..86beaa9 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -11,7 +11,7 @@ if(!Object.fromEntries) {
+   fromEntries.shim();
+ }
+ 
+-if(require('semver').gte(process.version, '8.6.0')) {
++if(!process.version || require('semver').gte(process.version, '8.6.0')) {
+   module.exports = require('./jsonld');
+ } else {
+   require('core-js/features/object/entries');
+-- 
+2.20.1
+
