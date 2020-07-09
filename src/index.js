@@ -41,11 +41,11 @@ const LOG_MARKET = 'MARKET';
 //////////////////////////////////////////////////////////////////////////
 
 // CID for external libraries
-const DISTRO_CID = 'QmZyHviUtgbwck1VSPH7yoWWoZcAHPhDYA3ce7Bo5hNfvU';
+const DISTRO_CID = 'QmUATZDVu9A4m9kn2uNDgFafiDpkUKyPWdiunp1zNZ4NFs';
 
 // IPFS libraries
 const JS_IPFS_VERSION = '0.47.0';
-const ORBIT_DB_VERSION = '0.21.4';
+const ORBIT_DB_VERSION = '0.24.2';
 
 // UI libraries
 const JSONLD_VERSION = '1.6.2';
