@@ -1,44 +1,35 @@
-/*
+/******************************************************************************
+ *
  * Geometry
- */
+ *
+ ******************************************************************************/
+
 body {
   margin: 0;
 }
-#gameCanvas {
+
+/*
+ * Rendering
+ */
+
+#videoBackground {
   position: fixed;
   width: 100%;
   height: 100%;
   min-width: 100%;
   min-height: 100%;
 }
-#backgroundVideo {
+
+#renderCanvas,
+#overlayCanvas2D,
+#overlayCanvas3D {
   position: fixed;
-  width: 100%;
-  height: 100%;
-  min-width: 100%;
-  min-height: 100%;
 }
-#metamaskDialog {
-  /* TODO: Responsive dimensions */
-  position: absolute;
-  height: 260px;
-  width: 500px;
-  top: 50%;
-  left: 50%;
-  margin-top: -130px; /* Margin is -1/2 dimension */
-  margin-left: -250px; /* Margin is -1/2 dimension */
-}
-#metamaskDialogBackground {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-#metamaskDialogForegroundInstall,
-#metamaskDialogForegroundLogin {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
+
+/*
+ * UI
+ */
+
 #botIcon {
   position: fixed;
   bottom: 0;
@@ -71,17 +62,97 @@ body {
   width: 128px;
   height: 128px;
 }
+#viewOverlayIcon,
+#hideOverlayIcon {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  width: 128px;
+  height: 128px;
+}
 
 /*
- * Presentation
+ * Dialogs
  */
+
+#metamaskDialog {
+  /* TODO: Responsive dimensions */
+  position: absolute;
+  height: 260px;
+  width: 500px;
+  top: 50%;
+  left: 50%;
+  margin-top: -130px; /* Margin is -1/2 dimension */
+  margin-left: -250px; /* Margin is -1/2 dimension */
+}
+#metamaskDialogBackground {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+#metamaskDialogForegroundInstall,
+#metamaskDialogForegroundLogin {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/******************************************************************************
+ *
+ * Presentation
+ *
+ ******************************************************************************/
+
 body {
   background-color: black;
   font-family: Sans-Serif;
 }
-#backgroundVideo {
+
+/*
+ * Rendering
+ */
+
+#videoBackground {
   object-fit: cover;
 }
+#renderCanvas,
+#overlayCanvas2D,
+#overlayCanvas3D {
+  display: none;
+}
+
+/*
+ * UI
+ */
+
+#botIcon {
+  display: none;
+}
+#parachuteIcon {
+  display: none;
+}
+#volumeDownIcon,
+#volumeMuteIcon,
+#volumeOffIcon,
+#volumeUpIcon {
+  display: none;
+  opacity: 0.5;
+}
+#enterFullscreenIcon,
+#leaveFullscreenIcon {
+  display: none;
+  opacity: 0.5;
+}
+#viewOverlayIcon,
+#hideOverlayIcon {
+  display: none;
+  opacity: 0.5;
+}
+
+/*
+ * Dialogs
+ */
+
 #metamaskDialog {
   display: none;
 }
@@ -98,45 +169,42 @@ body {
   line-height: 1.5;
   outline: none;
 }
+
+/******************************************************************************
+ *
+ * Interaction
+ ******************************************************************************/
+
+/*
+ * UI
+ */
+
 #botIcon {
-  display: none;
+  cursor: pointer;
 }
 #parachuteIcon {
-  display: none;
+  cursor: pointer;
 }
 #volumeDownIcon,
 #volumeMuteIcon,
 #volumeOffIcon,
 #volumeUpIcon {
-  display: none;
-  opacity: 0.5;
+  cursor: pointer;
 }
 #enterFullscreenIcon,
 #leaveFullscreenIcon {
-  display: none;
-  opacity: 0.5;
+  cursor: pointer;
+}
+#viewOverlayIcon,
+#hideOverlayIcon {
+  cursor: pointer;
 }
 
 /*
- * Interaction
+ * Dialogs
  */
+
 #metamaskDialogForegroundInstall,
 #metamaskDialogForegroundLogin {
-  cursor: pointer;
-}
-#botIcon {
-  cursor: pointer;
-}
-#parachuteIcon {
-  cursor: pointer;
-}
-#volumeDownIcon,
-#volumeMuteIcon,
-#volumeOffIcon,
-#volumeUpIcon {
-  cursor: pointer;
-}
-#enterFullscreenIcon,
-#leaveFullscreenIcon {
   cursor: pointer;
 }

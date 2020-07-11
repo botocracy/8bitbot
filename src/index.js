@@ -173,7 +173,7 @@ async function loadHls(videoUri) {
   hls.on(Hls.Events.MANIFEST_PARSED, () => {
     log_ui(`Parsed HLS manifest`);
 
-    var video = document.getElementById('backgroundVideo');
+    var video = document.getElementById('videoBackground');
     hls.attachMedia(video);
 
     // Video will start soon, so show the volume indicator
@@ -203,7 +203,7 @@ async function loadHls(videoUri) {
 
 // Handle volume selection
 function onVolumeSelect() {
-  const video = document.getElementById('backgroundVideo');
+  const video = document.getElementById('videoBackground');
 
   const volumeMuteIcon = document.getElementById('volumeMuteIcon');
   const volumeUpIcon = document.getElementById('volumeUpIcon');
@@ -225,16 +225,16 @@ function onVolumeSelect() {
 
 // Go full-screen
 function enterFullscreen() {
-  const gameCanvas = document.getElementById('gameCanvas');
+  const canvas = document.getElementById('renderCanvas');
 
-  if (gameCanvas.requestFullscreen) {
-    gameCanvas.requestFullscreen();
-  } else if (gameCanvas.webkitRequestFullscreen) {
-    gameCanvas.webkitRequestFullscreen();
-  } else if (gameCanvas.mozRequestFullScreen) {
-    gameCanvas.mozRequestFullScreen();
-  } else if (gameCanvas.msRequestFullscreen) {
-    gameCanvas.msRequestFullscreen();
+  if (canvas.requestFullscreen) {
+    canvas.requestFullscreen();
+  } else if (canvas.webkitRequestFullscreen) {
+    canvas.webkitRequestFullscreen();
+  } else if (canvas.mozRequestFullScreen) {
+    canvas.mozRequestFullScreen();
+  } else if (canvas.msRequestFullscreen) {
+    canvas.msRequestFullscreen();
   }
 }
 
