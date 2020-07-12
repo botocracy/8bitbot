@@ -19,6 +19,14 @@ function postinstall() {
     patch -p1 --forward --directory="node_modules/jsonld" < \
       "tools/depends/jsonld.js/${patch}" || [ "$?" == "1" ]
   done
+
+  # Patch Threads library
+  for patch in \
+      "0001-Fix-browser-error-bundling-with-Snowpack.patch" \
+  ; do
+    patch -p1 --forward --directory="node_modules/threads" < \
+      "tools/depends/threads/${patch}" || [ "$?" == "1" ]
+  done
 }
 
 function depends() {
@@ -30,7 +38,7 @@ function depends-checkout() {
 }
 
 function depends-build() {
-  make -C tools build
+  make -C tools build -j$(getconf _NPROCESSORS_ONLN)
 }
 
 function depends-install() {
@@ -39,7 +47,11 @@ function depends-install() {
 
 function build() {
   # Build depends
-  [ -f "src/generated/opencv.js" ] || depends
+  (
+    [ -f "public/scene_detector/scene_detector.js" ] &&
+    [ -f "public/scene_detector/scene_detector.wasm" ] &&
+    [ -f "src/generated/opencv.js" ]
+  ) || depends
 
   # Build snowpack package
   snowpack build

@@ -29,8 +29,14 @@ REPO_DIR = $(TOOL_DIR)/repos
 # Directory of building dependencies
 BUILD_DIR = $(TOOL_DIR)/build
 
+# Directory to find sources to compile
+LIB_DIR = $(TOOL_DIR)/../lib
+
 # Directory to place generated files
 INSTALL_DIR = $(TOOL_DIR)/../src/generated
+
+# Root directory of the web server
+PUBLIC_DIR = $(TOOL_DIR)/../public
 
 # Stamp files for build system stages
 CHECKOUT_DONE = $(STAMP_DIR)/.checkout-done

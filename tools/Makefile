@@ -54,27 +54,44 @@ include setup_environment.mk
 #
 ################################################################################
 
+# Source directories
+SOURCE_DIR_SCENE_DETECTOR = $(LIB_DIR)/scene_detector
+
 # Checkout directories
 REPO_DIR_ANDROID_SDK = $(REPO_DIR)/android-sdk
+REPO_DIR_CODECBOX_JS = $(REPO_DIR)/$(CODECBOX_JS_REPO_NAME)
 REPO_DIR_EMSDK = $(REPO_DIR)/$(EMSDK_REPO_NAME)
 REPO_DIR_OPENCV = $(REPO_DIR)/$(OPENCV_REPO_NAME)
 
 # Build directories
 BUILD_DIR_ANDROID_SDK = $(BUILD_DIR)/android-sdk
+BUILD_DIR_CODECBOX_JS = $(BUILD_DIR)/$(CODECBOX_JS_REPO_NAME)
 BUILD_DIR_EMSDK = $(BUILD_DIR)/$(EMSDK_REPO_NAME)
 BUILD_DIR_OPENCV = $(BUILD_DIR)/$(OPENCV_REPO_NAME)
+BUILD_DIR_SCENE_DETECTOR = $(BUILD_DIR)/scene_detector
 
 # Build files
+BUILD_FILE_CODECBOX_JS = $(BUILD_DIR_CODECBOX_JS)/src/$(CODECBOX_JS_LIB)
 BUILD_FILE_OPENCV = $(BUILD_DIR_OPENCV)/bin/$(OPENCV_LIB)
+BUILD_FILE_SCENE_DETECTOR = $(BUILD_DIR_SCENE_DETECTOR)/$(SCENE_DETECTOR_LIB)
 
 # Install files
 INSTALL_FILE_OPENCV = $(INSTALL_DIR)/$(OPENCV_LIB)
+INSTALL_FILE_SCENE_DETECTOR = $(INSTALL_DIR)/$(SCENE_DETECTOR_LIB)
 
 ################################################################################
 #
 # Dependency configuration
 #
 ################################################################################
+
+#
+# Configure Codecbox.js
+#
+
+CODECBOX_JS_BUILD_DEPENDS = \
+  $(S)/checkout-codecbox.js \
+  $(S)/build-emsdk
 
 #
 # Configure Emscripten SDK
@@ -103,6 +120,13 @@ ifeq ($(PLATFORM),darwin)
   OPENCV_BUILD_FLAGS +=
 endif
 
+#
+# Configure scene detector
+#
+
+SCENE_DETECTOR_DEPENDS = \
+  $(BUILD_FILE_CODECBOX_JS)
+
 ################################################################################
 #
 # Build system targets
@@ -116,6 +140,7 @@ endif
 #
 
 CHECKOUT_DEPENDS = \
+  $(S)/checkout-codecbox.js \
   $(S)/checkout-emsdk \
   $(S)/checkout-opencv \
   $(S)/patch-opencv
@@ -129,14 +154,17 @@ endif
 #
 
 BUILD_DEPENDS = \
-  $(BUILD_FILE_OPENCV)
+  $(BUILD_FILE_CODECBOX_JS) \
+  $(BUILD_FILE_OPENCV) \
+  $(BUILD_FILE_SCENE_DETECTOR) \
 
 #
 # Define targets for "make install"
 #
 
 INSTALL_DEPENDS = \
-  $(INSTALL_FILE_OPENCV)
+  $(INSTALL_FILE_OPENCV) \
+  $(INSTALL_FILE_SCENE_DETECTOR) \
 
 #
 # Inject targets
@@ -150,16 +178,67 @@ install: $(INSTALL_DEPENDS)
 # Define targets for building individual depends via "make <depend>"
 #
 
+.PHONY: codecbox.js
 .PHONY: opencv
+.PHONY: scene-detector
+
+codecbox.js: \
+  $(INSTALL_FILE_CODECBOX_JS)
 
 opencv: \
   $(INSTALL_FILE_OPENCV)
+
+scene_detector: \
+  $(INSTALL_FILE_SCENE_DETECTOR)
 
 ################################################################################
 #
 # Build system procedures
 #
 ################################################################################
+
+#
+# Checkout Codecbox.js
+#
+# Dependency: Run npm install first
+#
+
+$(S)/checkout-codecbox.js: $(S)/.precheckout \
+  $(TOOL_DIR)/depends/codecbox.js/0001-Fix-error-building-OpenH264.patch \
+  $(TOOL_DIR)/depends/openh264/0001-Fix-build-on-macOS.patch \
+  $(TOOL_DIR)/depends/x264/0001-Remove-problematic-configure-test.patch
+	# Clone repo
+	[ -d "$(REPO_DIR_CODECBOX_JS)" ] || ( \
+	  git clone "$(CODECBOX_JS_REMOTE_REPO)" "$(REPO_DIR_CODECBOX_JS)" && \
+	  git -C "$(REPO_DIR_CODECBOX_JS)" reset --hard $(CODECBOX_JS_VERSION) \
+	)
+
+	# Patch repo
+	patch --forward --directory "$(REPO_DIR_CODECBOX_JS)" < \
+	  "$(TOOL_DIR)/depends/codecbox.js/0001-Fix-error-building-OpenH264.patch" || ( \
+	    code=$$?; [[ "$${code}" -lt "2" ]] || exit $${code}; \
+	  )
+	patch --forward --directory "$(REPO_DIR_CODECBOX_JS)" < \
+	  "$(TOOL_DIR)/depends/codecbox.js/0002-Fix-errors-building-with-latest-llvm.patch" || ( \
+	    code=$$?; [[ "$${code}" -lt "2" ]] || exit $${code}; \
+	  )
+
+	# Clone depends
+	cd "$(REPO_DIR_CODECBOX_JS)" && \
+	PATH="$(TOOL_DIR)/../node_modules/.bin:${PATH}" \
+	  grunt init --force
+
+	# Patch depends
+	patch -p1 --forward --directory "$(REPO_DIR_CODECBOX_JS)/build/openh264" < \
+	  "$(TOOL_DIR)/depends/openh264/0001-Fix-build-on-macOS.patch" || ( \
+	    code=$$?; [[ "$${code}" -lt "2" ]] || exit $${code}; \
+	  )
+	patch --forward --directory "$(REPO_DIR_CODECBOX_JS)/build/x264" < \
+	  "$(TOOL_DIR)/depends/x264/0001-Remove-problematic-configure-test.patch" || ( \
+	    code=$$?; [[ "$${code}" -lt "2" ]] || exit $${code}; \
+	  )
+
+	touch "$@"
 
 #
 # Checkout Android SDK
@@ -220,6 +299,24 @@ $(S)/patch-opencv: $(S)/checkout-opencv \
 	touch "$@"
 
 #
+# Build Codecbox.js
+#
+
+$(BUILD_FILE_CODECBOX_JS): $(S)/.precheckout $(CODECBOX_JS_BUILD_DEPENDS)
+	# Deep-copy repo to build folder for now
+	[ -d "$(BUILD_DIR_CODECBOX_JS)" ] || ( \
+	  cp -r "$(REPO_DIR_CODECBOX_JS)" "$(BUILD_DIR_CODECBOX_JS)" \
+	)
+
+	# Source Emscripten environment, then build Codecbox.js and dependencies
+	cd "$(BUILD_DIR_CODECBOX_JS)" && \
+	  . "$(REPO_DIR_EMSDK)/emsdk_set_env.sh" && \
+	  PATH="$(TOOL_DIR)/../node_modules/.bin:$${PATH}" \
+	    grunt build
+
+	touch "$@"
+
+#
 # Build Emscripten
 #
 
@@ -251,6 +348,48 @@ $(BUILD_FILE_OPENCV): $(S)/.prebuild $(OPENCV_BUILD_DEPENDS)
 	touch "$@"
 
 #
+# Build scene detector
+#
+
+$(BUILD_FILE_SCENE_DETECTOR): $(S)/.prebuild $(SCENE_DETECTOR_DEPENDS)
+	mkdir -p "$(BUILD_DIR_SCENE_DETECTOR)"
+
+	# Compile object
+	cd "$(BUILD_DIR_SCENE_DETECTOR)" && \
+	  . "$(REPO_DIR_EMSDK)/emsdk_set_env.sh" && \
+	  emcc --bind -O3 -c -v -std=c++11 \
+	    -I"$(BUILD_DIR_CODECBOX_JS)/build/dist/include" \
+	    "$(SOURCE_DIR_SCENE_DETECTOR)/scene_detector.cpp" \
+	    -o "scene_detector.o"
+
+	# Compile bindings
+	cd "$(BUILD_DIR_SCENE_DETECTOR)" && \
+	  . "$(REPO_DIR_EMSDK)/emsdk_set_env.sh" && \
+	  emcc --bind -O3 -c -v -std=c++11 \
+	    -I"$(BUILD_DIR_CODECBOX_JS)/build/dist/include" \
+	    "$(SOURCE_DIR_SCENE_DETECTOR)/embinder.cpp" \
+	    -o "embinder.o"
+
+	# Link
+	cd "$(BUILD_DIR_SCENE_DETECTOR)" && \
+	  . "$(REPO_DIR_EMSDK)/emsdk_set_env.sh" && \
+	  emcc \
+	    "scene_detector.o" \
+	    "embinder.o" \
+	    -o "scene_detector.so"
+
+	# Generate JavaScript and WASM
+	cd "$(BUILD_DIR_SCENE_DETECTOR)" && \
+	  . "$(REPO_DIR_EMSDK)/emsdk_set_env.sh" && \
+	  emcc --bind -O3 -v -s VERBOSE=1 -s TOTAL_MEMORY=67108864 \
+	    -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
+	    -lworkerfs.js \
+	    "scene_detector.so" \
+	    "$(BUILD_DIR_CODECBOX_JS)/build/dist/lib/libx264.so" \
+	    "$(BUILD_DIR_CODECBOX_JS)/build/dist/lib/libopenh264.so" \
+	    -o "$(BUILD_FILE_SCENE_DETECTOR)"
+
+#
 # Install OpenCV
 #
 
@@ -264,6 +403,28 @@ $(INSTALL_FILE_OPENCV): $(S)/.preinstall \
 
 	# Hack in ES6 support
 	patch --no-backup-if-mismatch -d "$(INSTALL_DIR)" < "$(TOOL_DIR)/depends/opencv/0001-temp-Hack-opencv.js-to-ES6.patch"
+
+#
+# Install scene detector
+#
+
+$(INSTALL_FILE_SCENE_DETECTOR): $(S)/.preinstall $(BUILD_FILE_SCENE_DETECTOR)
+	mkdir -p "$(INSTALL_DIR)"
+	mkdir -p "$(PUBLIC_DIR)/scene_detector"
+
+	# Copy loader
+	cp "$(BUILD_FILE_SCENE_DETECTOR)" "$(INSTALL_DIR)"
+
+	# Copy worker to public directory
+	# TODO
+	#cp "$(TOOL_DIR)/depends/scene_detector/scene_detector_worker.js" "$(PUBLIC_DIR)/scene_detector"
+
+	# Copy loader and wasm to public directory for deployment
+	cp "$(BUILD_FILE_SCENE_DETECTOR)" "$(PUBLIC_DIR)/scene_detector"
+	cp "$(BUILD_DIR_SCENE_DETECTOR)/scene_detector.wasm" "$(PUBLIC_DIR)/scene_detector"
+
+	# Copy wasm to install directory for testing
+	cp "$(BUILD_DIR_SCENE_DETECTOR)/scene_detector.wasm" "$(INSTALL_DIR)"
 
 #
 # Clean stage

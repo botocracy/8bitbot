@@ -60,6 +60,14 @@ class MotionTracker {
     this.line.material.transparent = true;
     //this.scene.add(this.line); // TODO
 
+    // Scene detection
+    this.worker = new Worker('./scene_detector/scene_detector_worker.js');
+    this.sceneDetectorRunning = false;
+    this.videoBuffers = [];
+
+    const videoBufferThreshold = 4;
+    const videoBufferLimit = 12;
+
     // Reverence given to event handlers
     let self = this;
 
@@ -116,6 +124,34 @@ class MotionTracker {
     this.window.addEventListener('orientationchange', () => {
       this.computeDimensions();
     });
+
+    // Worker events
+    this.worker.onmessage = function (ev) {
+      const msg = ev.data;
+
+      if (msg.error) {
+        console.error('Error: ' + msg.type, msg);
+      }
+
+      switch (msg.type) {
+        case 'moduleInitialized':
+          console.log('Scene detection worker initialized');
+          self.sceneDetectorRunning = true;
+          break;
+
+        case 'onSceneChange':
+          self.onSceneChange(msg.frameId);
+          break;
+
+        default:
+          console.error('Unkown message type: ' + msg.type);
+      }
+    };
+  }
+
+  onSceneChange(frameId) {
+    // TODO
+    console.log(`Scene change detected on frame ${frameId}`);
   }
 
   doUnload() {
@@ -123,6 +159,8 @@ class MotionTracker {
     this.initialHomography.delete();
     this.previousImage.delete();
     this.previousFeatures.delete();
+
+    // TODO: Cleanup worker
   }
 
   renderLoop() {
@@ -232,10 +270,44 @@ class MotionTracker {
     const renderHeight = this.renderCanvas.height;
 
     // Render video to the render canvas
-    const renderImage = this.renderVideo(this.video, renderWidth, renderHeight);
-    if (!renderImage) {
+    const renderPixels = this.renderVideo(
+      this.video,
+      renderWidth,
+      renderHeight
+    );
+    if (!renderPixels) {
       return;
     }
+
+    // Hand render pixels to scene detector
+    if (this.sceneDetectorRunning) {
+      // TODO
+      let buf = this.videoBuffers.pop();
+
+      if (!buf) {
+        buf = new ArrayBuffer(renderWidth * renderHeight * 4);
+      }
+
+      let src = renderPixels.data;
+      let dest = new Uint8Array(buf);
+
+      dest.set(src);
+
+      this.worker.postMessage(
+        {
+          type: 'addVideoFrame',
+          frameId: this.frameCount,
+          buffer: dest.buffer,
+          bufferSize: dest.byteLength,
+          videoWidth: renderWidth,
+          videoHeight: renderWidth,
+        },
+        [dest.buffer]
+      );
+    }
+
+    // Get matrix for source image
+    const renderImage = this.cv.matFromImageData(renderPixels);
 
     // Update dimensions before the overlay is rendered
     this.computeDimensions();
@@ -421,10 +493,7 @@ class MotionTracker {
       return null;
     }
 
-    // Get matrix for source image
-    const renderImage = this.cv.matFromImageData(renderPixels);
-
-    return renderImage;
+    return renderPixels;
   }
 
   /*

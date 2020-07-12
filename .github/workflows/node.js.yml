@@ -77,6 +77,8 @@ jobs:
         with:
           path: |
             src/generated
+            public/scene_detector/scene_detector.js
+            public/scene_detector/scene_detector.wasm
           key: install-depends-${{ matrix.os }}-${{ hashFiles('tools/Makefile', 'tools/manifest.mk') }}
 
       - name: Build depends
