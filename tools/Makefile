@@ -62,6 +62,7 @@ REPO_DIR_ANDROID_SDK = $(REPO_DIR)/android-sdk
 REPO_DIR_CODECBOX_JS = $(REPO_DIR)/$(CODECBOX_JS_REPO_NAME)
 REPO_DIR_EMSDK = $(REPO_DIR)/$(EMSDK_REPO_NAME)
 REPO_DIR_OPENCV = $(REPO_DIR)/$(OPENCV_REPO_NAME)
+REPO_DIR_WABT = $(REPO_DIR)/$(WABT_REPO_NAME)
 
 # Build directories
 BUILD_DIR_ANDROID_SDK = $(BUILD_DIR)/android-sdk
@@ -69,6 +70,7 @@ BUILD_DIR_CODECBOX_JS = $(BUILD_DIR)/$(CODECBOX_JS_REPO_NAME)
 BUILD_DIR_EMSDK = $(BUILD_DIR)/$(EMSDK_REPO_NAME)
 BUILD_DIR_OPENCV = $(BUILD_DIR)/$(OPENCV_REPO_NAME)
 BUILD_DIR_SCENE_DETECTOR = $(BUILD_DIR)/scene_detector
+BUILD_DIR_WABT = $(BUILD_DIR)/$(WABT_REPO_NAME)
 
 # Build files
 BUILD_FILE_CODECBOX_JS = $(BUILD_DIR_CODECBOX_JS)/src/$(CODECBOX_JS_LIB)
@@ -127,6 +129,13 @@ endif
 SCENE_DETECTOR_DEPENDS = \
   $(BUILD_FILE_CODECBOX_JS)
 
+#
+# Configure WABT
+#
+
+WABT_BUILD_DEPENDS = \
+  $(S)/checkout-wabt
+
 ################################################################################
 #
 # Build system targets
@@ -143,6 +152,7 @@ CHECKOUT_DEPENDS = \
   $(S)/checkout-codecbox.js \
   $(S)/checkout-emsdk \
   $(S)/checkout-opencv \
+  $(S)/checkout-wabt \
   $(S)/patch-opencv
 
 ifeq ($(PLATFORM),darwin)
@@ -157,6 +167,7 @@ BUILD_DEPENDS = \
   $(BUILD_FILE_CODECBOX_JS) \
   $(BUILD_FILE_OPENCV) \
   $(BUILD_FILE_SCENE_DETECTOR) \
+  $(S)/build-wabt \
 
 #
 # Define targets for "make install"
@@ -165,6 +176,7 @@ BUILD_DEPENDS = \
 INSTALL_DEPENDS = \
   $(INSTALL_FILE_OPENCV) \
   $(INSTALL_FILE_SCENE_DETECTOR) \
+  $(S)/install-wabt \
 
 #
 # Inject targets
@@ -181,6 +193,7 @@ install: $(INSTALL_DEPENDS)
 .PHONY: codecbox.js
 .PHONY: opencv
 .PHONY: scene-detector
+.PHONY: wabt
 
 codecbox.js: \
   $(INSTALL_FILE_CODECBOX_JS)
@@ -190,6 +203,9 @@ opencv: \
 
 scene_detector: \
   $(INSTALL_FILE_SCENE_DETECTOR)
+
+wabt: \
+  $(S)/install-wabt
 
 ################################################################################
 #
@@ -283,6 +299,18 @@ $(S)/checkout-emsdk: $(S)/.precheckout
 
 $(S)/checkout-opencv: $(S)/.precheckout
 	[ -d "$(REPO_DIR_OPENCV)" ] ||  git clone -b $(OPENCV_VERSION) "$(OPENCV_REMOTE_REPO)" "$(REPO_DIR_OPENCV)"
+
+	@# TODO: Repository sync is delegated to the CI system.
+
+	touch "$@"
+
+#
+# Check out WABT
+#
+
+$(S)/checkout-wabt: $(S)/.precheckout
+	[ -d "$(REPO_DIR_WABT)" ] || \
+	  git clone --recursive -b $(WABT_VERSION) "$(WABT_REMOTE_REPO)" "$(REPO_DIR_WABT)"
 
 	@# TODO: Repository sync is delegated to the CI system.
 
@@ -390,6 +418,31 @@ $(BUILD_FILE_SCENE_DETECTOR): $(S)/.prebuild $(SCENE_DETECTOR_DEPENDS)
 	    -o "$(BUILD_FILE_SCENE_DETECTOR)"
 
 #
+# Build WABT
+#
+
+$(S)/build-wabt: $(S)/.prebuild $(WABT_BUILD_DEPENDS)
+	mkdir -p "$(BUILD_DIR_WABT)"
+
+	#
+	# Try building with Ninja optimistically, and fall back to the default
+	# generator if the environment doesn't have Ninja.
+	#
+	# TODO: We can use the Ninja bundled with CMake provided by the Android SDK,
+	# which we will need for macOS eventually.
+	#
+	cd "$(BUILD_DIR_WABT)" && \
+	  ( \
+	    cmake "$(REPO_DIR_WABT)" -GNinja -DCMAKE_INSTALL_PREFIX="$(TOOL_DIR)/wabt" || ( \
+	      rm -rf * && \
+	      cmake "$(REPO_DIR_WABT)" -DCMAKE_INSTALL_PREFIX="$(TOOL_DIR)/wabt" \
+	    ) \
+	  ) && \
+	  cmake --build .
+
+	touch "$@"
+
+#
 # Install OpenCV
 #
 
@@ -425,6 +478,18 @@ $(INSTALL_FILE_SCENE_DETECTOR): $(S)/.preinstall $(BUILD_FILE_SCENE_DETECTOR)
 
 	# Copy wasm to install directory for testing
 	cp "$(BUILD_DIR_SCENE_DETECTOR)/scene_detector.wasm" "$(INSTALL_DIR)"
+
+#
+# Install WABT
+#
+
+$(S)/install-wabt: $(S)/.preinstall $(S)/build-wabt
+	mkdir -p "$(TOOL_DIR)/wabt"
+
+	cd "$(BUILD_DIR_WABT)" && \
+	  cmake --build . --target install
+
+	touch "$@"
 
 #
 # Clean stage

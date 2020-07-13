@@ -47,5 +47,10 @@ OPENCV_LIB = opencv.js
 # Scene detector
 SCENE_DETECTOR_LIB = scene_detector.js
 
+# WebAssembly Binary Toolkit
+WABT_REPO_NAME = wabt
+WABT_VERSION = 1.0.17
+WABT_REMOTE_REPO = https://github.com/WebAssembly/$(WABT_REPO_NAME).git
+
 # Cache buster for CI systems
 CI_RELEASE = 0

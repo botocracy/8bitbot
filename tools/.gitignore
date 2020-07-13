@@ -6,3 +6,6 @@ repos/
 
 # Dependency build files
 build/
+
+# WABT tools
+wabt/
