@@ -56,6 +56,7 @@ SHELL := /bin/bash
 ################################################################################
 
 include depends/android-sdk/package.mk
+include depends/codecbox.js/package.mk
 include depends/emscripten/package.mk
 include depends/opencv/package.mk
 
@@ -72,6 +73,7 @@ include depends/opencv/package.mk
 #
 
 CHECKOUT_DEPENDS = \
+  $(S)/checkout-codecbox.js \
   $(S)/checkout-emsdk \
   $(S)/checkout-opencv \
   $(S)/patch-opencv
@@ -85,6 +87,7 @@ endif
 #
 
 BUILD_DEPENDS = \
+  $(S)/build-codecbox.js \
   $(S)/build-opencv \
 
 #
@@ -92,6 +95,7 @@ BUILD_DEPENDS = \
 #
 
 INSTALL_DEPENDS = \
+  $(S)/install-codecbox.js \
   $(S)/install-opencv \
 
 #
@@ -106,8 +110,12 @@ install: $(INSTALL_DEPENDS)
 # Define targets for building individual depends via "make <depend>"
 #
 
+.PHONY: codecbox.js
 .PHONY: emscripten
 .PHONY: opencv
+
+codecbox.js: \
+  $(S)/install-codecbox.js
 
 emscripten: \
   $(S)/build-emsdk
