@@ -1,0 +1,3 @@
+# Generated files (TODO: Better ignore strategy)
+scene_detector.js
+scene_detector.wasm

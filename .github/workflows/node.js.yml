@@ -71,6 +71,15 @@ jobs:
       - name: npm run audit
         run: npm run audit
 
+      - name: Restore C++ libraries
+        id: restore-libraries
+        uses: actions/cache@v2
+        with:
+          path: |
+            public/scene_detector
+            test/generated
+          key: build-libraries-${{ matrix.os }}-${{ hashFiles('lib/*', 'lib/**/*', 'tools/depends/emscripten/*', 'tools/depends/codecbox.js/*', 'tools/depends/openh264/*', 'tools/depends/x264/*') }}
+
       - name: Restore OpenCV library
         id: restore-opencv
         uses: actions/cache@v2
@@ -96,8 +105,17 @@ jobs:
             tools/build/opencv
           key: build-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/emscripten/*') }}
 
+      - name: Restore Codecbox.js files
+        id: restore-codecbox
+        uses: actions/cache@v2
+        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true'
+        with:
+          path: |
+            tools/dist
+          key: build-codecbox-${{ matrix.os }}-${{ hashFiles('tools/depends/codecbox.js/*', 'tools/depends/openh264/*', 'tools/depends/x264/*') }}-${{ hashFiles('tools/depends/emscripten/*') }}
+
       - name: Build depends
-        if: steps.restore-opencv.outputs.cache-hit != 'true'
+        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true'
         run: npm run depends
 
       - name: npm run build
