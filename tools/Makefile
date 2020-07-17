@@ -58,11 +58,15 @@ SHELL := /bin/bash
 include depends/ade/package.mk
 include depends/android-sdk/package.mk
 include depends/ceres-solver/package.mk
+include depends/codecbox.js/package.mk
 include depends/eigen/package.mk
 include depends/emscripten/package.mk
+include depends/ffmpeg/package.mk
 include depends/google-flags/package.mk
 include depends/google-log/package.mk
+include depends/libvpx/package.mk
 include depends/opencv/package.mk
+include depends/x264/package.mk
 
 ################################################################################
 #
@@ -79,12 +83,17 @@ include depends/opencv/package.mk
 CHECKOUT_DEPENDS = \
   $(S)/checkout-ade \
   $(S)/checkout-ceres \
+  $(S)/checkout-codecbox.js \
   $(S)/checkout-eigen \
   $(S)/checkout-emsdk \
+  $(S)/checkout-ffmpeg \
   $(S)/checkout-gflags \
   $(S)/checkout-glog \
+  $(S)/checkout-libvpx \
   $(S)/checkout-opencv \
-  $(S)/patch-opencv
+  $(S)/checkout-x264 \
+  $(S)/patch-codecbox.js \
+  $(S)/patch-opencv \
 
 ifeq ($(PLATFORM),darwin)
   #CHECKOUT_DEPENDS += $(S)/checkout-android-sdk # TODO
@@ -95,6 +104,7 @@ endif
 #
 
 BUILD_DEPENDS = \
+  $(S)/build-ffmpeg \
   $(S)/build-opencv \
 
 #
@@ -102,6 +112,7 @@ BUILD_DEPENDS = \
 #
 
 INSTALL_DEPENDS = \
+  $(S)/install-ffmpeg \
   $(S)/install-opencv \
 
 #
@@ -118,11 +129,15 @@ install: $(INSTALL_DEPENDS)
 
 .PHONY: ade
 .PHONY: ceres
+.PHONY: codecbox.js
 .PHONY: eigen
 .PHONY: emscripten
+.PHONY: ffmpeg
 .PHONY: gflags
 .PHONY: glog
+.PHONY: libvpx
 .PHONY: opencv
+.PHONY: x264
 
 ade: \
   $(S)/install-ade
@@ -130,11 +145,17 @@ ade: \
 ceres: \
   $(S)/install-ceres
 
+codecbox.js: \
+  $(S)/install-codecbox.js
+
 eigen: \
   $(S)/install-eigen
 
 emscripten: \
   $(S)/build-emsdk
+
+ffmpeg: \
+  $(S)/install-ffmpeg
 
 gflags: \
   $(S)/install-gflags
@@ -142,8 +163,14 @@ gflags: \
 glog: \
   $(S)/install-glog
 
+libvpx: \
+  $(S)/install-libvpx
+
 opencv: \
   $(S)/install-opencv
+
+x264: \
+  $(S)/install-x264
 
 ################################################################################
 #
