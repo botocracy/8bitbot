@@ -46,6 +46,9 @@ include setup_paths.mk
 # Build parameter setup
 include setup_environment.mk
 
+# Define the shell used to execute commands
+SHELL := /bin/bash
+
 ################################################################################
 #
 # Build system paths
@@ -54,15 +57,18 @@ include setup_environment.mk
 
 # Checkout directories
 REPO_DIR_ANDROID_SDK = $(REPO_DIR)/android-sdk
+REPO_DIR_CODECBOX_JS = $(REPO_DIR)/$(CODECBOX_JS_REPO_NAME)
 REPO_DIR_EMSDK = $(REPO_DIR)/$(EMSDK_REPO_NAME)
 REPO_DIR_OPENCV = $(REPO_DIR)/$(OPENCV_REPO_NAME)
 
 # Build directories
 BUILD_DIR_ANDROID_SDK = $(BUILD_DIR)/android-sdk
+BUILD_DIR_CODECBOX_JS = $(BUILD_DIR)/$(CODECBOX_JS_REPO_NAME)
 BUILD_DIR_EMSDK = $(BUILD_DIR)/$(EMSDK_REPO_NAME)
 BUILD_DIR_OPENCV = $(BUILD_DIR)/$(OPENCV_REPO_NAME)
 
 # Build files
+BUILD_FILE_CODECBOX_JS = $(BUILD_DIR_CODECBOX_JS)/src/$(CODECBOX_JS_LIB)
 BUILD_FILE_OPENCV = $(BUILD_DIR_OPENCV)/bin/$(OPENCV_LIB)
 
 # Install files
@@ -73,6 +79,15 @@ INSTALL_FILE_OPENCV = $(INSTALL_DIR)/$(OPENCV_LIB)
 # Dependency graph
 #
 ################################################################################
+
+#
+# Configure Codecbox.js
+#
+
+CODECBOX_JS_BUILD_DEPENDS = \
+  $(S)/checkout-codecbox.js \
+  $(S)/patch-codecbox.js \
+  $(S)/build-emsdk
 
 #
 # Configure Emscripten SDK
@@ -100,6 +115,7 @@ endif
 ################################################################################
 
 include depends/android-sdk/package.mk
+include depends/codecbox.js/package.mk
 include depends/emscripten/package.mk
 include depends/opencv/package.mk
 
@@ -116,6 +132,7 @@ include depends/opencv/package.mk
 #
 
 CHECKOUT_DEPENDS = \
+  $(S)/checkout-codecbox.js \
   $(S)/checkout-emsdk \
   $(S)/checkout-opencv \
   $(S)/patch-opencv
@@ -129,6 +146,7 @@ endif
 #
 
 BUILD_DEPENDS = \
+  $(S)/build-codecbox.js \
   $(BUILD_FILE_OPENCV) \
 
 #
@@ -136,6 +154,7 @@ BUILD_DEPENDS = \
 #
 
 INSTALL_DEPENDS = \
+  $(S)/install-codecbox.js \
   $(INSTALL_FILE_OPENCV) \
 
 #
@@ -150,8 +169,12 @@ install: $(INSTALL_DEPENDS)
 # Define targets for building individual depends via "make <depend>"
 #
 
+.PHONY: codecbox.js
 .PHONY: emscripten
 .PHONY: opencv
+
+codecbox.js: \
+  $(S)/install-codecbox.js
 
 emscripten: \
   $(S)/build-emsdk

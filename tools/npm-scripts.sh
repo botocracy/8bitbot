@@ -31,7 +31,16 @@ function depends() {
     BUILD_DEPENDS+="opencv "
   fi
 
+  # Bulid Codecbox.js
+  if [ ! -d "tools/dist" ]; then
+    rm -f tools/stamps/build-codecbox.js
+    BUILD_DEPENDS+="codecbox.js "
+  fi
+
   make -C tools -j$(getconf _NPROCESSORS_ONLN) ${BUILD_DEPENDS}
+
+  # Build C++ libraries
+  lib/build-ci.sh
 }
 
 function depends-checkout() {
@@ -39,7 +48,7 @@ function depends-checkout() {
 }
 
 function depends-build() {
-  make -C tools build
+  make -C tools build -j$(getconf _NPROCESSORS_ONLN)
 }
 
 function depends-install() {
@@ -71,6 +80,7 @@ function test() {
 
   # Run test suite
   ts-mocha \
+    --require canvas \
     --require esm \
     --require isomorphic-fetch \
     --require jsdom-global/register
