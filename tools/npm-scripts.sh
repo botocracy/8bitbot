@@ -44,6 +44,12 @@ function depends() {
     BUILD_DEPENDS+="opencv "
   fi
 
+  # Bulid FFmpeg
+  if [ ! -f "tools/dist/lib/libavutil.a" ]; then
+    rm -f tools/stamps/build-codecbox.js
+    BUILD_DEPENDS+="ffmpeg "
+  fi
+
   make -C tools -j$(getconf _NPROCESSORS_ONLN) ${BUILD_DEPENDS}
 
   # Build C++ libraries
@@ -86,8 +92,8 @@ function test() {
   lint
 
   # Run test suite
-  # TODO: Add --require canvas if ImageData or other APIs are needed for tests
   ts-mocha \
+    --require canvas \
     --require esm \
     --require isomorphic-fetch \
     --require jsdom-global/register

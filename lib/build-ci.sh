@@ -42,9 +42,13 @@ DEPENDS_DIRECTORY="${TOOL_DIRECTORY}/dist"
 # Directory to place the generated libraries
 INSTALL_DIRECTORY="${SOURCE_DIRECTORY}/../public"
 
+# Directory to place the generated libraries for testing
+TEST_DIRECTORY="${SOURCE_DIRECTORY}/../test/generated"
+
 # Ensure directories exist
 mkdir -p "${BUILD_DIRECTORY}"
 mkdir -p "${INSTALL_DIRECTORY}"
+mkdir -p "${TEST_DIRECTORY}"
 
 #
 # Setup environment
@@ -62,6 +66,7 @@ emcmake cmake \
   "${SOURCE_DIRECTORY}" \
   -DCMAKE_FIND_ROOT_PATH="${DEPENDS_DIRECTORY}" \
   -DCMAKE_INSTALL_PREFIX="${INSTALL_DIRECTORY}" \
+  -DTEST_DIRECTORY="${TEST_DIRECTORY}" \
 
 #cmake --build "${BUILD_DIRECTORY}" --target install
 make -C "${BUILD_DIRECTORY}" -j8 install
