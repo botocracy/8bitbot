@@ -29,6 +29,9 @@ REPO_DIR = $(TOOL_DIR)/repos
 # Directory of building dependencies
 BUILD_DIR = $(TOOL_DIR)/build
 
+# Directory to install build dependencies
+DEPENDS_INSTALL_DIR = $(TOOL_DIR)/dist
+
 # Directory to place generated files
 INSTALL_DIR = $(TOOL_DIR)/../src/generated
 

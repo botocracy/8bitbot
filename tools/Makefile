@@ -59,19 +59,23 @@ SHELL := /bin/bash
 REPO_DIR_ANDROID_SDK = $(REPO_DIR)/android-sdk
 REPO_DIR_CODECBOX_JS = $(REPO_DIR)/$(CODECBOX_JS_REPO_NAME)
 REPO_DIR_EMSDK = $(REPO_DIR)/$(EMSDK_REPO_NAME)
+REPO_DIR_GOOGLE_TEST = $(REPO_DIR)/$(GOOGLE_TEST_REPO_NAME)
 REPO_DIR_OPENCV = $(REPO_DIR)/$(OPENCV_REPO_NAME)
 
 # Build directories
 BUILD_DIR_ANDROID_SDK = $(BUILD_DIR)/android-sdk
 BUILD_DIR_CODECBOX_JS = $(BUILD_DIR)/$(CODECBOX_JS_REPO_NAME)
 BUILD_DIR_EMSDK = $(BUILD_DIR)/$(EMSDK_REPO_NAME)
+BUILD_DIR_GOOGLE_TEST = $(BUILD_DIR)/$(GOOGLE_TEST_REPO_NAME)
 BUILD_DIR_OPENCV = $(BUILD_DIR)/$(OPENCV_REPO_NAME)
 
 # Build files
 BUILD_FILE_CODECBOX_JS = $(BUILD_DIR_CODECBOX_JS)/src/$(CODECBOX_JS_LIB)
+BUILD_FILE_GOOGLE_TEST = $(BUILD_DIR_GOOGLE_TEST)/lib/$(GOOGLE_TEST_LIB)
 BUILD_FILE_OPENCV = $(BUILD_DIR_OPENCV)/bin/$(OPENCV_LIB)
 
 # Install files
+INSTALL_FILE_GOOGLE_TEST = $(DEPENDS_INSTALL_DIR)/lib/$(GOOGLE_TEST_LIB)
 INSTALL_FILE_OPENCV = $(INSTALL_DIR)/$(OPENCV_LIB)
 
 ################################################################################
@@ -97,6 +101,13 @@ EMSDK_BUILD_DEPENDS = \
   $(S)/checkout-emsdk
 
 #
+# Configure Google Test
+#
+
+GOOGLE_TEST_BUILD_DEPENDS = \
+  $(S)/checkout-google-test
+
+#
 # Configure OpenCV
 #
 
@@ -117,6 +128,7 @@ endif
 include depends/android-sdk/package.mk
 include depends/codecbox.js/package.mk
 include depends/emscripten/package.mk
+include depends/googletest/package.mk
 include depends/opencv/package.mk
 
 ################################################################################
@@ -171,6 +183,7 @@ install: $(INSTALL_DEPENDS)
 
 .PHONY: codecbox.js
 .PHONY: emscripten
+.PHONY: google-test
 .PHONY: opencv
 
 codecbox.js: \
@@ -178,6 +191,9 @@ codecbox.js: \
 
 emscripten: \
   $(S)/build-emsdk
+
+google-test: \
+  $(INSTALL_FILE_GOOGLE_TEST)
 
 opencv: \
   $(INSTALL_FILE_OPENCV)
