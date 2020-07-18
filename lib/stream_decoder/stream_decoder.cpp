@@ -13,6 +13,7 @@
 
 extern "C"
 {
+#include <libavformat/avio.h>
 #include <libavutil/mem.h>
 
 // TODO
@@ -49,23 +50,35 @@ StreamDecoder::~StreamDecoder() = default;
 
 void StreamDecoder::AddPacket(const emscripten::val& packet)
 {
-  if (m_frames.empty())
+  if (m_state == StreamDecoderState::Init)
   {
-    const unsigned int dataSize = ArrayLength(packet);
+    m_state = StreamDecoderState::Running;
 
-    std::vector<uint8_t> data(dataSize);
-
-    GetArrayData(packet, data.data(), dataSize);
-
-    m_frames.emplace_back(std::move(data));
+    // TODO
   }
 
-  m_state = StreamDecoderState::Running;
+  unsigned int bufferSize = 4096;
+
+  if (m_blockSize > 1)
+    bufferSize = m_blockSize;
+
+  uint8_t* buffer = static_cast<uint8_t*>(av_malloc(bufferSize));
+  m_ioContext = avio_alloc_context(buffer, bufferSize, 0, this, ReadPacketInternal, nullptr, nullptr);
+
+  const unsigned int dataSize = ArrayLength(packet);
+
+  std::vector<uint8_t> data(dataSize);
+
+  GetArrayData(packet, data.data(), dataSize);
+
+  m_packets.emplace_back(std::move(data));
+
+  // TODO: Consume data
 }
 
 StreamDecoderState StreamDecoder::GetState() const
 {
-  if (!m_frames.empty())
+  if (!m_packets.empty())
     return StreamDecoderState::HasFrame;
 
   return m_state;
@@ -73,7 +86,7 @@ StreamDecoderState StreamDecoder::GetState() const
 
 unsigned int StreamDecoder::GetFrameWidth() const
 {
-  if (!m_frames.empty())
+  if (!m_packets.empty())
   {
     // TODO
     return 720;
@@ -84,7 +97,7 @@ unsigned int StreamDecoder::GetFrameWidth() const
 
 unsigned int StreamDecoder::GetFrameHeight() const
 {
-  if (!m_frames.empty())
+  if (!m_packets.empty())
   {
     // TODO
     return 480;
@@ -95,20 +108,70 @@ unsigned int StreamDecoder::GetFrameHeight() const
 
 unsigned int StreamDecoder::GetFrameSize() const
 {
-  if (!m_frames.empty())
-    return m_frames.front().size();
+  if (!m_packets.empty())
+    return m_packets.front().size();
 
   return 0;
 }
 
 uintptr_t StreamDecoder::GetFrame()
 {
-  if (!m_frames.empty()) {
-    m_currentFrame = std::move(m_frames.front());
-    m_frames.pop_front();
+  if (!m_packets.empty()) {
+    m_currentFrame = std::move(m_packets.front());
+    m_packets.pop_front();
 
     return reinterpret_cast<uintptr_t>(m_currentFrame.data());
   }
 
   return 0;
+}
+
+int StreamDecoder::ReadPacket(uint8_t* buffer, int bufferSize)
+{
+  if (GetState() == StreamDecoderState::Failed)
+    return AVERROR_EXIT;
+
+  unsigned int length = GetPacket(buffer, static_cast<unsigned int>(bufferSize));
+
+  if (length == 0)
+    return AVERROR_EOF;
+  else
+    return length;
+}
+
+unsigned int StreamDecoder::GetPacket(uint8_t* buffer, unsigned int bufferSize)
+{
+  if (!m_packets.empty())
+  {
+    std::vector<uint8_t>& packet = m_packets.front();
+
+    unsigned int start = m_packetOffset;
+    unsigned int copySize = std::min(bufferSize, static_cast<unsigned int>(packet.size()) - m_packetOffset);
+
+    if (copySize > 0)
+    {
+      std::memcpy(static_cast<void*>(buffer), static_cast<const void*>(packet.data() + m_packetOffset), copySize);
+
+      m_packetOffset += copySize;
+
+      if (m_packetOffset >= packet.size())
+      {
+        m_packetOffset = 0;
+        m_packets.pop_front();
+      }
+
+      return copySize;
+    }
+  }
+
+  return 0;
+}
+
+int StreamDecoder::ReadPacketInternal(void* handle, uint8_t* buffer, int bufferSize)
+{
+  StreamDecoder* decoder = static_cast<StreamDecoder*>(handle);
+  if (decoder != nullptr)
+    return decoder->ReadPacket(buffer, bufferSize);
+
+  return AVERROR_EXIT;
 }

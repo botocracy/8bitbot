@@ -56,6 +56,7 @@ set(SCENE_DETECTOR_SOURCES
 )
 
 set(SCENE_DETECTOR_LIBRARIES
+  "${DEPENDS_DIRECTORY}/lib/libavformat.a"
   "${DEPENDS_DIRECTORY}/lib/libavutil.a"
   #"${DEPENDS_DIRECTORY}/lib/libopenh264.so"
   #"${DEPENDS_DIRECTORY}/lib/libx264.so"
@@ -72,6 +73,7 @@ set(STREAM_DECODER_SOURCES
 )
 
 set(STREAM_DECODER_LIBRARIES
+  "${DEPENDS_DIRECTORY}/lib/libavformat.a"
   "${DEPENDS_DIRECTORY}/lib/libavutil.a"
   #"${DEPENDS_DIRECTORY}/lib/libopenh264.so"
   #"${DEPENDS_DIRECTORY}/lib/libx264.so"

@@ -52,13 +52,19 @@ public:
   uintptr_t GetFrame();
 
 private:
+  int ReadPacket(uint8_t* buffer, int bufferSize);
+  unsigned int GetPacket(uint8_t* buffer, unsigned int bufferSize);
+
+  static int ReadPacketInternal(void* handle, uint8_t* buffer, int bufferSize);
+
   // Construction parameters
   const std::string& m_streamUrl;
 
   // Video parameters
   unsigned int m_blockSize = 0;
   AVIOContext* m_ioContext = nullptr;
-  std::deque<std::vector<uint8_t>> m_frames;
+  std::deque<std::vector<uint8_t>> m_packets;
+  unsigned int m_packetOffset = 0;
   std::vector<uint8_t> m_currentFrame;
 
   // State parameters
