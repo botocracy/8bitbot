@@ -35,6 +35,7 @@ SOURCE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 function build_scene_detector() {
   # Compile and link
   emcc --bind -O3 -std=c++11 \
+    -s ASSERTIONS=1 \
     -I"${DEPENDS_DIRECTORY}/include" \
     "$@" \
     -o "${BUILD_DIRECTORY}/scene_detector.so"
@@ -42,7 +43,8 @@ function build_scene_detector() {
 
 function scene_detector() {
   # Generate JavaScript and WASM
-  emcc --bind -O3 -s \
+  emcc --bind -O3 \
+    -s ASSERTIONS=1 \
     -s TOTAL_MEMORY=67108864 \
     -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
     -lworkerfs.js \
@@ -54,6 +56,7 @@ function scene_detector() {
 function build_stream_decoder() {
   # Compile and link
   emcc --bind -O3 -std=c++11 \
+    -s ASSERTIONS=1 \
     -I"${DEPENDS_DIRECTORY}/include" \
     "$@" \
     -o "${BUILD_DIRECTORY}/stream_decoder.so"
@@ -61,7 +64,8 @@ function build_stream_decoder() {
 
 function stream_decoder() {
   # Generate JavaScript and WASM
-  emcc --bind -O3 -s \
+  emcc --bind -O3 \
+    -s ASSERTIONS=1 \
     -s TOTAL_MEMORY=67108864 \
     -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
     -lworkerfs.js \
