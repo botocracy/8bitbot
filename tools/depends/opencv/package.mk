@@ -62,7 +62,7 @@ $(BUILD_FILE_OPENCV): $(S)/.prebuild $(OPENCV_BUILD_DEPENDS)
 	# Activate PATH and other environment variables in the current terminal and
 	# build OpenCV
 	. "$(REPO_DIR_EMSDK)/emsdk_set_env.sh" && \
-	  CMAKE_BUILD_PARALLEL_LEVEL=$(getconf _NPROCESSORS_ONLN) \
+	  CMAKE_BUILD_PARALLEL_LEVEL=$(shell getconf _NPROCESSORS_ONLN) \
 	    python3 "$(REPO_DIR_OPENCV)/platforms/js/build_js.py" $(OPENCV_BUILD_FLAGS) \
 	      "$(BUILD_DIR_OPENCV)"
 
