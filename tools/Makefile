@@ -146,7 +146,7 @@ endif
 #
 
 BUILD_DEPENDS = \
-  $(S)/build-codecbox.js \
+  $(BUILD_FILE_CODECBOX_JS) \
   $(BUILD_FILE_OPENCV) \
 
 #
