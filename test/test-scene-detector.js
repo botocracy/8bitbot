@@ -37,6 +37,7 @@ function sleep(ms) {
 
 describe('Scene detector', function () {
   before(async function () {
+    this.blockSize = 0;
     this.stream = null;
     this.streamUrl = null;
     this.fileChunks = [];
@@ -102,7 +103,10 @@ describe('Scene detector', function () {
   it('should download torrent metadata within 10s', function (done) {
     this.timeout(10 * 1000);
 
-    this.client.add(torrentId, function (_) {
+    self = this;
+    this.client.add(torrentId, function (torrent) {
+      self.blockSize = torrent.pieceLength;
+      console.log(`  Block size: ${self.blockSize}`);
       done();
     });
   });
@@ -156,6 +160,9 @@ describe('Scene detector', function () {
 
   it('should decode file data', async function () {
     chai.expect(this.fileChunks.length).to.be.greaterThan(0);
+    chai.expect(this.blockSize).to.be.greaterThan(0);
+
+    this.decoderWorker.setBlockSize(this.blockSize);
 
     for (const chunk of this.fileChunks) {
       const result = await this.decoderWorker.addPacket(chunk);

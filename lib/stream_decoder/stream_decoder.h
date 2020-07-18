@@ -37,6 +37,8 @@ public:
   StreamDecoder(const std::string& streamUrl);
   ~StreamDecoder();
 
+  void SetBlockSize(unsigned int blockSize) { m_blockSize = blockSize; }
+
   // Can't use void* because embind has problems with a getter that returns
   // a raw pointer
   void AddPacket(const emscripten::val& packet);
@@ -54,6 +56,7 @@ private:
   const std::string& m_streamUrl;
 
   // Video parameters
+  unsigned int m_blockSize = 0;
   AVIOContext* m_ioContext = nullptr;
   std::deque<std::vector<uint8_t>> m_frames;
   std::vector<uint8_t> m_currentFrame;

@@ -40,6 +40,10 @@ const streamDecoder = {
     );
   },
 
+  async setBlockSize(blockSize) {
+    decoder.setBlockSize(blockSize);
+  },
+
   async addPacket(packet) {
     if (!decoder) {
       throw new Error('Stream decoder is not initialized');

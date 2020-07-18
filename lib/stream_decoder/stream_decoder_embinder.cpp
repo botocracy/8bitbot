@@ -23,6 +23,7 @@ EMSCRIPTEN_BINDINGS(stream_decoder)
 
   class_<StreamDecoder>("StreamDecoder")
     .constructor<const std::string&>()
+    .function("setBlockSize", &StreamDecoder::SetBlockSize)
     .function("addPacket", &StreamDecoder::AddPacket)
     .function("getFrame", &StreamDecoder::GetFrame)
     .property("state", &StreamDecoder::GetState)
