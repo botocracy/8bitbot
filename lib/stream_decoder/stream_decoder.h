@@ -15,6 +15,7 @@
 
 extern "C"
 {
+#include <libavformat/avformat.h>
 #include <libavformat/avio.h>
 }
 
@@ -39,6 +40,9 @@ public:
 
   void SetBlockSize(unsigned int blockSize) { m_blockSize = blockSize; }
 
+  bool Initialize();
+  void Deinitialize();
+
   // Can't use void* because embind has problems with a getter that returns
   // a raw pointer
   void AddPacket(const emscripten::val& packet);
@@ -55,18 +59,24 @@ private:
   int ReadPacket(uint8_t* buffer, int bufferSize);
   unsigned int GetPacket(uint8_t* buffer, unsigned int bufferSize);
 
-  static int ReadPacketInternal(void* handle, uint8_t* buffer, int bufferSize);
+  static int InterruptCallback(void* context);
+  static int ReadPacketInternal(void* context, uint8_t* buffer, int bufferSize);
 
   // Construction parameters
   const std::string& m_streamUrl;
 
-  // Video parameters
-  unsigned int m_blockSize = 0;
-  AVIOContext* m_ioContext = nullptr;
-  std::deque<std::vector<uint8_t>> m_packets;
-  unsigned int m_packetOffset = 0;
-  std::vector<uint8_t> m_currentFrame;
-
   // State parameters
   StreamDecoderState m_state = StreamDecoderState::Init;
+
+  // Video parameters
+  unsigned int m_blockSize = 0;
+
+  // Video handles
+  AVIOContext* m_ioContext = nullptr;
+  AVFormatContext* m_pFormatContext = nullptr;
+
+  //std::deque<std::vector<uint8_t>> m_packets;
+  //unsigned int m_packetOffset = 0;
+  //std::vector<uint8_t> m_currentFrame;
+
 };

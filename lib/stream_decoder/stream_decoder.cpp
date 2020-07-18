@@ -8,12 +8,12 @@
 
 #include "stream_decoder.h"
 
+#include <cstdio>
 #include <cstring>
 #include <emscripten/val.h>
 
 extern "C"
 {
-#include <libavformat/avio.h>
 #include <libavutil/mem.h>
 
 // TODO
@@ -41,21 +41,43 @@ namespace
   }
 }
 
+static AVCodecContext* createCodecContext(AVFormatContext* formatContext, int streamId)
+{
+    AVCodecContext* codecContext = nullptr;
+    auto orignalContext = formatContext->streams[streamId]->codec;
+    auto codec = avcodec_find_decoder(orignalContext->codec_id);
+    JIF(codec == nullptr, "failed avcodec_find_decoder %d", orignalContext->codec_id);
+    codecContext = avcodec_alloc_context3(codec);
+    JIF(codecContext == nullptr, "failed avcodec_alloc_context3");
+    JIF(avcodec_copy_context(codecContext, orignalContext) != 0, "failed avcodec_copy_context");
+    JIF(avcodec_open2(codecContext, codec, nullptr) < 0, "failed avcodec_open2");
+
+    return codecContext;
+err:
+    if (codecContext) avcodec_free_context(&codecContext);
+    return nullptr;
+}
+
 StreamDecoder::StreamDecoder(const std::string& streamUrl)
  : m_streamUrl(streamUrl)
 {
 }
 
-StreamDecoder::~StreamDecoder() = default;
-
-void StreamDecoder::AddPacket(const emscripten::val& packet)
+StreamDecoder::~StreamDecoder()
 {
-  if (m_state == StreamDecoderState::Init)
-  {
-    m_state = StreamDecoderState::Running;
+  Deinitialize();
+}
 
-    // TODO
-  }
+bool StreamDecoder::Initialize()
+{
+  AVInputFormat* inputFormat = NULL;
+
+  const AVIOInterruptCB interruptCallback = { InterruptCallback, this };
+
+  // Preallocate an AVFormatContext to use our custom read function instead of
+  // the avformat internal I/O layer
+  m_pFormatContext = avformat_alloc_context();
+  m_pFormatContext->interrupt_callback = interruptCallback;
 
   unsigned int bufferSize = 4096;
 
@@ -64,6 +86,65 @@ void StreamDecoder::AddPacket(const emscripten::val& packet)
 
   uint8_t* buffer = static_cast<uint8_t*>(av_malloc(bufferSize));
   m_ioContext = avio_alloc_context(buffer, bufferSize, 0, this, ReadPacketInternal, nullptr, nullptr);
+
+  if (m_blockSize > 1)
+    m_ioContext->max_packet_size = bufferSize;
+
+  //m_ioContext->seekable = 0;
+
+  // TODO
+  inputFormat = av_find_input_format("mp4");
+
+  if (inputFormat->name)
+    std::printf("Probing detected format [%s]", inputFormat->name);
+  else
+    std::printf("Probing detected unnamed format");
+
+  // Set the pb field of the AVFormatContext to the newly created AVIOContext
+  m_pFormatContext->pb = m_ioContext;
+
+  if (avformat_open_input(&m_pFormatContext, m_streamUrl.c_str(), inputFormat, nullptr) < 0)
+  {
+    std::printf("Error, could not open file %s", m_streamUrl.c_str());
+    Deinitialize();
+    return false;
+  }
+
+  // Use nonblocking reads
+  m_pFormatContext->flags |= AVFMT_FLAG_NONBLOCK;
+
+  return true;
+}
+
+void StreamDecoder::Deinitialize()
+{
+  //m_pkt.result = -1;
+  //av_packet_unref(&m_pkt.pkt);
+
+  if (m_pFormatContext != nullptr)
+  {
+    avformat_close_input(&m_pFormatContext);
+    m_pFormatContext = nullptr;
+  }
+
+  if (m_ioContext != nullptr)
+  {
+    av_free(m_ioContext->buffer);
+    av_free(m_ioContext);
+    m_ioContext = nullptr;
+  }
+}
+
+void StreamDecoder::AddPacket(const emscripten::val& packet)
+{
+  if (m_state == StreamDecoderState::Init)
+  {
+    m_state = StreamDecoderState::Running;
+    Initialize();
+  }
+
+
+
 
   const unsigned int dataSize = ArrayLength(packet);
 
@@ -167,9 +248,18 @@ unsigned int StreamDecoder::GetPacket(uint8_t* buffer, unsigned int bufferSize)
   return 0;
 }
 
-int StreamDecoder::ReadPacketInternal(void* handle, uint8_t* buffer, int bufferSize)
+int StreamDecoder::InterruptCallback(void* context)
 {
-  StreamDecoder* decoder = static_cast<StreamDecoder*>(handle);
+  StreamDecoder* decoder = static_cast<StreamDecoder*>(context);
+  if (decoder && decoder->GetState() == StreamDecoderState::Failed)
+    return 1;
+
+  return 0;
+}
+
+int StreamDecoder::ReadPacketInternal(void* context, uint8_t* buffer, int bufferSize)
+{
+  StreamDecoder* decoder = static_cast<StreamDecoder*>(context);
   if (decoder != nullptr)
     return decoder->ReadPacket(buffer, bufferSize);
 
