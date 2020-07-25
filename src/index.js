@@ -17,6 +17,7 @@ import { getRtcConfig } from './utils';
 
 import { IPFS_GATEWAY } from './ipfs';
 import { MotionTracker } from './motiontracker';
+import { TorrentDecoder } from './torrentdecoder';
 import { World } from './world';
 
 const world = new World();
@@ -171,6 +172,9 @@ async function loadUserInterface(node) {
   const videoUri = await world.getVideoHlsUri();
 
   await loadHls(videoUri);
+
+  // Start torrent decoding
+  torrentDecoder = new TorrentDecoder();
 }
 
 async function loadHls(videoUri) {
@@ -201,6 +205,7 @@ async function loadHls(videoUri) {
 }
 
 let motionTracker;
+let torrentDecoder;
 
 //////////////////////////////////////////////////////////////////////////
 // Menu logic
