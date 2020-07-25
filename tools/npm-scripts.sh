@@ -25,10 +25,20 @@ function patch_package() {
 }
 
 function postinstall() {
+  # Patch bittorrent-tracker
+  #patch_package bittorrent-tracker 0001-temp-Add-debug-logging.patch
+
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
+
+  # Patch readable-stream library
+  #patch_package "readable-stream" "0001-Fix-error-with-Webpack.patch"
+
+  # Patch rollup-plugin-node-polyfills
+  patch_package rollup-plugin-node-polyfills 0001-Compatibility-with-new-readable-stream.patch
+  patch_package rollup-plugin-node-polyfills 0001-Don-t-fix-readable-stream-at-version-1.0.x.patch
 
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"

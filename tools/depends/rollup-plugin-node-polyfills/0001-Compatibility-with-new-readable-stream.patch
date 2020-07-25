@@ -1,0 +1,34 @@
+From 1fea32aa0fc0b573a51be9aff3e098ffbaa60a71 Mon Sep 17 00:00:00 2001
+From: Garrett Brown <themagnificentmrb@gmail.com>
+Date: Sat, 25 Jul 2020 10:42:08 -0700
+Subject: [PATCH] Compatibility with new readable-stream
+
+Needed with readable-stream >= 3.
+---
+ polyfills/stream.js | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/polyfills/stream.js b/polyfills/stream.js
+index 8cf9974..4ad7466 100644
+--- a/polyfills/stream.js
++++ b/polyfills/stream.js
+@@ -1,11 +1,11 @@
+ import EE from 'events';
+ import {inherits} from 'util';
+ 
+-import {Duplex} from './readable-stream/duplex.js';
+-import {Readable} from './readable-stream/readable.js';
+-import {Writable} from './readable-stream/writable.js';
+-import {Transform} from './readable-stream/transform.js';
+-import {PassThrough} from './readable-stream/passthrough.js';
++import {Duplex} from './readable-stream/lib/_stream_duplex.js';
++import {Readable} from './readable-stream/lib/_stream_readable.js';
++import {Writable} from './readable-stream/lib/_stream_writable.js';
++import {Transform} from './readable-stream/lib/_stream_transform.js';
++import {PassThrough} from './readable-stream/lib/_stream_passthrough.js';
+ inherits(Stream, EE);
+ Stream.Readable = Readable;
+ Stream.Writable = Writable;
+-- 
+2.17.1
+

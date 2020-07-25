@@ -1,0 +1,41 @@
+From 830990f672c4b24b0c8ae1894c8b69afebdcc9f1 Mon Sep 17 00:00:00 2001
+From: Garrett Brown <themagnificentmrb@gmail.com>
+Date: Sat, 25 Jul 2020 10:27:53 -0700
+Subject: [PATCH] [temp] Add debug logging
+
+---
+ lib/client/websocket-tracker.js | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/lib/client/websocket-tracker.js b/lib/client/websocket-tracker.js
+index fec33d2..e80e5bb 100644
+--- a/lib/client/websocket-tracker.js
++++ b/lib/client/websocket-tracker.js
+@@ -171,6 +171,8 @@ class WebSocketTracker extends Tracker {
+ 
+     this.socket = socketPool[this.announceUrl]
+     if (this.socket) {
++      console.log('Socket:');
++      console.log(this.socket);
+       socketPool[this.announceUrl].consumers += 1
+       if (this.socket.connected) {
+         this._onSocketConnectBound()
+@@ -178,10 +180,15 @@ class WebSocketTracker extends Tracker {
+     } else {
+       this.socket = socketPool[this.announceUrl] = new Socket(this.announceUrl)
+       this.socket.consumers = 1
++      console.log('New socket:');
++      console.log(this.socket);
+       this.socket.once('connect', this._onSocketConnectBound)
++      console.log('once');
+     }
+ 
++    console.log('on');
+     this.socket.on('data', this._onSocketDataBound)
++    console.log('once2');
+     this.socket.once('close', this._onSocketCloseBound)
+     this.socket.once('error', this._onSocketErrorBound)
+   }
+-- 
+2.17.1
+

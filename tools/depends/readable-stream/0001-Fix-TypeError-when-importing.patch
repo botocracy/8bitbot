@@ -1,0 +1,28 @@
+From 117d55aca8980bda01f8485b2e031bc4e7c6129f Mon Sep 17 00:00:00 2001
+From: Garrett Brown <themagnificentmrb@gmail.com>
+Date: Fri, 24 Jul 2020 18:05:58 -0700
+Subject: [PATCH] Fix TypeError when importing
+
+Error was:
+
+    Uncaught TypeError: this.once is not a function
+---
+ lib/_stream_duplex.js | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/lib/_stream_duplex.js b/lib/_stream_duplex.js
+index 6752519..708dd12 100644
+--- a/lib/_stream_duplex.js
++++ b/lib/_stream_duplex.js
+@@ -25,6 +25,8 @@
+ 'use strict';
+ /*<replacement>*/
+ 
++var once = require('once');
++
+ var objectKeys = Object.keys || function (obj) {
+   var keys = [];
+ 
+-- 
+2.17.1
+

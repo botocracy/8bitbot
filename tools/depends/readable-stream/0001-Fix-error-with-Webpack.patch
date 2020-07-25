@@ -1,0 +1,35 @@
+From be11681a2e6260b6181d29fd973833e127f1ef42 Mon Sep 17 00:00:00 2001
+From: Garrett Brown <themagnificentmrb@gmail.com>
+Date: Sat, 25 Jul 2020 10:12:23 -0700
+Subject: [PATCH] Fix error with Webpack
+
+Error was:
+
+    Uncaught TypeError: this.once is not a function
+
+See GitHub issues:
+
+    * https://github.com/nodejs/readable-stream/issues/315
+    * https://github.com/mqttjs/MQTT.js/issues/696
+---
+ lib/_stream_duplex.js | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lib/_stream_duplex.js b/lib/_stream_duplex.js
+index 6752519..9f860ce 100644
+--- a/lib/_stream_duplex.js
++++ b/lib/_stream_duplex.js
+@@ -61,6 +61,10 @@ function Duplex(options) {
+   Writable.call(this, options);
+   this.allowHalfOpen = true;
+ 
++  if (!this.once) {
++    this.once = require('once');
++  }
++
+   if (options) {
+     if (options.readable === false) this.readable = false;
+     if (options.writable === false) this.writable = false;
+-- 
+2.17.1
+
