@@ -85,6 +85,16 @@ set(COMMON_SOURCES
 )
 
 #
+# Motion tracker
+#
+
+set(MOTION_TRACKER_SOURCES
+  ${COMMON_SOURCES}
+  motion_tracker/motion_tracker.cpp
+  motion_tracker/motion_tracker_embinder.cpp
+)
+
+#
 # Scene detector
 #
 
@@ -149,6 +159,26 @@ string(APPEND EMSCRIPTEN_LINK_FLAGS
   "-s USE_ZLIB=1 "
   # " -s WASM=1 "
 )
+
+#
+# Motion tracker
+#
+
+add_executable(motion_tracker
+  ${MOTION_TRACKER_SOURCES}
+)
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
+  set_target_properties(motion_tracker PROPERTIES
+    COMPILE_FLAGS " \
+      -s ASSERTIONS=1 \
+    "
+    LINK_FLAGS " \
+      --bind \
+      -s ASSERTIONS=1 \
+    "
+  )
+endif ()
 
 #
 # Scene detector
@@ -218,6 +248,18 @@ endif ()
 # Install libraries
 #
 ################################################################################
+
+#
+# Motion tracker
+#
+
+INSTALL(
+  FILES
+    "${CMAKE_BINARY_DIR}/motion_tracker.js"
+    "${CMAKE_BINARY_DIR}/motion_tracker.wasm"
+  DESTINATION
+    motion_tracker
+)
 
 #
 # Scene detector

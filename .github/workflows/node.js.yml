@@ -76,6 +76,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
+            public/motion_tacker
             public/scene_detector
             test/generated
           key: build-libraries-${{ matrix.os }}-${{ hashFiles('lib/*', 'lib/**/*', 'tools/depends/emscripten/*', 'tools/depends/codecbox.js/*', 'tools/depends/openh264/*', 'tools/depends/x264/*') }}

@@ -6,6 +6,7 @@ src/generated/
 test/generated/
 
 # Generated C++ libraries (TODO: Better ignore strategy)
+public/motion_tracker/motion_tracker.js
 public/scene_detector/scene_detector.js
 public/stream_decoder/stream_decoder.js
 
