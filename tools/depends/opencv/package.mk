@@ -10,7 +10,7 @@
 
 # Dependency name and version
 OPENCV_REPO_NAME = opencv
-OPENCV_VERSION = 4.3.0
+OPENCV_VERSION = 4.4.0
 OPENCV_REMOTE_REPO = https://github.com/opencv/$(OPENCV_REPO_NAME).git
 OPENCV_LIB = opencv.js
 
