@@ -43,13 +43,13 @@ private:
   unsigned int m_width = 0;
   unsigned int m_height = 0;
 
-  // Frame resources
-  std::vector<uint8_t> m_points;
-  std::vector<uint8_t> m_rotationMatrix;
-  std::vector<uint8_t> m_translationVector;
-
-  // State parameters
+  // State
   cv::Mat m_currentFrame;
   cv::Mat m_previousFrame;
   float m_previousMafd = 0.0;
+
+  // Resources
+  std::vector<uint8_t> m_points;
+  std::vector<uint8_t> m_rotationMatrix;
+  std::vector<uint8_t> m_translationVector;
 };

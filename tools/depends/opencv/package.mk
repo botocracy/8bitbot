@@ -8,12 +8,24 @@
 #
 ################################################################################
 
+################################################################################
+#
+# Required parameters:
+#
+#   USE_CONTRIB - Set to 1 to build with OpenCV's extra modules from contributory repo
+#
+################################################################################
+
 # Dependency name and version
 OPENCV_REPO_NAME = opencv
 OPENCV_VERSION = 4.4.0
 OPENCV_REMOTE_REPO = https://github.com/opencv/$(OPENCV_REPO_NAME).git
 OPENCV_LIB = libopencv_core.a
 OPENCV_JS_LIB = opencv.js
+
+# OpenCV extra modules
+OPENCV_CONTRIB_REPO_NAME = opencv_contrib
+OPENCV_CONTRIB_REMOTE_REPO = https://github.com/opencv/$(OPENCV_CONTRIB_REPO_NAME).git
 
 ################################################################################
 #
@@ -23,6 +35,7 @@ OPENCV_JS_LIB = opencv.js
 
 # Checkout directory
 REPO_DIR_OPENCV = $(REPO_DIR)/$(OPENCV_REPO_NAME)
+REPO_DIR_OPENCV_CONTRIB = $(REPO_DIR)/$(OPENCV_CONTRIB_REPO_NAME)
 
 # Build directory
 BUILD_DIR_OPENCV = $(BUILD_DIR)/$(OPENCV_REPO_NAME)
@@ -63,6 +76,10 @@ $(S)/checkout-opencv: $(S)/.precheckout
 	    "$(TOOL_DIR)/depends/opencv/0001-GAPI-Implement-RGBA2Gray-and-GBRA2Gray.patch" \
 	)
 
+	[ -d "$(REPO_DIR_OPENCV_CONTRIB)" ] || ( \
+	  git clone -b $(OPENCV_VERSION) "$(OPENCV_CONTRIB_REMOTE_REPO)" "$(REPO_DIR_OPENCV_CONTRIB)" \
+	)
+
 	@# TODO: Repository sync is delegated to the CI system.
 
 	touch "$@"
@@ -85,6 +102,17 @@ $(S)/patch-opencv: $(S)/.prepatch $(S)/checkout-opencv \
 #
 ################################################################################
 
+# TODO
+USE_CONTRIB = 1
+
+ifeq ($(USE_CONTRIB),1)
+  CMAKE_CONTRIB_PARAMETER = -DOPENCV_EXTRA_MODULES_PATH="$(REPO_DIR_OPENCV_CONTRIB)/modules"
+
+  CMAKE_CONTRIB_MODULES = \
+    -DBUILD_opencv_aruco=OFF \
+
+endif
+
 $(BUILD_FILE_OPENCV): $(S)/.prebuild $(OPENCV_BUILD_DEPENDS)
 	mkdir -p "$(BUILD_DIR_OPENCV)"
 
@@ -96,6 +124,8 @@ $(BUILD_FILE_OPENCV): $(S)/.prebuild $(OPENCV_BUILD_DEPENDS)
 	    emcmake cmake "$(REPO_DIR_OPENCV)" \
 	      -DCMAKE_FIND_ROOT_PATH="$(DEPENDS_DIR)" \
 	      -DCMAKE_INSTALL_PREFIX="$(DEPENDS_DIR)" \
+	       $(CMAKE_CONTRIB_PARAMETER) \
+	       $(CMAKE_CONTRIB_MODULES) \
 	      -DBUILD_SHARED_LIBS=OFF \
 	      -DWITH_1394=OFF \
 	      -DWITH_ADE=ON \
