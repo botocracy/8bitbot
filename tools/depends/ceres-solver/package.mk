@@ -9,10 +9,10 @@
 ################################################################################
 
 # Dependency name and version
-ADE_REPO_NAME = ade
-ADE_VERSION = 0.1.1f
-ADE_REMOTE_REPO = https://github.com/opencv/$(ADE_REPO_NAME).git
-ADE_LIB = libade.a
+CERES_REPO_NAME = ceres-solver
+CERES_VERSION = 1.14.0
+CERES_REMOTE_REPO = https://github.com/ceres-solver/$(CERES_REPO_NAME).git
+CERES_LIB = libceres.a # TODO
 
 ################################################################################
 #
@@ -21,16 +21,16 @@ ADE_LIB = libade.a
 ################################################################################
 
 # Checkout directory
-REPO_DIR_ADE = $(REPO_DIR)/$(ADE_REPO_NAME)
+REPO_DIR_CERES = $(REPO_DIR)/$(CERES_REPO_NAME)
 
 # Build directory
-BUILD_DIR_ADE = $(BUILD_DIR)/$(ADE_REPO_NAME)
+BUILD_DIR_CERES = $(BUILD_DIR)/$(CERES_REPO_NAME)
 
 # Build output
-BUILD_FILE_ADE = $(BUILD_DIR_ADE)/lib/$(ADE_LIB)
+BUILD_FILE_CERES = $(BUILD_DIR_CERES)/lib/$(CERES_LIB)
 
 # Install output
-INSTALL_FILE_ADE = $(DEPENDS_DIR)/lib/$(ADE_LIB)
+INSTALL_FILE_CERES = $(DEPENDS_DIR)/lib/$(CERES_LIB)
 
 ################################################################################
 #
@@ -38,9 +38,10 @@ INSTALL_FILE_ADE = $(DEPENDS_DIR)/lib/$(ADE_LIB)
 #
 ################################################################################
 
-ADE_BUILD_DEPENDS = \
-  $(S)/checkout-ade \
-  $(S)/build-emsdk
+CERES_BUILD_DEPENDS = \
+  $(S)/checkout-ceres \
+  $(S)/build-emsdk \
+  $(S)/install-eigen \
 
 ################################################################################
 #
@@ -48,8 +49,10 @@ ADE_BUILD_DEPENDS = \
 #
 ################################################################################
 
-$(S)/checkout-ade: $(S)/.precheckout
-	[ -d "$(REPO_DIR_ADE)" ] ||  git clone -b v$(ADE_VERSION) "$(ADE_REMOTE_REPO)" "$(REPO_DIR_ADE)"
+$(S)/checkout-ceres: $(S)/.precheckout
+	[ -d "$(REPO_DIR_CERES)" ] ||  ( \
+	  git clone -b $(CERES_VERSION) "$(CERES_REMOTE_REPO)" "$(REPO_DIR_CERES)" \
+	)
 
 	@# TODO: Repository sync is delegated to the CI system.
 
@@ -61,21 +64,29 @@ $(S)/checkout-ade: $(S)/.precheckout
 #
 ################################################################################
 
-$(BUILD_FILE_ADE): $(S)/.prebuild $(ADE_BUILD_DEPENDS)
-	mkdir -p "$(BUILD_DIR_ADE)"
+$(BUILD_FILE_CERES): $(S)/.prebuild $(CERES_BUILD_DEPENDS)
+	mkdir -p "$(BUILD_DIR_CERES)"
 
 	# Activate PATH and other environment variables in the current terminal and
-	# build ADE
+	# build CERES
 	. "$(REPO_DIR_EMSDK)/emsdk_set_env.sh" && \
-	  cd "${BUILD_DIR_ADE}" && \
-	  emcmake cmake "$(REPO_DIR_ADE)" \
-	    -DCMAKE_INSTALL_PREFIX="$(DEPENDS_DIR)" \
+	  cd "${BUILD_DIR_CERES}" && \
+	  CMAKE_BUILD_PARALLEL_LEVEL=$(shell getconf _NPROCESSORS_ONLN) \
+	    emcmake cmake "$(REPO_DIR_CERES)" \
+	      -DCMAKE_FIND_ROOT_PATH="$(DEPENDS_DIR)" \
+	      -DCMAKE_INSTALL_PREFIX="$(DEPENDS_DIR)" \
+	      -DMINIGLOG=ON \
+	      -DGFLAGS=OFF \
+	      -DBUILD_TESTING=OFF \
+	      -DBUILD_EXAMPLES=OFF \
+	      -DBUILD_BENCHMARKS=OFF \
 
-	cmake --build "${BUILD_DIR_ADE}"
+	#cmake --build "${BUILD_DIR_CERES}"
+	make -C "${BUILD_DIR_CERES}" -j$(shell getconf _NPROCESSORS_ONLN)
 
 	touch "$@"
 
-$(S)/build-ade: $(BUILD_FILE_ADE)
+$(S)/build-ceres: $(BUILD_FILE_CERES)
 	touch "$@"
 
 ################################################################################
@@ -84,14 +95,14 @@ $(S)/build-ade: $(BUILD_FILE_ADE)
 #
 ################################################################################
 
-$(INSTALL_FILE_ADE): $(S)/.preinstall $(S)/build-ade
+$(INSTALL_FILE_CERES): $(S)/.preinstall $(S)/build-ceres
 	mkdir -p "$(DEPENDS_DIR)"
 
 	cmake \
-	  --build "${BUILD_DIR_ADE}" \
+	  --build "${BUILD_DIR_CERES}" \
 	  --target install
 
 	touch "$@"
 
-$(S)/install-ade: $(INSTALL_FILE_ADE)
+$(S)/install-ceres: $(INSTALL_FILE_CERES)
 	touch "$@"

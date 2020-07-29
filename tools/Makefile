@@ -57,6 +57,8 @@ SHELL := /bin/bash
 
 include depends/ade/package.mk
 include depends/android-sdk/package.mk
+include depends/ceres-solver/package.mk
+include depends/eigen/package.mk
 include depends/emscripten/package.mk
 include depends/opencv/package.mk
 
@@ -74,6 +76,8 @@ include depends/opencv/package.mk
 
 CHECKOUT_DEPENDS = \
   $(S)/checkout-ade \
+  $(S)/checkout-ceres \
+  $(S)/checkout-eigen \
   $(S)/checkout-emsdk \
   $(S)/checkout-opencv \
   $(S)/patch-opencv
@@ -109,11 +113,19 @@ install: $(INSTALL_DEPENDS)
 #
 
 .PHONY: ade
+.PHONY: ceres
+.PHONY: eigen
 .PHONY: emscripten
 .PHONY: opencv
 
 ade: \
   $(S)/install-ade
+
+ceres: \
+  $(S)/install-ceres
+
+eigen: \
+  $(S)/install-eigen
 
 emscripten: \
   $(S)/build-emsdk

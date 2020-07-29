@@ -58,6 +58,7 @@ OPENCV_BUILD_DEPENDS = \
   $(S)/checkout-opencv \
   $(S)/build-emsdk \
   $(S)/install-ade \
+  $(S)/install-ceres \
 
 ifeq ($(PLATFORM),darwin)
   #OPENCV_BUILD_DEPENDS += $(S)/checkout-android-sdk # TODO

@@ -9,10 +9,10 @@
 ################################################################################
 
 # Dependency name and version
-ADE_REPO_NAME = ade
-ADE_VERSION = 0.1.1f
-ADE_REMOTE_REPO = https://github.com/opencv/$(ADE_REPO_NAME).git
-ADE_LIB = libade.a
+EIGEN_REPO_NAME = eigen
+EIGEN_VERSION = 3.3.7
+EIGEN_REMOTE_REPO = https://gitlab.com/libeigen/$(EIGEN_REPO_NAME).git
+EIGEN_HEADER = Matrix.h # TODO
 
 ################################################################################
 #
@@ -21,16 +21,13 @@ ADE_LIB = libade.a
 ################################################################################
 
 # Checkout directory
-REPO_DIR_ADE = $(REPO_DIR)/$(ADE_REPO_NAME)
+REPO_DIR_EIGEN = $(REPO_DIR)/$(EIGEN_REPO_NAME)
 
 # Build directory
-BUILD_DIR_ADE = $(BUILD_DIR)/$(ADE_REPO_NAME)
-
-# Build output
-BUILD_FILE_ADE = $(BUILD_DIR_ADE)/lib/$(ADE_LIB)
+BUILD_DIR_EIGEN = $(BUILD_DIR)/$(EIGEN_REPO_NAME)
 
 # Install output
-INSTALL_FILE_ADE = $(DEPENDS_DIR)/lib/$(ADE_LIB)
+INSTALL_FILE_EIGEN = $(DEPENDS_DIR)/include/eigen3/Eigen/src/Core/$(EIGEN_HEADER)
 
 ################################################################################
 #
@@ -38,8 +35,8 @@ INSTALL_FILE_ADE = $(DEPENDS_DIR)/lib/$(ADE_LIB)
 #
 ################################################################################
 
-ADE_BUILD_DEPENDS = \
-  $(S)/checkout-ade \
+EIGEN_BUILD_DEPENDS = \
+  $(S)/checkout-eigen \
   $(S)/build-emsdk
 
 ################################################################################
@@ -48,8 +45,8 @@ ADE_BUILD_DEPENDS = \
 #
 ################################################################################
 
-$(S)/checkout-ade: $(S)/.precheckout
-	[ -d "$(REPO_DIR_ADE)" ] ||  git clone -b v$(ADE_VERSION) "$(ADE_REMOTE_REPO)" "$(REPO_DIR_ADE)"
+$(S)/checkout-eigen: $(S)/.precheckout
+	[ -d "$(REPO_DIR_EIGEN)" ] ||  git clone -b $(EIGEN_VERSION) "$(EIGEN_REMOTE_REPO)" "$(REPO_DIR_EIGEN)"
 
 	@# TODO: Repository sync is delegated to the CI system.
 
@@ -61,21 +58,20 @@ $(S)/checkout-ade: $(S)/.precheckout
 #
 ################################################################################
 
-$(BUILD_FILE_ADE): $(S)/.prebuild $(ADE_BUILD_DEPENDS)
-	mkdir -p "$(BUILD_DIR_ADE)"
+$(S)/build-eigen: $(S)/.prebuild $(EIGEN_BUILD_DEPENDS)
+	mkdir -p "$(BUILD_DIR_EIGEN)"
 
 	# Activate PATH and other environment variables in the current terminal and
-	# build ADE
+	# build EIGEN
 	. "$(REPO_DIR_EMSDK)/emsdk_set_env.sh" && \
-	  cd "${BUILD_DIR_ADE}" && \
-	  emcmake cmake "$(REPO_DIR_ADE)" \
-	    -DCMAKE_INSTALL_PREFIX="$(DEPENDS_DIR)" \
+	  cd "${BUILD_DIR_EIGEN}" && \
+	  CMAKE_BUILD_PARALLEL_LEVEL=$(shell getconf _NPROCESSORS_ONLN) \
+	    emcmake cmake "$(REPO_DIR_EIGEN)" \
+	      -DCMAKE_INSTALL_PREFIX="$(DEPENDS_DIR)" \
 
-	cmake --build "${BUILD_DIR_ADE}"
+	#cmake --build "${BUILD_DIR_EIGEN}"
+	make -C "${BUILD_DIR_EIGEN}" -j$(shell getconf _NPROCESSORS_ONLN)
 
-	touch "$@"
-
-$(S)/build-ade: $(BUILD_FILE_ADE)
 	touch "$@"
 
 ################################################################################
@@ -84,14 +80,14 @@ $(S)/build-ade: $(BUILD_FILE_ADE)
 #
 ################################################################################
 
-$(INSTALL_FILE_ADE): $(S)/.preinstall $(S)/build-ade
+$(INSTALL_FILE_EIGEN): $(S)/.preinstall $(S)/build-eigen
 	mkdir -p "$(DEPENDS_DIR)"
 
 	cmake \
-	  --build "${BUILD_DIR_ADE}" \
+	  --build "${BUILD_DIR_EIGEN}" \
 	  --target install
 
 	touch "$@"
 
-$(S)/install-ade: $(INSTALL_FILE_ADE)
+$(S)/install-eigen: $(INSTALL_FILE_EIGEN)
 	touch "$@"
