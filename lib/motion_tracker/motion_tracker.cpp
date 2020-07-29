@@ -52,11 +52,9 @@ namespace opencv_test
 {
 namespace
 {
-    using namespace cv;
-
-    G_TYPED_KERNEL(GCountCalls, <cv::GOpaque<int>(GMat)>, "org.opencv.test.count_calls")
+    G_TYPED_KERNEL(GCountCalls, <cv::GOpaque<int>(cv::GMat)>, "org.opencv.test.count_calls")
     {
-        static GOpaqueDesc outMeta(GMatDesc /* in */) { return empty_gopaque_desc(); }
+        static cv::GOpaqueDesc outMeta(cv::GMatDesc /* in */) { return cv::empty_gopaque_desc(); }
     };
 
     GAPI_OCV_KERNEL_ST(GOCVCountCalls, GCountCalls, int)
@@ -72,10 +70,13 @@ namespace
         }
     };
 
-    G_TYPED_KERNEL(GIsStateUpToDate, <cv::GOpaque<bool>(GMat)>,
+    G_TYPED_KERNEL(GIsStateUpToDate, <cv::GOpaque<bool>(cv::GMat)>,
                    "org.opencv.test.is_state_up-to-date")
     {
-        static GOpaqueDesc outMeta(GMatDesc /* in */) { return empty_gopaque_desc(); }
+        static cv::GOpaqueDesc outMeta(cv::GMatDesc /* in */)
+        {
+          return cv::empty_gopaque_desc();
+        }
     };
 
     GAPI_OCV_KERNEL_ST(GOCVIsStateUpToDate, GIsStateUpToDate, cv::Size)
@@ -91,17 +92,21 @@ namespace
         }
     };
 
-    G_TYPED_KERNEL(GStInvalidResize, <GMat(GMat,Size,double,double,int)>,
+    G_TYPED_KERNEL(GStInvalidResize, <cv::GMat(cv::GMat, cv::Size, double, double, int)>,
                    "org.opencv.test.st_invalid_resize")
     {
-         static GMatDesc outMeta(GMatDesc in, Size, double, double, int) { return in; }
+         static cv::GMatDesc outMeta(cv::GMatDesc in, cv::Size, double, double, int)
+         {
+           return in;
+         }
     };
 
     GAPI_OCV_KERNEL_ST(GOCVStInvalidResize, GStInvalidResize, int)
     {
         static void setup(const cv::GMatDesc, cv::Size, double, double, int,
                           std::shared_ptr<int> &/* state */)
-        {  }
+        {
+        }
 
         static void run(const cv::Mat& in, cv::Size sz, double fx, double fy, int interp,
                         cv::Mat &out, int& /* state */)
@@ -110,29 +115,32 @@ namespace
         }
     };
 
-    G_TYPED_KERNEL(GBackSub, <GMat(GMat)>, "org.opencv.test.background_substractor")
+    G_TYPED_KERNEL(GBackSub, <cv::GMat(cv::GMat)>, "org.opencv.test.background_substractor")
     {
-         static GMatDesc outMeta(GMatDesc in) { return in.withType(CV_8U, 1); }
+         static cv::GMatDesc outMeta(cv::GMatDesc in)
+         {
+           return in.withType(CV_8U, 1);
+         }
     };
 
     GAPI_OCV_KERNEL_ST(GOCVBackSub, GBackSub, cv::BackgroundSubtractor)
     {
         static void setup(const cv::GMatDesc &/* desc */,
-                          std::shared_ptr<BackgroundSubtractor> &state,
+                          std::shared_ptr<cv::BackgroundSubtractor> &state,
                           const cv::GCompileArgs &compileArgs)
         {
             auto sbParams = cv::gapi::getCompileArg<BackSubStateParams>(compileArgs)
                                 .value_or(BackSubStateParams { });
 
             if (sbParams.method == "knn")
-                state = createBackgroundSubtractorKNN();
+                state = cv::createBackgroundSubtractorKNN();
             else if (sbParams.method == "mog2")
-                state = createBackgroundSubtractorMOG2();
+                state = cv::createBackgroundSubtractorMOG2();
 
             GAPI_Assert(state);
         }
 
-        static void run(const cv::Mat& in, cv::Mat &out, BackgroundSubtractor& state)
+        static void run(const cv::Mat& in, cv::Mat &out, cv::BackgroundSubtractor& state)
         {
             state.apply(in, out, -1);
         }
