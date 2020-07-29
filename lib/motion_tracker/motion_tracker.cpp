@@ -61,7 +61,7 @@ namespace
     {
         static void setup(const cv::GMatDesc &/* in */, std::shared_ptr<int> &state)
         {
-            state.reset(new int{  });
+            state.reset(new int{});
         }
 
         static void run(const cv::Mat &/* in */, int &out, int& state)
@@ -89,29 +89,6 @@ namespace
         static void run(const cv::Mat &in , bool &out, cv::Size& state)
         {
             out = in.size() == state;
-        }
-    };
-
-    G_TYPED_KERNEL(GStInvalidResize, <cv::GMat(cv::GMat, cv::Size, double, double, int)>,
-                   "org.opencv.test.st_invalid_resize")
-    {
-         static cv::GMatDesc outMeta(cv::GMatDesc in, cv::Size, double, double, int)
-         {
-           return in;
-         }
-    };
-
-    GAPI_OCV_KERNEL_ST(GOCVStInvalidResize, GStInvalidResize, int)
-    {
-        static void setup(const cv::GMatDesc, cv::Size, double, double, int,
-                          std::shared_ptr<int> &/* state */)
-        {
-        }
-
-        static void run(const cv::Mat& in, cv::Size sz, double fx, double fy, int interp,
-                        cv::Mat &out, int& /* state */)
-        {
-            cv::resize(in, out, sz, fx, fy, interp);
         }
     };
 
@@ -205,6 +182,9 @@ FrameInfo MotionTracker::AddVideoFrame(const emscripten::val& frameArray)
                                                                    minDistance);
 
   using OpticalFlowOutput = cv::gapi::video::GOptFlowLKOutput;
+
+
+
 
   // TODO
   cv::GMat prevImg;
