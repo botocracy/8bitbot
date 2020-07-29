@@ -55,6 +55,7 @@ SHELL := /bin/bash
 #
 ################################################################################
 
+include depends/ade/package.mk
 include depends/android-sdk/package.mk
 include depends/emscripten/package.mk
 include depends/opencv/package.mk
@@ -72,6 +73,7 @@ include depends/opencv/package.mk
 #
 
 CHECKOUT_DEPENDS = \
+  $(S)/checkout-ade \
   $(S)/checkout-emsdk \
   $(S)/checkout-opencv \
   $(S)/patch-opencv
@@ -106,8 +108,12 @@ install: $(INSTALL_DEPENDS)
 # Define targets for building individual depends via "make <depend>"
 #
 
+.PHONY: ade
 .PHONY: emscripten
 .PHONY: opencv
+
+ade: \
+  $(S)/install-ade
 
 emscripten: \
   $(S)/build-emsdk

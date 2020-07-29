@@ -71,33 +71,45 @@ jobs:
       - name: npm run audit
         run: npm run audit
 
+      - name: Restore C++ libraries
+        id: restore-libraries
+        uses: actions/cache@v2
+        with:
+          path: |
+            public/motion_tracker/motion_tracker.js
+            public/motion_tracker/motion_tracker.wasm
+          key: restore-libraries-${{ matrix.os }}-${{ hashFiles('lib/*', 'lib/**/*', 'tools/depends/ade/*', 'tools/depends/empscripten/*', 'tools/depends/opencv/*') }}
+
       - name: Restore OpenCV library
         id: restore-opencv
         uses: actions/cache@v2
         with:
           path: |
             src/generated/opencv.js
-          key: build-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/opencv/*') }}-${{ hashFiles('tools/depends/emscripten/*') }}
+          key: restore-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/ade/*', 'tools/depends/empscripten/*', 'tools/depends/opencv/*') }}
 
-      - name: Checkout OpenCV repo
-        uses: actions/checkout@v2
-        if: steps.restore-opencv.outputs.cache-hit != 'true'
+      - name: Restore ADE build files
+        id: restore-ade-build
+        uses: actions/cache@v2
+        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true'
         with:
-          repository: 'opencv/opencv'
-          ref: '4.3.0'
-          path: tools/repos/opencv
+          path: |
+            tools/build/ade
+            tools/repos/ade
+          key: restore-ade-build-${{ matrix.os }}-${{ hashFiles('tools/depends/ade/*', 'tools/depends/emscripten/*') }}
 
       - name: Restore OpenCV build files
-        id: restore-runtime-build
+        id: restore-opencv-build
         uses: actions/cache@v2
-        if: steps.restore-opencv.outputs.cache-hit != 'true'
+        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true'
         with:
           path: |
             tools/build/opencv
-          key: build-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/emscripten/*') }}
+            tools/repos/opencv
+          key: restore-opencv-build-${{ matrix.os }}-${{ hashFiles('tools/depends/emscripten/*', 'tools/depends/opencv/*') }}
 
       - name: Build depends
-        if: steps.restore-opencv.outputs.cache-hit != 'true'
+        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true'
         run: npm run depends
 
       - name: npm run build
