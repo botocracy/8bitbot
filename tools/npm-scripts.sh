@@ -29,6 +29,9 @@ function postinstall() {
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
+
+  # Patch Threads library
+  patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
 }
 
 function depends() {
@@ -36,12 +39,15 @@ function depends() {
   BUILD_DEPENDS="emscripten "
 
   # Build OpenCV
-  if [ ! -f "src/generated/opencv.js" ]; then
+  if [ ! -f "tools/dist/lib/libopencv_core.a" ] || [ ! -f "src/generated/opencv.js" ]; then
     rm -f tools/stamps/build-opencv
     BUILD_DEPENDS+="opencv "
   fi
 
   make -C tools -j$(getconf _NPROCESSORS_ONLN) ${BUILD_DEPENDS}
+
+  # Build C++ libraries
+  lib/build-ci.sh
 }
 
 function depends-checkout() {
@@ -80,6 +86,7 @@ function test() {
   lint
 
   # Run test suite
+  # TODO: Add --require canvas if ImageData or other APIs are needed for tests
   ts-mocha \
     --require esm \
     --require isomorphic-fetch \
