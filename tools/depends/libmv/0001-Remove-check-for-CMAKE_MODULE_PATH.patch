@@ -1,0 +1,32 @@
+From bd39dc74b732ab27c876f0b613bb9209d70841a7 Mon Sep 17 00:00:00 2001
+From: Garrett Brown <themagnificentmrb@gmail.com>
+Date: Tue, 28 Jul 2020 22:43:41 -0700
+Subject: [PATCH] Remove check for CMAKE_MODULE_PATH
+
+FIND_FILE() works differently when cross-compiling, so this can lead to
+false alarms.
+---
+ src/CMake/ConfigureBuild.cmake | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/src/CMake/ConfigureBuild.cmake b/src/CMake/ConfigureBuild.cmake
+index 12c0b3b..26895c6 100644
+--- a/src/CMake/ConfigureBuild.cmake
++++ b/src/CMake/ConfigureBuild.cmake
+@@ -33,13 +33,6 @@ MESSAGE("CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
+ IF (NOT CMAKE_MODULE_PATH)
+   MESSAGE(FATAL_ERROR
+           "ERROR: export CMAKE_MODULE_PATH as your CMakeModules repository.")
+-ELSE (NOT CMAKE_MODULE_PATH)
+-  # Check for one of the find scripts for sanity.
+-  FIND_FILE(LIBMV_CMAKE_MODULE_PATH_OK FindJPEG.cmake ${CMAKE_MODULE_PATH}
+-            DOC "testing CMAKE_MODULE_PATH")
+-  IF (NOT LIBMV_CMAKE_MODULE_PATH_OK)
+-    MESSAGE(FATAL_ERROR "CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH} invalid: FindJPEG.cmake not found.")
+-  ENDIF (NOT LIBMV_CMAKE_MODULE_PATH_OK)
+ ENDIF (NOT CMAKE_MODULE_PATH)
+ MARK_AS_ADVANCED(LIBMV_CMAKE_MODULE_PATH_OK)
+ 
+-- 
+2.17.1
+

@@ -60,6 +60,7 @@ include depends/android-sdk/package.mk
 include depends/ceres-solver/package.mk
 include depends/eigen/package.mk
 include depends/emscripten/package.mk
+include depends/libmv/package.mk
 include depends/opencv/package.mk
 
 ################################################################################
@@ -79,6 +80,7 @@ CHECKOUT_DEPENDS = \
   $(S)/checkout-ceres \
   $(S)/checkout-eigen \
   $(S)/checkout-emsdk \
+  $(S)/checkout-libmv \
   $(S)/checkout-opencv \
   $(S)/patch-opencv
 
@@ -116,6 +118,7 @@ install: $(INSTALL_DEPENDS)
 .PHONY: ceres
 .PHONY: eigen
 .PHONY: emscripten
+.PHONY: libmv
 .PHONY: opencv
 
 ade: \
@@ -129,6 +132,9 @@ eigen: \
 
 emscripten: \
   $(S)/build-emsdk
+
+libmv: \
+  $(S)/install-libmv
 
 opencv: \
   $(S)/install-opencv
