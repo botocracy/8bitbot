@@ -69,8 +69,7 @@ $(S)/build-eigen: $(S)/.prebuild $(EIGEN_BUILD_DEPENDS)
 	    emcmake cmake "$(REPO_DIR_EIGEN)" \
 	      -DCMAKE_INSTALL_PREFIX="$(DEPENDS_DIR)" \
 
-	#cmake --build "${BUILD_DIR_EIGEN}"
-	make -C "${BUILD_DIR_EIGEN}" -j$(shell getconf _NPROCESSORS_ONLN)
+	cmake --build "${BUILD_DIR_EIGEN}"
 
 	touch "$@"
 
