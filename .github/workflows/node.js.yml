@@ -77,27 +77,89 @@ jobs:
         with:
           path: |
             src/generated/opencv.js
-          key: build-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/opencv/*') }}-${{ hashFiles('tools/depends/emscripten/*') }}
+          key: restore-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/ade/*', 'tools/depends/ceres-solver/*', 'tools/depends/eigen/*', 'tools/depends/emscripten/*', 'tools/depends/google-flags/*', 'tools/depends/google-log/*', 'tools/depends/opencv/*') }}
 
-      - name: Checkout OpenCV repo
-        uses: actions/checkout@v2
-        if: steps.restore-opencv.outputs.cache-hit != 'true'
-        with:
-          repository: 'opencv/opencv'
-          ref: '4.3.0'
-          path: tools/repos/opencv
-
-      - name: Restore OpenCV build files
-        id: restore-runtime-build
+      - name: Restore C++ libraries
+        id: restore-libraries
         uses: actions/cache@v2
-        if: steps.restore-opencv.outputs.cache-hit != 'true'
         with:
           path: |
+            public/motion_tracker/motion_tracker.js
+            public/motion_tracker/motion_tracker.wasm
+          key: restore-libraries-${{ matrix.os }}-${{ hashFiles('lib/*', 'lib/**/*', 'tools/depends/ade/*', 'tools/depends/ceres-solver/*', 'tools/depends/eigen/*', 'tools/depends/emscripten/*', 'tools/depends/google-flags/*', 'tools/depends/google-log/*', 'tools/depends/opencv/*') }}
+
+      - name: Restore build dependencies
+        id: restore-library-depends
+        uses: actions/cache@v2
+        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true'
+        with:
+          path: |
+            tools/dist
+          key: restore-library-depends-${{ matrix.os }}-${{ hashFiles('tools/depends/ade/*', 'tools/depends/ceres-solver/*', 'tools/depends/eigen/*', 'tools/depends/emscripten/*', 'tools/depends/google-flags/*', 'tools/depends/google-log/*', 'tools/depends/opencv/*') }}
+
+      - name: Restore ADE build files
+        id: restore-ade-build
+        uses: actions/cache@v2
+        if: (steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true') && steps.restore-library-depends.outputs.cache-hit != 'true'
+        with:
+          path: |
+            tools/repos/ade
+            tools/build/ade
+          key: restore-ade-build-${{ matrix.os }}-${{ hashFiles('tools/depends/ade/*', 'tools/depends/emscripten/*') }}
+
+      - name: Restore gflags build files
+        id: restore-gflags-build
+        uses: actions/cache@v2
+        if: (steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true') && steps.restore-library-depends.outputs.cache-hit != 'true'
+        with:
+          path: |
+            tools/repos/gflags
+            tools/build/gflags
+          key: restore-gflags-build-${{ matrix.os }}-${{ hashFiles('tools/depends/emscripten/*', 'tools/depends/google-flags/*') }}
+
+      - name: Restore Google Logging Library build files
+        id: restore-glog-build
+        uses: actions/cache@v2
+        if: (steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true') && steps.restore-library-depends.outputs.cache-hit != 'true'
+        with:
+          path: |
+            tools/repos/glog
+            tools/build/glog
+          key: restore-glog-build-${{ matrix.os }}-${{ hashFiles('tools/depends/emscripten/*', 'tools/depends/google-log/*') }}
+
+      - name: Restore Eigen build files
+        id: restore-eigen-build
+        uses: actions/cache@v2
+        if: (steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true') && steps.restore-library-depends.outputs.cache-hit != 'true'
+        with:
+          path: |
+            tools/repos/eigen
+            tools/build/eigen
+          key: restore-eigen-build-${{ matrix.os }}-${{ hashFiles('tools/depends/eigen/*', 'tools/depends/emscripten/*') }}
+
+      - name: Restore Ceres build files
+        id: restore-ceres-build
+        uses: actions/cache@v2
+        if: (steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true') && steps.restore-library-depends.outputs.cache-hit != 'true'
+        with:
+          path: |
+            tools/repos/ceres-solver
+            tools/build/ceres-solver
+          key: restore-ceres-build-${{ matrix.os }}-${{ hashFiles('tools/depends/ceres-solver/*', 'tools/depends/emscripten/*') }}
+
+      - name: Restore OpenCV build files
+        id: restore-opencv-build
+        uses: actions/cache@v2
+        if: (steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true') && steps.restore-library-depends.outputs.cache-hit != 'true'
+        with:
+          path: |
+            tools/repos/opencv
+            tools/repos/opencv_contrib
             tools/build/opencv
-          key: build-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/emscripten/*') }}
+          key: restore-opencv-build-${{ matrix.os }}-${{ hashFiles('tools/depends/emscripten/*', 'tools/depends/opencv/*') }}
 
       - name: Build depends
-        if: steps.restore-opencv.outputs.cache-hit != 'true'
+        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true'
         run: npm run depends
 
       - name: npm run build
