@@ -8,17 +8,11 @@ module.exports = {
     'mount:public': 'mount public --to /',
     'mount:src': 'mount src --to /_dist_',
   },
-  plugins: [
-    [
-      '@snowpack/plugin-babel',
-      '@snowpack/plugin-webpack',
-      {
-        sourceMap: true,
-      },
-    ],
-  ],
   devOptions: {
     bundle: false,
+  },
+  buildOptions: {
+    minify: false,
   },
   install: ['hls.js', 'jsonld'],
   installOptions: {

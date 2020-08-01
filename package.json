@@ -23,7 +23,6 @@
     "postinstall": "bash tools/npm-scripts.sh postinstall",
     "start": "bash tools/npm-scripts.sh start",
     "build": "bash tools/npm-scripts.sh build",
-    "bundle:*": "@snowpack/plugin-webpack",
     "audit": "bash tools/npm-scripts.sh audit",
     "lint": "bash tools/npm-scripts.sh lint",
     "test": "bash tools/npm-scripts.sh test",
@@ -35,7 +34,6 @@
     "npm": ">=6.0.0"
   },
   "devDependencies": {
-    "@snowpack/plugin-babel": ">=1.4.0",
     "@snowpack/plugin-webpack": ">=1.4.0",
     "audit-ci": ">=3.1.0",
     "chai": ">=4.2.0",
