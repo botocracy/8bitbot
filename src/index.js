@@ -150,7 +150,7 @@ async function loadOrbitDB(ipfsNode) {
 //////////////////////////////////////////////////////////////////////////
 
 // Constants
-const HLS_BUFFER_LENGTH = 5 * 60; // 5 minutes
+const HLS_BUFFER_LENGTH = 60 * 60; // 1 hour (limit by size, not time)
 const HLS_BUFFER_SIZE = 1 * 1024 * 1024 * 1024; // 1 GB
 
 // Entry point after bootstrapping IPFS
