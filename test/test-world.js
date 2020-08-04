@@ -19,7 +19,9 @@ describe('World', function () {
     chai.expect(this.world).to.be.an('object');
   });
 
-  it('should provide video URIs', async function () {
+  it('should provide video URIs within 10s', async function () {
+    this.timeout(10 * 1000);
+
     chai
       .expect(await this.world.getVideoHlsUri(), 'HLS video URI')
       .to.be.a('string');
