@@ -40,7 +40,7 @@ BUILD_PATH="${SCRIPT_DIR}/build"
 mkdir -p "${BUILD_PATH}"
 
 # Process videos
-for video in ${SOURCE_DIR}/*; do
+for video in ${SOURCE_DIR}/170724_17_Palmtreesdawn.mp4; do
   # Extract filename without extension
   filename=$(basename -- "${video}" ".mp4")
 

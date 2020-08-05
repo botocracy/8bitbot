@@ -19,7 +19,7 @@ class World {
     this.WORLD_VERSION = '1.0.0';
 
     // World Content Identifier
-    this.WORLD_CID = 'QmUHi5kmNvVanFJh3EapKHXiDHy8VSi9AatUs6UDkH8odD';
+    this.WORLD_CID = 'QmQVJVMakbqFUYVsfNA1xrvFxEkg9KNTAmJhKoiGGynEu9';
 
     this.WORLD_URI = `${IPFS_GATEWAY}/ipfs/${this.WORLD_CID}/graph.json`;
   }
@@ -113,8 +113,8 @@ class World {
     }
 
     // Index of the the background video from all videos in the world
-    const WORLD_VIDEO_INDEX = Math.floor(Math.random() * videos.length);
-    //const WORLD_VIDEO_INDEX = 4;
+    //const WORLD_VIDEO_INDEX = Math.floor(Math.random() * videos.length);
+    const WORLD_VIDEO_INDEX = 0;
 
     // Choose a video
     const fileName = videos[WORLD_VIDEO_INDEX];

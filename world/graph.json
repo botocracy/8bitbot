@@ -32,6 +32,23 @@
         {
             "@type": "VideoObject",
             "title": {
+                "en": "Flight Through Palm Trees at Sunrise"
+            },
+            "description": {
+                "en": "Flying low over palm trees towards the morning sun shining through a misty backdrop."
+            },
+            "creator": "Videvo",
+            "license": "CC-BY-3.0",
+            "mediaStream": [
+                {
+                    "@type": "FileDataObject",
+                    "fileUrl": "170724_17_Palmtreesdawn/index.m3u8"
+                }
+            ]
+        },
+        {
+            "@type": "VideoObject",
+            "title": {
                 "en": "Dubai Downtown Panorama"
             },
             "creator": "Swedrone",
