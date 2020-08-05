@@ -13,12 +13,20 @@
 # Script to generate the game world
 #
 
+# Enable strict mode
+set -o errexit
+set -o pipefail
+set -o nounset
+
 ################################################################################
 # Build parameters
 ################################################################################
 
 # Get the absolute path to this script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Directory containing the MP4s
+SOURCE_DIR=mp4
 
 BUILD_PATH="${SCRIPT_DIR}/build"
 
@@ -30,10 +38,20 @@ mkdir -p "${BUILD_PATH}"
 ################################################################################
 
 # Copy MP4s
-cp mp4/* "${BUILD_PATH}"
+for video in "${SOURCE_DIR}"/*; do
+  # Extract filename without extension
+  filename=$(basename -- "${video}")
 
-# Generate HLS
-./hls_encode.sh
+  # Check if video is already encoded
+  if [ -f "${BUILD_PATH}/${filename}" ]; then
+    echo "Skipping copy of ${video}"
+  else
+    cp -v "${video}" "${BUILD_PATH}"
+  fi
+
+  # Generate HLS
+  ./hls_encode.sh "${video}"
+done
 
 ################################################################################
 # Linked Data
