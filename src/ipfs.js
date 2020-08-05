@@ -15,6 +15,6 @@ const IPFS_GATEWAYS = [
 
 // TODO
 //const IPFS_GATEWAY = IPFS_GATEWAYS[Math.floor(Math.random() * IPFS_GATEWAYS.length)];
-const IPFS_GATEWAY = IPFS_GATEWAYS[0];
+const IPFS_GATEWAY = IPFS_GATEWAYS[1];
 
 export { IPFS_GATEWAY };
