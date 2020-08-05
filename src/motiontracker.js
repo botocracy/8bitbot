@@ -305,7 +305,6 @@ class MotionTracker {
     const frameInfo = await this.frameProcessed;
 
     const nowMs = performance.now();
-    //console.log(`Processed frame in ${nowMs - frameInfo.pts} ms`);
 
     const sceneScore = frameInfo.sceneScore;
     const pointBuffer = frameInfo.pointBuffer;
@@ -324,6 +323,12 @@ class MotionTracker {
     );
     // TODO
     //const projectionMatrix = new Float32Array(projectionMatrixBuffer);
+
+    let pointCount = `${points.length / 2}`;
+    while (pointCount.length < 4) {
+      pointCount = ' ' + pointCount;
+    }
+    console.log(`Processed frame with ${pointCount} points in ${nowMs - frameInfo.pts} ms`);
 
     // Update dimensions before the overlay is rendered
     this.computeDimensions();
