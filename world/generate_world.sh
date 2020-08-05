@@ -81,6 +81,14 @@ Green Robot (1)
 Hero and Baddies (2 meh)
 JellyBot (3 meh)
 
+Non-bots:
+Cat Ninja (1)
+Dark Elf (1)
+Enemies: (4)
+Gentleman Spy:: (1)
+Mage (1)
+Mr. Man (1)
+Bushly (1)
+Raven (1)
 
 EOF
-
