@@ -78,6 +78,13 @@ body {
   width: 128px;
   height: 128px;
 }
+#uploadVideoIcon {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 128px;
+  height: 128px;
+}
 
 /*
  * Dialogs
@@ -156,6 +163,12 @@ body {
   display: none;
   opacity: 0.5;
 }
+#uploadVideoIcon {
+  opacity: 0.5;
+}
+#uploadVideoInput {
+  opacity: 0;
+}
 
 /*
  * Dialogs
@@ -181,6 +194,7 @@ body {
 /******************************************************************************
  *
  * Interaction
+ *
  ******************************************************************************/
 
 /*
@@ -205,6 +219,9 @@ body {
 }
 #viewOverlayIcon,
 #hideOverlayIcon {
+  cursor: pointer;
+}
+#uploadVideoIcon {
   cursor: pointer;
 }
 

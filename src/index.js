@@ -322,6 +322,106 @@ function toggleOverlay() {
   }
 }
 
+// Called from input icon
+function handleUpload(event) {
+  const uploadInput = document.getElementById('uploadVideoInput');
+  uploadInput.click();
+}
+
+// Called from input form
+function uploadVideo(event) {
+  const fileList = event.target.files;
+  uploadFiles(fileList);
+}
+
+// We don't actually need to do anything with the dragenter and dragover
+// events in our case, so these functions are both simple. They just stop
+// propagation of the event and prevent the default action from occurring.
+function dragenter(event) {
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+function dragover(event) {
+  event.stopPropagation();
+  event.preventDefault();
+}
+
+// The real magic happens in the drop() function
+function drop(event) {
+  event.stopPropagation();
+  event.preventDefault();
+
+  const dataTransfer = event.dataTransfer;
+  const files = dataTransfer.files;
+
+  uploadFiles(files);
+}
+
+// Do the upload
+function uploadFiles(fileList) {
+  if (fileList.length === 1) {
+    const file = fileList[0];
+
+    console.log('Uploding file:');
+    console.log(file);
+
+    // File name, not supported in Safari for iOS.
+    const fileName = file.name;
+
+    // File size, unknown cross-browser support
+    const fileSize = file.size;
+
+    // File type, not supported in Firefox for Android or Opera for Android
+    // Let's see what the browser has inferred about the file
+    // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
+    const fileType = file.type;
+
+    // Last modified (could use this?)
+    const lastModified = file.lastModified;
+
+    // 1 KB at a time, because we expect that the column will probably be small
+    const CHUNK_SIZE = 1024;
+
+    let offset = 0;
+
+    const fileReader = new FileReader();
+    fileReader.onload = function (event) {
+      const fr = event.target;
+
+      //let view = new Uint8Array(fileReader.result);
+      let view = new Uint8Array(fr.result);
+
+      // TODO: handle view
+
+      handleChunk(view);
+
+      offset += CHUNK_SIZE;
+      seek(fr, file, offset, CHUNK_SIZE);
+    };
+    fileReader.onerror = function (err) {
+      // Cannot read file
+      console.error(err);
+    };
+
+    seek(fileReader, file, offset, CHUNK_SIZE);
+  }
+}
+
+function seek(fileReader, file, offset, length) {
+  if (offset >= file.size) {
+    return;
+  }
+
+  const slice = file.slice(offset, offset + length);
+  fileReader.readAsArrayBuffer(slice);
+}
+
+function handleChunk(chunk) {
+  // chunk type is Uint8Array
+  console.log(`Received chunk of length: ${chunk.length}`);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Utilities
 //////////////////////////////////////////////////////////////////////////
@@ -385,6 +485,20 @@ const viewOverlayIcon = document.getElementById('viewOverlayIcon');
 const hideOverlayIcon = document.getElementById('hideOverlayIcon');
 
 viewOverlayIcon.onclick = hideOverlayIcon.onclick = toggleOverlay;
+
+const uploadIcon = document.getElementById('uploadVideoIcon');
+const uploadInput = document.getElementById('uploadVideoInput');
+
+// Input form
+uploadInput.addEventListener('change', uploadVideo);
+
+// Click
+uploadIcon.onclick = handleUpload;
+
+// Drag and drop
+uploadIcon.addEventListener('dragenter', dragenter, false);
+uploadIcon.addEventListener('dragover', dragover, false);
+uploadIcon.addEventListener('drop', drop, false);
 
 //////////////////////////////////////////////////////////////////////////
 // Async entry points

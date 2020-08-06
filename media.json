@@ -97,6 +97,15 @@
       "creator": "Font Awesome",
       "license": "CC-BY-4.0",
       "url": "volume-up-solid.svg"
+    },
+    {
+      "@type": "Image",
+      "title": {
+        "en": "Upload"
+      },
+      "creator": "Mark Otto",
+      "license": "MIT",
+      "url": "upload.svg"
     }
   ]
 }
