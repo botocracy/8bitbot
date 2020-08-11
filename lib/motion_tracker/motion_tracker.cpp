@@ -17,6 +17,10 @@
 #include <iostream>
 #include <opencv2/video/tracking.hpp>
 
+// TODO
+#include <opencv2/sfm/reconstruct.hpp>
+#include <iostream>
+
 // Scene score from libav's "select" filter. You may have seen filters that
 // look like:
 //
@@ -57,9 +61,9 @@ bool MotionTracker::Initialize(int width, int height)
                  static_cast<double>(m_height)); // TODO
 
   // Initialize camera calibration matrix with sensible values
-  m_cameraMatrix = (cv::Mat_<double>(3, 3) << f, 0, pp.x,
-                                              0, f, pp.y,
-                                              0, 0,  1.0 );
+  m_cameraMatrix = cv::Matx33d( f, 0, pp.x,
+                                0, f, pp.y,
+                                0, 0,  1.0 );
 
   m_visionGraph.reset(new VisionGraph);
   m_visionGraph->Compile(width,
@@ -151,10 +155,7 @@ FrameInfo MotionTracker::AddVideoFrame(const emscripten::val& frameArray)
     AddFrameToHistory(std::move(currentFrame));
 
   // Reconstruct trajectory
-  if (false)
-  {
-    GetProjectionMatrix(currentFrame->projectionMatrix);
-  }
+  GetProjectionMatrix(currentFrame->projectionMatrix);
 
   // Update state
   std::swap(currentGrayscale, m_previousGrayscale);
@@ -280,20 +281,74 @@ void MotionTracker::AddFrameToHistory(FramePtr&& frame)
 
 void MotionTracker::GetProjectionMatrix(cv::Mat& projectionMatrix)
 {
-  if (!m_frameHistory.empty())
+  std::cout << "GetProjectionMatrix() - " << m_frameHistory.size() << " frames"
+      << std::endl;
+
+  // TODO: Zero-copy
+  std::vector<cv::Mat> points2d;
+  points2d.reserve(m_frameHistory.size());
+
+  // Embed data in reconstruction api format
+  for (int i = 0; i < m_frameHistory.size(); ++i)
   {
-    // Make a copy of the camera matrix, it is used as an in/out parameter
-    cv::Mat previousCameraMatrix = m_cameraMatrix;
+    const std::vector<cv::Point2f>& tracks = m_frameHistory[0]->points;
+    const unsigned int trackCount = tracks.size();
 
-    // TODO: Zero-copy
-    m_pointHistoryBuffer.clear();
-    for (const auto& frame : m_frameHistory)
-      m_pointHistoryBuffer.emplace_back(frame->points);
+    cv::Mat_<double> frame(2, trackCount);
 
-    m_visionGraph->ReconstructTrajectory(m_pointHistoryBuffer,
-                                         previousCameraMatrix,
-                                         projectionMatrix,
-                                         m_cameraMatrix);
+    for (int j = 0; j < trackCount; ++j)
+    {
+      frame(0, j) = static_cast<double>(tracks[j].x);
+      frame(1, j) = static_cast<double>(tracks[j].y);
+    }
+
+    points2d.emplace_back(cv::Mat(frame));
+  }
+
+  std::cout << "Points: " << points2d[0].cols << std::endl;
+
+  // If true, the cameras is supposed to be projective
+  constexpr bool isProjective = true;
+
+  // Reconstruct the scene using the 2d correspondences
+  std::vector<cv::Mat> projections;
+
+  if (m_frameHistory.size() == 2)
+  {
+    // TODO: cv::sfm::reconstruct() expects cv::Mat instead of std::vector<cv::Mat>
+    // for estimated 3D points output
+
+    // Unused (we would have to project these back to 2D image space for them
+    // to be useful)
+    cv::Mat estimated3dPoints;
+
+    // Perform reconstruction
+    cv::sfm::reconstruct(points2d, projections, estimated3dPoints, m_cameraMatrix, isProjective);
+  }
+  else if (m_frameHistory.size() >= 3)
+  {
+    // Unused (we would have to project these back to 2D image space for them
+    // to be useful)
+    std::vector<cv::Mat> estimated3dPoints;
+
+    // Perform reconstruction
+    cv::sfm::reconstruct(points2d, projections, estimated3dPoints, m_cameraMatrix, isProjective);
+  }
+
+  std::cout << "Projections: " << projections.size() << std::endl;
+
+  // We are interested in the most recent projection
+  if (!projections.empty())
+  {
+    projectionMatrix = projections.back();
+
+    /*
+    std::cout << "projectionMatrix: " << projectionMatrix.t() << std::endl;
+
+    const auto& initialProjectionMatrix = projections.front();
+
+    std::cout << "initialProjectionMatrix: " << initialProjectionMatrix.t() << std::endl;
+    */
   }
 }
 

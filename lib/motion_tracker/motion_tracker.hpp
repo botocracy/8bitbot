@@ -11,6 +11,7 @@
 #include "utils/frame_pool.hpp"
 
 #include <opencv2/core/mat.hpp>
+#include <opencv2/core/matx.hpp>
 #include <stdint.h>
 #include <vector>
 
@@ -24,7 +25,7 @@ class VisionGraph;
 struct ConfigOptions
 {
   // The maximum number of points to track
-  unsigned int maxPointCount = 200;
+  unsigned int maxPointCount = 20;
 
   // The maximum number of frames to solve for
   unsigned int maxFrameCount = 40;
@@ -133,7 +134,7 @@ private:
   // State parameters
   std::vector<FramePtr> m_frameHistory;
   cv::Mat m_previousGrayscale;
-  cv::Mat m_cameraMatrix; // 3x3 camera calibration matrix
+  cv::Matx33d m_cameraMatrix; // 3x3 camera calibration matrix
 
   // Vision graph
   std::shared_ptr<VisionGraph> m_visionGraph;

@@ -305,7 +305,7 @@ class MotionTracker {
     const initialPointBuffer = frameInfo.initialPointBuffer;
     const initialPointOffset = frameInfo.initialPointOffset;
     const initialPointLength = frameInfo.initialPointLength;
-    //const projectionMatrixBuffer = frameInfo.projectionMatrixBuffer;
+    const projectionMatrixBuffer = frameInfo.projectionMatrixBuffer;
 
     const points = new Float32Array(pointBuffer, pointOffset, pointLength);
     const initialPoints = new Float32Array(
@@ -313,8 +313,7 @@ class MotionTracker {
       initialPointOffset,
       initialPointLength
     );
-    // TODO
-    //const projectionMatrix = new Float32Array(projectionMatrixBuffer);
+    const projectionMatrix = new Float32Array(projectionMatrixBuffer);
 
     let pointCount = `${points.length / 2}`;
     while (pointCount.length < 4) {
@@ -370,7 +369,6 @@ class MotionTracker {
           0 <= initialCoords.y &&
           initialCoords.y <= overlayHeight
         ) {
-          //this.drawCircle(initialCoords.x, initialCoords.y);
           this.drawLine(initialCoords.x, initialCoords.y, coords.x, coords.y);
         }
       }
