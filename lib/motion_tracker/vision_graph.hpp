@@ -54,6 +54,8 @@ public:
   void FindFeatures(
       // Input
       const cv::Mat& currentGrayscale,
+      unsigned int maxFeatures,
+      double minDistance,
       // Output
       std::vector<cv::Point2f>& currentPoints);
 

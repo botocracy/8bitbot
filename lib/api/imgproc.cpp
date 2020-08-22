@@ -15,13 +15,21 @@ cv::GMat imgproc::RGBA2Gray(const cv::GMat& rgbaImage)
   return cv::gapi::RGBA2Gray(rgbaImage);
 }
 
-cv::GArray<cv::Point2f> imgproc::GoodFeaturesToTrack(const cv::GMat& grayscalImage,
-                                                     unsigned int maxCorners,
+cv::GArray<cv::Point2f> imgproc::GoodFeaturesToTrack(const cv::GMat& grayscaleImage,
+                                                     const cv::GScalar& maxFeatures,
+                                                     const cv::GScalar& minDistance,
                                                      double qualityLevel,
-                                                     double minDistance)
+                                                     const cv::Mat& mask,
+                                                     int blockSize,
+                                                     bool useHarrisDetector,
+                                                     double k)
 {
-  return cv::gapi::goodFeaturesToTrack(grayscalImage,
-                                       static_cast<int>(maxCorners),
-                                       qualityLevel,
-                                       minDistance);
+  return GGoodFeatures::on(grayscaleImage,
+                           maxFeatures,
+                           qualityLevel,
+                           minDistance,
+                           mask,
+                           blockSize,
+                           useHarrisDetector,
+                           k);
 }

@@ -9,11 +9,20 @@
 #pragma once
 
 #include <opencv2/gapi/garray.hpp>
+#include <opencv2/gapi/gkernel.hpp>
 #include <opencv2/gapi/gmat.hpp>
 #include <opencv2/core/types.hpp>
 
 namespace imgproc
 {
+  G_TYPED_KERNEL(GGoodFeatures,
+                 <cv::GArray<cv::Point2f>(cv::GMat, cv::GScalar, double, cv::GScalar, cv::Mat, int, bool, double)>,
+                 "com.8bitbot.imgproc.goodFeaturesToTrack") {
+    static cv::GArrayDesc outMeta(cv::GMatDesc, cv::GScalarDesc, double, cv::GScalarDesc, const cv::Mat&, int, bool, double) {
+      return cv::empty_array_desc();
+    }
+  };
+
   /*!
    * \brief Convert RGBA image to grayscale
    *
@@ -51,7 +60,11 @@ namespace imgproc
    * \return A list of good features to track
    */
   cv::GArray<cv::Point2f> GoodFeaturesToTrack(const cv::GMat& grayscaleImage,
-                                              unsigned int maxCorners,
-                                              double qualityLevel,
-                                              double minDistance);
+                                              const cv::GScalar& maxFeatures,
+                                              const cv::GScalar& minDistance,
+                                              double qualityLevel = 0.01,
+                                              const cv::Mat& mask = cv::Mat(),
+                                              int blockSize = 3,
+                                              bool useHarrisDetector = false,
+                                              double k = 0.04);
 }

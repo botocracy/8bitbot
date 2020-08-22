@@ -10,6 +10,7 @@
 #include "vision_graph.hpp"
 
 #include "utils/emscripten_utils.hpp"
+#include "utils/math_utils.hpp"
 
 #include <algorithm>
 #include <emscripten/val.h>
@@ -72,6 +73,11 @@ bool MotionTracker::Initialize(int width, int height)
   return true;
 }
 
+void MotionTracker::SetConfig(const ConfigOptions& config)
+{
+  m_config = config;
+}
+
 FrameInfo MotionTracker::AddVideoFrame(const emscripten::val& frameArray)
 {
   // Dereference buffers
@@ -102,7 +108,7 @@ FrameInfo MotionTracker::AddVideoFrame(const emscripten::val& frameArray)
   }
 
   // TODO
-  if (m_frameHistory.size() > 40)
+  if (m_frameHistory.size() > m_config.maxFrameCount)
   {
     m_frameHistory.clear();
   }
@@ -201,7 +207,13 @@ void MotionTracker::FindFeatures(const cv::Mat& currentGrayscale,
                                  std::vector<uint8_t>& status,
                                  std::vector<float>& errors)
 {
-  m_visionGraph->FindFeatures(currentGrayscale, currentPoints);
+  // TODO
+  const double minDistance = std::max(
+      MathUtils::GeometricMean(m_width, m_height) / (static_cast<double>(m_config.maxPointCount) / 2.0),
+      2.0
+  );
+
+  m_visionGraph->FindFeatures(currentGrayscale, m_config.maxPointCount, minDistance, currentPoints);
   status.assign(currentPoints.size(), 1U);
   errors.assign(currentPoints.size(), 0.0f);
 }

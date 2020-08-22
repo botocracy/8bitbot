@@ -21,6 +21,15 @@ class val;
 
 class VisionGraph;
 
+struct ConfigOptions
+{
+  // The maximum number of points to track
+  unsigned int maxPointCount = 200;
+
+  // The maximum number of frames to solve for
+  unsigned int maxFrameCount = 40;
+};
+
 struct FrameInfo
 {
   double sceneScore = 0.0; // in the range [0.0, 1.0], 1.0 is a new scene
@@ -45,6 +54,8 @@ public:
    * \param height The video height
    */
   bool Initialize(int width, int height);
+
+  void SetConfig(const ConfigOptions& config);
 
   /*!
    * \brief Add a frame to the motion tracker and return the results
@@ -115,6 +126,9 @@ private:
   // Video parameters
   unsigned int m_width = 0;
   unsigned int m_height = 0;
+
+  // Config parameters
+  ConfigOptions m_config;
 
   // State parameters
   std::vector<FramePtr> m_frameHistory;
