@@ -59,6 +59,7 @@ set(MOTION_TRACKER_SOURCES
   api/reconstruction.cpp
   api/scene.cpp
   api/video.cpp
+  kernels/cpu/cpu_imgproc.cpp
   kernels/cpu/cpu_reconstruction.cpp
   kernels/cpu/cpu_scene.cpp
   kernels/cpu/cpu_video.cpp

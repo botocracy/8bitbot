@@ -24,9 +24,15 @@ EMSCRIPTEN_BINDINGS(motion_tracker)
     .field("projectionMatrixSize", &FrameInfo::projectionMatrixSize)
     ;
 
+  value_object<ConfigOptions>("ConfigOptions")
+    .field("maxPointCount", &ConfigOptions::maxPointCount)
+    .field("maxFrameCount", &ConfigOptions::maxFrameCount)
+    ;
+
   class_<MotionTracker>("MotionTracker")
     .constructor<>()
     .function("initialize", &MotionTracker::Initialize)
+    .function("setConfig", &MotionTracker::SetConfig)
     .function("addVideoFrame", &MotionTracker::AddVideoFrame)
     .function("deinitialize", &MotionTracker::Deinitialize)
     ;

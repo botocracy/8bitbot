@@ -12,14 +12,15 @@
 #include "api/reconstruction.hpp"
 #include "api/scene.hpp"
 #include "api/video.hpp"
+#include "kernels/cpu/cpu_imgproc.hpp"
 #include "kernels/cpu/cpu_reconstruction.hpp"
 #include "kernels/cpu/cpu_scene.hpp"
 #include "kernels/cpu/cpu_video.hpp"
-#include "utils/math_utils.hpp"
 
 #include <opencv2/gapi/cpu/imgproc.hpp>
 #include <opencv2/gapi/cpu/video.hpp>
 #include <opencv2/gapi/gcomputation.hpp>
+#include <tuple>
 
 VisionGraph::~VisionGraph() = default;
 
@@ -34,6 +35,8 @@ void VisionGraph::Compile(unsigned int width,
   std::vector<cv::Point2f> currentPoints;
   std::vector<std::vector<cv::Point2f>> pointHistory;
   cv::Mat previousCameraMatrix;
+  cv::Scalar maxFeatures;
+  cv::Scalar minDistance;
 
   // Declare graph
   // The version of a pipeline expression with a lambda-based constructor is
@@ -56,21 +59,17 @@ void VisionGraph::Compile(unsigned int width,
   // Find features
   cv::GComputation featurePipeline([width, height]()
     {
-      // Parameters (TODO: Move out of graph)
-      const unsigned int maxCorners = 200;
-      const double qualityLevel = 0.01;
-      const double minDistance = std::max(MathUtils::GeometricMean(width, height) / 100.0,
-                                          2.0);
-
       // Input
       cv::GMat grayscaleImage;
+      cv::GScalar maxFeatures;
+      cv::GScalar minDistance;
 
       // Output
       cv::GArray<cv::Point2f> features;
 
-      features = imgproc::GoodFeaturesToTrack(grayscaleImage, maxCorners, qualityLevel, minDistance);
+      features = imgproc::GoodFeaturesToTrack(grayscaleImage, maxFeatures, minDistance);
 
-      return cv::GComputation(cv::GIn(grayscaleImage), cv::GOut(features));
+      return cv::GComputation(cv::GIn(grayscaleImage, maxFeatures, minDistance), cv::GOut(features));
     });
 
   // Calculate scene score
@@ -135,13 +134,14 @@ void VisionGraph::Compile(unsigned int width,
   // Declare custom and gapi kernels
   static auto kernels = cv::gapi::combine(cv::gapi::imgproc::cpu::kernels(),
                                           cv::gapi::video::cpu::kernels(),
+                                          imgproc::kernels(),
                                           reconstruction::kernels(),
                                           scene::kernels(),
                                           video::kernels());
 
   // Compile computation graphs in serial mode
   m_applyGrayscale = grayscalePipeline.compile(cv::descr_of(currentFrame), cv::compile_args(kernels));
-  m_findFeatures = featurePipeline.compile(cv::descr_of(currentGrayscale), cv::compile_args(kernels));
+  m_findFeatures = featurePipeline.compile(cv::descr_of(currentGrayscale), cv::descr_of(maxFeatures), cv::descr_of(minDistance), cv::compile_args(kernels));
   m_calcSceneScore = sceneScorePipeline.compile(cv::descr_of(previousGrayscale), cv::descr_of(currentGrayscale), cv::descr_of(previousMafd), cv::compile_args(kernels));
   m_calcOpticalFlow = opticalFlowPipeline.compile(cv::descr_of(previousGrayscale), cv::descr_of(currentGrayscale), cv::descr_of(currentPoints), cv::descr_of(pointHistory), cv::compile_args(kernels));
   m_reconstructTrajectory = reconstructTrajectoryPipeline.compile(cv::descr_of(pointHistory), cv::descr_of(previousCameraMatrix), cv::compile_args(kernels));
@@ -191,10 +191,15 @@ void VisionGraph::CalcOpticalFlow(
 void VisionGraph::FindFeatures(
   // Input
   const cv::Mat& currentGrayscale,
+  unsigned int maxFeatures,
+  double minDistance,
   // Output
   std::vector<cv::Point2f>& currentPoints)
 {
-  auto inVector = cv::gin(currentGrayscale);
+  cv::Scalar maxFeaturesScalar(maxFeatures > 0 ? static_cast<double>(maxFeatures) : -1.0);
+  cv::Scalar minDistanceScalar(minDistance);
+
+  auto inVector = cv::gin(currentGrayscale, maxFeaturesScalar, minDistanceScalar);
   auto outVector = cv::gout(currentPoints);
   m_findFeatures(std::move(inVector), std::move(outVector));
 }

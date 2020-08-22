@@ -328,7 +328,11 @@ class MotionTracker {
     while (pointCount.length < 4) {
       pointCount = ' ' + pointCount;
     }
-    //console.log(`Processed frame with ${pointCount} points in ${nowMs - frameInfo.pts} ms`);
+    /*
+    console.log(
+      `Processed frame with ${pointCount} points in ${nowMs - frameInfo.pts} ms`
+    );
+    */
 
     // Update dimensions before the overlay is rendered
     this.computeDimensions();
