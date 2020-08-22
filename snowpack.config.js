@@ -12,6 +12,7 @@ const polyfills = require('rollup-plugin-node-polyfills');
 module.exports = {
   scripts: {
     'mount:public': 'mount public --to /',
+    'mount:lib': 'mount lib --to /lib',
     'mount:src': 'mount src --to /_dist_',
   },
   devOptions: {

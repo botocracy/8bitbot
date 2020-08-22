@@ -193,11 +193,11 @@ async function loadHls(videoUri) {
     volumeIcon.style.display = 'block';
 
     // Start OpenCV processing
-    motionTracker = new MotionTracker(window, video);
+    motionTracker.start(video);
   });
 }
 
-let motionTracker;
+const motionTracker = new MotionTracker(window);
 
 //////////////////////////////////////////////////////////////////////////
 // Menu logic
