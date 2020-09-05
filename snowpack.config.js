@@ -8,6 +8,7 @@
 
 const globals = require('rollup-plugin-node-globals');
 const polyfills = require('rollup-plugin-node-polyfills');
+const resolve = require('@rollup/plugin-node-resolve').nodeResolve;
 
 module.exports = {
   scripts: {
@@ -28,6 +29,7 @@ module.exports = {
     'dexie',
     'hls.js',
     'jsonld',
+    'opensea-js',
     'p2p-media-loader-core',
     'p2p-media-loader-hlsjs',
     'path',
@@ -39,7 +41,12 @@ module.exports = {
     sourceMap: true,
     treeshake: true,
     rollup: {
-      plugins: [globals(), polyfills()],
+      plugins: [
+        // Fix "Uncaught TypeError: bufferEs6.hasOwnProperty is not a function"
+        resolve({ preferBuiltins: false }),
+        globals(),
+        polyfills(),
+      ],
     },
   },
 };

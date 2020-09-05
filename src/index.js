@@ -11,6 +11,8 @@
  **/
 
 import Hls from 'hls.js';
+import * as Web3 from 'web3';
+import { OpenSeaPort, Network } from 'opensea-js';
 import WebTorrent from 'webtorrent';
 
 import { getRtcConfig } from './utils';
