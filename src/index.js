@@ -18,8 +18,58 @@ import { getRtcConfig } from './utils';
 import { IPFS_GATEWAY } from './ipfs';
 import { MotionTracker } from './motiontracker';
 import { World } from './world';
+import { isConstructorDeclaration, setTokenSourceMapRange } from 'typescript';
 
 const world = new World();
+
+PEERTUBE_INSTANCE = 'https://diode.zone';
+
+const VIDEO_ID = '5ea4b933-26e2-4813-a2b2-7c99c8626a60' // Dubai Creek by Swedrone
+
+const mode = 'p2p-media-loader' // Or 'webtorrent'
+
+function getVideoUrl(videoId) {
+  return `${PEERTUBE_INSTANCE}/api/v1/videos/${videoId}`;
+}
+
+function getPreviewUrl(videoId) {
+  return `${PEERTUBE_INSTANCE}/static/previews/${videoId}.jpg`;
+}
+
+function loadVideoInfo(videoId) {
+  return fetch(getVideoUrl(videoId));
+}
+
+const videoPromise = loadVideoInfo(VIDEO_ID);
+const videoResponse = await videoPromise;
+
+if (!videoResponse.ok) {
+  console.error(`Failed to fetch ${getVideoUrl(VIDEO_ID)}`);
+} else {
+  const videoInfo = await videoResponse.json()
+
+  // TODO: Load preview URL
+  console.log(`Preview URL: ${getPreviewUrl(videoId)}`);
+
+  webtorrentVideoFiles = videoInfo.files;
+
+  if (mode === 'p2p-media-loader') {
+    //const hlsPlaylist = videoInfo.streamingPlaylists.find(p => p.type === VideoStreamingPlaylistType.HLS);
+  }
+
+  if (mode === 'webTorrent') {
+    // Import 'webtorrent-plugin'
+    const webtorrent = new WebTorrent({
+      tracker: {
+        rtcConfig: getRtcConfig()
+      },
+      dht: true,
+    })
+  }
+  else if (mode === 'p2p-media-loader') {
+    // Import p2p-media-loader-hlsjs and p2p-media-loader-plugin
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Application parameters
