@@ -104,6 +104,16 @@ body {
   width: 100%;
   height: 100%;
 }
+#exampleBlogHeader {
+  /* TODO: Responsive dimensions */
+  position: absolute;
+  height: 260px;
+  width: 500px;
+  top: 50%;
+  left: 50%;
+  margin-top: -30px; /* Margin is -1/2 dimension */
+  margin-left: -250px; /* Margin is -1/2 dimension */
+}
 
 /******************************************************************************
  *
@@ -162,7 +172,7 @@ body {
  */
 
 #metamaskDialog {
-  display: none;
+  display: block;
 }
 #metamaskDialogBackground {
   opacity: 0.6;
@@ -171,6 +181,15 @@ body {
 #metamaskDialogForegroundInstall,
 #metamaskDialogForegroundLogin {
   display: none;
+  color: #ffffff;
+  text-align: center;
+  text-decoration: none;
+  line-height: 1.5;
+  outline: none;
+}
+#exampleBlogHeader {
+  display: none;
+  font-size: 40px;
   color: #ffffff;
   text-align: center;
   text-decoration: none;

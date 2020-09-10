@@ -253,6 +253,9 @@ class MotionTracker {
   }
 
   async renderFrame() {
+    var title = document.getElementById('exampleBlogHeader');
+    title.style.display = 'block';
+
     if (!this.motionWorkerInitialized) {
       return;
     }
