@@ -86,12 +86,12 @@ body {
 #metamaskDialog {
   /* TODO: Responsive dimensions */
   position: absolute;
-  height: 260px;
-  width: 500px;
+  height: 300px;
+  width: 800px;
   top: 50%;
   left: 50%;
-  margin-top: -130px; /* Margin is -1/2 dimension */
-  margin-left: -250px; /* Margin is -1/2 dimension */
+  margin-top: -150px; /* Margin is -1/2 dimension */
+  margin-left: -400px; /* Margin is -1/2 dimension */
 }
 #metamaskDialogBackground {
   position: absolute;
@@ -107,12 +107,12 @@ body {
 #exampleBlogHeader {
   /* TODO: Responsive dimensions */
   position: absolute;
-  height: 260px;
-  width: 500px;
+  height: 300px;
+  width: 800px;
   top: 50%;
   left: 50%;
-  margin-top: -30px; /* Margin is -1/2 dimension */
-  margin-left: -250px; /* Margin is -1/2 dimension */
+  margin-top: -50px;
+  margin-left: -400px; /* Margin is -1/2 dimension */
 }
 
 /******************************************************************************
@@ -189,7 +189,8 @@ body {
 }
 #exampleBlogHeader {
   display: none;
-  font-size: 40px;
+  font-size: 60px;
+  font-family: geneva, arial, courier;
   color: #ffffff;
   text-align: center;
   text-decoration: none;
