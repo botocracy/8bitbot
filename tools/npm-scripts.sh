@@ -20,18 +20,93 @@ function patch_package() {
   package=$1
   patch=$2
 
-  patch -p1 --forward --directory="node_modules/${package}" < \
-    "tools/depends/${package}/${patch}" || [[ "$?" == "1" ]]
+  package_path="node_modules/${package}"
+  patch_path="tools/depends/${package}/${patch}"
+
+  # Can't discern between missing patch and already-applied patch
+  if [ ! -f "${patch_path}" ]; then
+    echo "Missing ${patch}!"
+    exit 1
+  fi
+
+  echo "Patching: ${package_path}"
+
+  patch -p1 --forward --directory="${package_path}" < "${patch_path}" || ( \
+    code=$?; [[ "${code}" -lt "2" ]] || exit ${code}; \
+  )
+}
+
+#
+# Helper function
+#
+# Usage:
+#
+#   patch_package_recursive <package name> <patch name>
+#
+# To prevent conflicts of nested dependencies, the nested package versions can
+# be controlled using the "resolutions" field in package.json.
+#
+function patch_package_recursive() {
+  package=$1
+  patch=$2
+
+  patch_path="tools/depends/${package}/${patch}"
+
+  # Can't discern between missing patch and already-applied patch
+  if [ ! -f "${patch_path}" ]; then
+    echo "Missing ${patch}!"
+    exit 1
+  fi
+
+  for package_path in $(find "node_modules" -name "${package}"); do
+    # Skip rollup polyfills
+    if echo "${package_path}" | grep --quiet rollup-plugin-node-polyfills; then
+      continue
+    fi
+
+    # Skip type declarations
+    if echo "${package_path}" | grep --quiet "@types/${package}"; then
+      continue
+    fi
+
+    echo "Patching: ${package_path}"
+
+    patch -p1 --forward --directory="${package_path}" < "${patch_path}" || ( \
+      code=$?; [[ "${code}" -lt "2" ]] || exit ${code}; \
+    )
+  done
+}
+
+function preinstall() {
+  # Create/update package-lock.json for npx
+  npm install --package-lock-only --ignore-scripts
+
+  # Force recursive dependencies based on "resolutions" field in package.json
+  npx npm-force-resolutions
 }
 
 function postinstall() {
+  # Patch bittorrent library
+  patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
 
+  # Patch p2p-media-loader libraries
+  patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
+  patch_package "p2p-media-loader-core" "0002-Fix-runtime-error-with-snowpack.patch"
+  patch_package "p2p-media-loader-hlsjs" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
+
+  # Patch readable-stream library (recursively)
+  patch_package_recursive "readable-stream" "0001-Fix-circular-dependency.patch"
+
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
+
+  # Patch Videostream library
+  patch_package "videostream" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 }
 
 function depends() {
@@ -69,7 +144,8 @@ function build() {
 
 function audit() {
   # Run audit which fails on discovery of moderate severity
-  audit-ci --moderate --package-manager npm
+  # Add --pass-enoaudit when using depedencies on their master branch
+  audit-ci --moderate --package-manager npm --pass-enoaudit
 }
 
 function lint() {
@@ -114,6 +190,9 @@ function clean() {
 case $1 in
   start)
     start
+    ;;
+  preinstall)
+    preinstall
     ;;
   postinstall)
     postinstall

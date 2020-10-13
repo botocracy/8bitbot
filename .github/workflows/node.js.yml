@@ -62,11 +62,32 @@ jobs:
           path: |
             node_modules
             package-lock.json
-          key: npm-install-${{ matrix.node-version }}-${{ hashFiles('package.json') }}
+          key: npm-install-${{ matrix.node-version }}-${{ matrix.os }}-${{ hashFiles('package.json', 'tools/npm-scripts.sh') }}
 
-      - name: npm install
+      # npm ci is required, instead of npm install, because we recursively
+      # patch sub-dependencies in the post-install step and require correct
+      # versions for the patches to apply.
+      #
+      # However, although package-lock.json is generated and updated in the
+      # preinstall step, npm ci won't run if package-lock.json doesn't exist
+      # yet. Chicken, meet egg.
+      #
+      # To get around this, manually run the preinstall step once evey time
+      # the project is cleaned:
+      #
+      #   npm run preinstall
+      #
+      # Instead of npm install, run:
+      #
+      #   npm ci
+      #
+      - name: npm run preinstall
         if: steps.restore-node.outputs.cache-hit != 'true'
-        run: npm install
+        run: npm run preinstall
+
+      - name: npm ci
+        if: steps.restore-node.outputs.cache-hit != 'true'
+        run: npm ci
 
       - name: npm run audit
         run: npm run audit
