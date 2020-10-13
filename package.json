@@ -46,6 +46,7 @@
     "@snowpack/plugin-webpack": ">=1.4.0",
     "@types/chai": "^4.2.14",
     "@types/mocha": "^8.0.3",
+    "@types/video.js": "^7.3.11",
     "audit-ci": ">=3.1.0",
     "chai": ">=4.2.0",
     "esm": ">=3.2.25",
@@ -62,9 +63,14 @@
     "typescript": ">=3.9.6"
   },
   "dependencies": {
+    "dexie": "^3.0.2",
     "hls.js": "^0.13.2",
     "jsonld": "^3.1.1",
+    "p2p-media-loader-core": "^0.6.2",
+    "p2p-media-loader-hlsjs": "^0.6.2",
+    "path": "^0.12.7",
     "three": "^0.121.1",
+    "video.js": "^7.8.4",
     "webtorrent": "^0.108.6"
   },
   "chromeapp": {
