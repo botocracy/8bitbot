@@ -80,6 +80,7 @@ $(BUILD_FILE_CERES): $(S)/.prebuild $(CERES_BUILD_DEPENDS)
 	    -DBUILD_TESTING=OFF \
 	    -DBUILD_EXAMPLES=OFF \
 	    -DBUILD_BENCHMARKS=OFF \
+	    $(shell ! command -v ccache &> /dev/null || echo "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache") \
 
 	# Rebuilding takes a long time
 	[ -f "$(BUILD_FILE_CERES)" ] || ( \
