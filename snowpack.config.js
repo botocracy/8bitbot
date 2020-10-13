@@ -22,7 +22,17 @@ module.exports = {
     minify: false,
   },
   plugins: ['@snowpack/plugin-typescript'],
-  install: ['hls.js', 'jsonld', 'three', 'webtorrent'],
+  install: [
+    'dexie',
+    'hls.js',
+    'jsonld',
+    'p2p-media-loader-core',
+    'p2p-media-loader-hlsjs',
+    'path',
+    'three',
+    'video.js',
+    'webtorrent',
+  ],
   installOptions: {
     sourceMap: true,
     treeshake: true,

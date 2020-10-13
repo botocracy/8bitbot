@@ -1,0 +1,51 @@
+From d5af25ab12a59e744fb474b376e3c0b8db87d3f0 Mon Sep 17 00:00:00 2001
+From: Garrett Brown <garrett.brown@aclima.io>
+Date: Tue, 13 Oct 2020 06:19:54 -0700
+Subject: [PATCH] Fix runtime error due to wrapped import
+
+Error was:
+
+    Uncaught TypeError: events is not a constructor
+---
+ client.js             | 2 +-
+ lib/client/tracker.js | 2 +-
+ server.js             | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/client.js b/client.js
+index 48f0dfb..2d9ca14 100644
+--- a/client.js
++++ b/client.js
+@@ -1,5 +1,5 @@
+ const debug = require('debug')('bittorrent-tracker:client')
+-const EventEmitter = require('events')
++const EventEmitter = require('events').EventEmitter
+ const once = require('once')
+ const parallel = require('run-parallel')
+ const Peer = require('simple-peer')
+diff --git a/lib/client/tracker.js b/lib/client/tracker.js
+index cbbd23d..e7e20f7 100644
+--- a/lib/client/tracker.js
++++ b/lib/client/tracker.js
+@@ -1,4 +1,4 @@
+-const EventEmitter = require('events')
++const EventEmitter = require('events').EventEmitter
+ 
+ class Tracker extends EventEmitter {
+   constructor (client, announceUrl) {
+diff --git a/server.js b/server.js
+index 1ec53da..00b74b3 100644
+--- a/server.js
++++ b/server.js
+@@ -1,7 +1,7 @@
+ const bencode = require('bencode')
+ const debug = require('debug')('bittorrent-tracker:server')
+ const dgram = require('dgram')
+-const EventEmitter = require('events')
++const EventEmitter = require('events').EventEmitter
+ const http = require('http')
+ const peerid = require('bittorrent-peerid')
+ const series = require('run-series')
+-- 
+2.17.1
+
