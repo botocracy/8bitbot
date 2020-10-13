@@ -32,6 +32,10 @@ function postinstall() {
 
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
+
+  # Patch p2p-media-loader libraries
+  patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
+  patch_package "p2p-media-loader-hlsjs" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
 }
 
 function depends() {
