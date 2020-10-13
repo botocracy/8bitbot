@@ -1,0 +1,144 @@
+From 80de55aa13cf29f739d41ca07b700ee2a06e5fe0 Mon Sep 17 00:00:00 2001
+From: Garrett Brown <garrett.brown@aclima.io>
+Date: Tue, 13 Oct 2020 03:50:53 -0700
+Subject: [PATCH] Fix build error due to commonjs translation bug
+
+Error was:
+
+    Duplicate export '__esModule' (4:185) in snowpack-wrap:./node_modules/p2p-media-loader-core/dist/index.js
+---
+ build/p2p-media-loader-core.js       | 1 -
+ dist/bandwidth-approximator.js       | 1 -
+ dist/http-media-manager.js           | 1 -
+ dist/hybrid-loader.js                | 1 -
+ dist/index.js                        | 1 -
+ dist/loader-interface.js             | 1 -
+ dist/media-peer.js                   | 1 -
+ dist/p2p-media-manager.js            | 1 -
+ dist/segments-memory-storage.js      | 1 -
+ dist/stringly-typed-event-emitter.js | 1 -
+ 10 files changed, 10 deletions(-)
+
+diff --git a/build/p2p-media-loader-core.js b/build/p2p-media-loader-core.js
+index 2a7c9a1..aa04c0d 100644
+--- a/build/p2p-media-loader-core.js
++++ b/build/p2p-media-loader-core.js
+@@ -15,7 +15,6 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+ const SMOOTH_INTERVAL = 1 * 1000;
+ const MEASURE_INTERVAL = 60 * 1000;
+ class NumberWithTime {
+diff --git a/dist/bandwidth-approximator.js b/dist/bandwidth-approximator.js
+index ff92c51..60c61d1 100644
+--- a/dist/bandwidth-approximator.js
++++ b/dist/bandwidth-approximator.js
+@@ -14,7 +14,6 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+ const SMOOTH_INTERVAL = 1 * 1000;
+ const MEASURE_INTERVAL = 60 * 1000;
+ class NumberWithTime {
+diff --git a/dist/http-media-manager.js b/dist/http-media-manager.js
+index b94f633..6093afd 100644
+--- a/dist/http-media-manager.js
++++ b/dist/http-media-manager.js
+@@ -14,7 +14,6 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+ const Debug = require("debug");
+ const stringly_typed_event_emitter_1 = require("./stringly-typed-event-emitter");
+ class HttpMediaManager extends stringly_typed_event_emitter_1.STEEmitter {
+diff --git a/dist/hybrid-loader.js b/dist/hybrid-loader.js
+index 2bb0910..b966f4a 100644
+--- a/dist/hybrid-loader.js
++++ b/dist/hybrid-loader.js
+@@ -14,7 +14,6 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+ const Debug = require("debug");
+ const loader_interface_1 = require("./loader-interface");
+ const events_1 = require("events");
+diff --git a/dist/index.js b/dist/index.js
+index 7635173..f69687a 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -18,7 +18,6 @@
+ function __export(m) {
+     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+ }
+-Object.defineProperty(exports, "__esModule", { value: true });
+ exports.version = "0.6.2";
+ __export(require("./loader-interface"));
+ __export(require("./hybrid-loader"));
+diff --git a/dist/loader-interface.js b/dist/loader-interface.js
+index d9095d8..b328e62 100644
+--- a/dist/loader-interface.js
++++ b/dist/loader-interface.js
+@@ -14,7 +14,6 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+ var Events;
+ (function (Events) {
+     /**
+diff --git a/dist/media-peer.js b/dist/media-peer.js
+index 81d6913..0f032bb 100644
+--- a/dist/media-peer.js
++++ b/dist/media-peer.js
+@@ -14,7 +14,6 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+ const Debug = require("debug");
+ const stringly_typed_event_emitter_1 = require("./stringly-typed-event-emitter");
+ const buffer_1 = require("buffer");
+diff --git a/dist/p2p-media-manager.js b/dist/p2p-media-manager.js
+index 66deb42..55ba502 100644
+--- a/dist/p2p-media-manager.js
++++ b/dist/p2p-media-manager.js
+@@ -14,7 +14,6 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+ const Debug = require("debug");
+ const Client = require("bittorrent-tracker/client");
+ const stringly_typed_event_emitter_1 = require("./stringly-typed-event-emitter");
+diff --git a/dist/segments-memory-storage.js b/dist/segments-memory-storage.js
+index 9bc1d17..661f674 100644
+--- a/dist/segments-memory-storage.js
++++ b/dist/segments-memory-storage.js
+@@ -14,7 +14,6 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+ class SegmentsMemoryStorage {
+     constructor(settings) {
+         this.settings = settings;
+diff --git a/dist/stringly-typed-event-emitter.js b/dist/stringly-typed-event-emitter.js
+index d4a7433..2ee3a3f 100644
+--- a/dist/stringly-typed-event-emitter.js
++++ b/dist/stringly-typed-event-emitter.js
+@@ -14,7 +14,6 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-Object.defineProperty(exports, "__esModule", { value: true });
+ const events_1 = require("events");
+ class STEEmitter extends events_1.EventEmitter {
+     on(event, listener) { return super.on(event, listener); }
+-- 
+2.17.1
+
