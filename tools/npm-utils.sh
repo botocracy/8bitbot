@@ -45,3 +45,45 @@ function patch_package() {
     [[ "${code}" -lt "2" ]] || exit ${code}
   )
 }
+
+#
+# Helper function
+#
+# Usage:
+#
+#   patch_package_recursive <package name> <patch name>
+#
+# To prevent conflicts of nested dependencies, the nested package versions can
+# be controlled using the "resolutions" field in package.json.
+#
+function patch_package_recursive() {
+  package=$1
+  patch=$2
+
+  patch_path="tools/depends/${package}/${patch}"
+
+  # Can't discern between missing patch and already-applied patch
+  if [ ! -f "${patch_path}" ]; then
+    echo "Missing ${patch}!"
+    exit 1
+  fi
+
+  for package_path in $(find "node_modules" -name "${package}"); do
+    # Skip rollup polyfills
+    if echo "${package_path}" | grep --quiet rollup-plugin-node-polyfills; then
+      continue
+    fi
+
+    # Skip type declarations
+    if echo "${package_path}" | grep --quiet "@types/${package}"; then
+      continue
+    fi
+
+    echo "Patching: ${package_path}"
+
+    patch -p1 --forward --directory="${package_path}" <"${patch_path}" || (
+      code=$?
+      [[ "${code}" -lt "2" ]] || exit ${code}
+    )
+  done
+}

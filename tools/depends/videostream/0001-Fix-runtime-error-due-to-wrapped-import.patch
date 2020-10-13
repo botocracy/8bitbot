@@ -1,0 +1,40 @@
+From 32afd8fc1f7d669e0c946651fbf93e723acffa74 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Mon, 19 Oct 2020 23:04:57 -0700
+Subject: [PATCH] Fix runtime error due to wrapped import
+
+Error was:
+
+    Uncaught TypeError: events is not a constructor
+---
+ dist/index.js  | 2 +-
+ mp4-remuxer.js | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dist/index.js b/dist/index.js
+index 210ebe6..79fa050 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1,7 +1,7 @@
+ (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.videostream = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+ (function (Buffer){
+ const bs = require('binary-search')
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ const mp4 = require('mp4-stream')
+ const Box = require('mp4-box-encoding')
+ const RangeSliceStream = require('range-slice-stream')
+diff --git a/mp4-remuxer.js b/mp4-remuxer.js
+index 0a34e4c..6bb9886 100644
+--- a/mp4-remuxer.js
++++ b/mp4-remuxer.js
+@@ -1,5 +1,5 @@
+ const bs = require('binary-search')
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ const mp4 = require('mp4-stream')
+ const Box = require('mp4-box-encoding')
+ const RangeSliceStream = require('range-slice-stream')
+-- 
+2.17.1
+
