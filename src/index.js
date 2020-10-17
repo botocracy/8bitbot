@@ -17,9 +17,13 @@ import { getRtcConfig } from './utils';
 
 import { IPFS_GATEWAY } from './ipfs';
 import { MotionTracker } from './motiontracker';
+import { loadVideoInfo } from './peertube-api';
+import { VideoPlayer } from './player/video-player';
 import { World } from './world';
 
 const world = new World();
+
+const VIDEO_ID = '5ea4b933-26e2-4813-a2b2-7c99c8626a60'; // Dubai Creek by Swedrone
 
 //////////////////////////////////////////////////////////////////////////
 // Application parameters
@@ -171,6 +175,30 @@ async function loadUserInterface(node) {
   const videoUri = await world.getVideoHlsUri();
 
   await loadHls(videoUri);
+
+  const videoInfo = await loadVideoInfo(VIDEO_ID);
+
+  if (videoInfo) {
+    console.log(`Opening video "${videoInfo.name}"`);
+
+    const videoElement = document.getElementById('videoBackground');
+
+    const player = new VideoPlayer(videoElement);
+
+    await player.open(videoInfo);
+
+    log_ui(`Video player started in ${player.mode} mode`);
+
+    // Video will start soon, so show the volume indicator
+    var volumeIcon = videoElement.muted
+      ? document.getElementById('volumeMuteIcon')
+      : document.getElementById('volumeUpIcon');
+
+    volumeIcon.style.display = 'block';
+
+    // Start OpenCV processing
+    motionTracker.start(videoElement);
+  }
 }
 
 async function loadHls(videoUri) {
