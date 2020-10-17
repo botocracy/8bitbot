@@ -1,7 +1,13 @@
-// Plugin: https://github.com/ionic-team/rollup-plugin-node-polyfills
+/*
+ * Copyright (C) 2020 Marquise Stein
+ * This file is part of 8bitbot - https://github.com/botocracy/8bitbot
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * See LICENSE.txt for more information.
+ */
 
-globals = require('rollup-plugin-node-globals');
-polyfills = require('rollup-plugin-node-polyfills');
+const globals = require('rollup-plugin-node-globals');
+const polyfills = require('rollup-plugin-node-polyfills');
 
 module.exports = {
   scripts: {
@@ -14,6 +20,7 @@ module.exports = {
   buildOptions: {
     minify: false,
   },
+  plugins: ['@snowpack/plugin-typescript'],
   install: ['hls.js', 'jsonld'],
   installOptions: {
     sourceMap: true,

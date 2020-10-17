@@ -1,0 +1,13 @@
+{
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules", "web_modules"],
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "allowJs": true,
+    "checkJs": false,
+    "removeComments": false,
+    "forceConsistentCasingInFileNames": true
+  }
+}

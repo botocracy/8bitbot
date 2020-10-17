@@ -50,7 +50,11 @@ function test() {
   lint
 
   # Run test suite
-  mocha \
+  # TODO: Add --require canvas if ImageData or other APIs are needed for tests
+  ts-mocha \
+    --recursive \
+    --extension js \
+    --extension ts \
     --require esm \
     --require isomorphic-fetch \
     --require jsdom-global/register
