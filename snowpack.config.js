@@ -37,7 +37,7 @@ module.exports = {
     sourceMap: true,
     treeshake: true,
     rollup: {
-      plugins: [globals(), polyfills()],
+      plugins: [globals(), polyfills({ crypto: true })],
     },
   },
 };
