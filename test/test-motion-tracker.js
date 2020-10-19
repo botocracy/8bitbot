@@ -181,7 +181,7 @@ describe('Motion tracker', function () {
   });
 
   it('should terminate worker', async function () {
-    this.timeout(15 * 1000);
+    this.timeout(20 * 1000);
 
     await this.worker.close();
     return Thread.terminate(this.worker);
