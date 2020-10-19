@@ -42,6 +42,8 @@
     "npm": ">=6.1.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^15.1.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
     "@snowpack/plugin-typescript": "^1.0.1",
     "@snowpack/plugin-webpack": ">=1.4.0",
     "@types/chai": "^4.2.14",

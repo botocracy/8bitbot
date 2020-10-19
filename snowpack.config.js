@@ -6,8 +6,10 @@
  * See LICENSE.txt for more information.
  */
 
+const commonjs = require('@rollup/plugin-commonjs');
 const globals = require('rollup-plugin-node-globals');
 const polyfills = require('rollup-plugin-node-polyfills');
+const resolve = require('@rollup/plugin-node-resolve').nodeResolve;
 
 module.exports = {
   scripts: {
@@ -37,7 +39,12 @@ module.exports = {
     sourceMap: true,
     treeshake: true,
     rollup: {
-      plugins: [globals(), polyfills({ crypto: true })],
+      plugins: [
+        resolve({ preferBuiltins: false }),
+        commonjs(),
+        globals(),
+        polyfills({ crypto: true }),
+      ],
     },
   },
 };
