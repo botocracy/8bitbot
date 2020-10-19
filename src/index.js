@@ -172,9 +172,9 @@ async function loadUserInterface(node) {
     return;
   }
 
-  const videoUri = await world.getVideoHlsUri();
+  //const videoUri = await world.getVideoHlsUri();
 
-  await loadHls(videoUri);
+  //await loadHls(videoUri);
 
   const videoInfo = await loadVideoInfo(VIDEO_ID);
 
