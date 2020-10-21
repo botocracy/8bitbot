@@ -1,0 +1,40 @@
+From 09401b5229a90451a2f737e0268cb9e5768fa8f0 Mon Sep 17 00:00:00 2001
+From: Garrett Brown <botocratic@gmail.com>
+Date: Wed, 21 Oct 2020 20:50:36 -0700
+Subject: [PATCH] Fix runtime error due to wrapped import
+
+Error was:
+
+    Uncaught TypeError: Class extends value [object Object] is not a constructor or null
+---
+ dist/es5/index.js | 2 +-
+ src/index.js      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dist/es5/index.js b/dist/es5/index.js
+index 64f8091..7dcb2a9 100644
+--- a/dist/es5/index.js
++++ b/dist/es5/index.js
+@@ -1,6 +1,6 @@
+ // const EthQuery = require('ethjs-query')
+ const EthQuery = require('eth-query');
+-const EventEmitter = require('events');
++const { EventEmitter } = require('events');
+ const pify = require('pify');
+ const hexUtils = require('./hexUtils');
+ const incrementHexNumber = hexUtils.incrementHexNumber;
+diff --git a/src/index.js b/src/index.js
+index 4bc2bb2..0fd0e50 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -1,6 +1,6 @@
+ // const EthQuery = require('ethjs-query')
+ const EthQuery = require('eth-query')
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ const pify = require('pify')
+ const hexUtils = require('./hexUtils')
+ const incrementHexNumber = hexUtils.incrementHexNumber
+-- 
+2.17.1
+

@@ -21,9 +21,98 @@ import { loadVideoInfo } from './peertube-api';
 import { VideoPlayer } from './player/video-player';
 import { World } from './world';
 
+import {
+  assetDataUtils,
+  BigNumber,
+  generatePseudoRandomSalt,
+  signatureUtils,
+} from '0x.js';
+
 const world = new World();
 
 const VIDEO_ID = '5ea4b933-26e2-4813-a2b2-7c99c8626a60'; // Dubai Creek by Swedrone
+
+// Test accounts
+// Provide mnemonic here to bypass MetaMask
+//const MNEMONIC = 'like ocean fall stock mammal approve woman sausage survey hat remember target auction obey envelope';
+
+// Constants
+const ONE_SECOND_MS = 1000;
+const ONE_MINUTE_MS = ONE_SECOND_MS * 60;
+const TEN_MINUTES_MS = ONE_MINUTE_MS * 10;
+const DECIMALS = 18;
+const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
+const ROPSTEN_NETWORK_ID = 3;
+const RINKEBY_NETWORK_ID = 4;
+const KOVAN_NETWORK_ID = 42;
+const GANACHE_NETWORK_ID = 50;
+
+// Config
+const TX_DEFAULTS = {
+  gas: 400000,
+};
+const GANACHE_CONFIGS = {
+  rpcUrl: 'http://127.0.0.1:8545',
+  networkId: GANACHE_NETWORK_ID,
+};
+const KOVAN_CONFIGS = {
+  rpcUrl: 'https://kovan.infura.io/',
+  networkId: KOVAN_NETWORK_ID,
+};
+const ROPSTEN_CONFIGS = {
+  rpcUrl: 'https://ropsten.infura.io/v3/bd1da1ddceef40ec9c0d3101e43b3ae6',
+  networkId: ROPSTEN_NETWORK_ID,
+};
+const RINKEBY_CONFIGS = {
+  rpcUrl: 'https://rinkeby.infura.io/',
+  networkId: RINKEBY_NETWORK_ID,
+};
+const NETWORK_CONFIGS = ROPSTEN_CONFIGS; // or KOVAN_CONFIGS or ROPSTEN_CONFIGS or RINKEBY_CONFIGS
+
+// Utilities
+function getNetworkName(networkId) {
+  switch (networkId) {
+    case ROPSTEN_NETWORK_ID:
+      return 'Ropsten';
+    case RINKEBY_NETWORK_ID:
+      return 'Rinkeby';
+    case KOVAN_NETWORK_ID:
+      return 'Kovan';
+    case GANACHE_NETWORK_ID:
+      return 'Ganache';
+  }
+  return `Unknown (${networkId})`;
+}
+
+// Entry point
+window.addEventListener('load', async () => {
+  // Detect if Web3 is found, if not, ask the user to install MetaMask
+  if (typeof web3 === 'undefined') {
+    // Show MetaMask install dialog
+    log_market(`Web 3 not detected, showing MetaMask install dialog`);
+
+    var dialog = document.getElementById('metamaskDialog');
+    var dialogBody = document.getElementById('metamaskDialogForegroundInstall');
+
+    dialog.style.display = 'block';
+    dialogBody.style.display = 'block';
+
+    // Require a page refresh
+    return;
+  } else {
+    log_market(`Web 3 support detected`);
+  }
+
+  const dialogLogin = document.getElementById('metamaskDialogForegroundLogin');
+
+  // Called on MetaMask login UI interaction
+  dialogLogin.onclick = async () => {
+    ethereum.enable();
+  };
+
+  // Run the marketplace
+  //runMarketplace();
+});
 
 //////////////////////////////////////////////////////////////////////////
 // Application parameters
