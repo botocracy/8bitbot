@@ -62,7 +62,7 @@ jobs:
           path: |
             node_modules
             package-lock.json
-          key: npm-install-${{ matrix.node-version }}-${{ hashFiles('package.json') }}
+          key: npm-install-${{ matrix.node-version }}-${{ matrix.os }}-${{ hashFiles('package.json') }}
 
       - name: npm install
         if: steps.restore-node.outputs.cache-hit != 'true'
@@ -164,6 +164,8 @@ jobs:
 
       - name: npm run build
         run: npm run build
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
 
       - name: npm test
         run: npm test
