@@ -1,0 +1,28 @@
+From 429de041ecc6f5e2be14d5f28f663392f2b09c8b Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Sun, 25 Oct 2020 17:38:55 -0700
+Subject: [PATCH] Fix build error due to ganache version mismatch
+
+Error was:
+
+    ganache.d.ts(15,31): error TS2694: Namespace '"ganache-core"' has no exported member 'GanacheOpts'.
+---
+ lib/src/subproviders/ganache.d.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/src/subproviders/ganache.d.ts b/lib/src/subproviders/ganache.d.ts
+index 62fdd79..e32f431 100644
+--- a/lib/src/subproviders/ganache.d.ts
++++ b/lib/src/subproviders/ganache.d.ts
+@@ -12,7 +12,7 @@ export declare class GanacheSubprovider extends Subprovider {
+      * Instantiates a GanacheSubprovider
+      * @param opts The desired opts with which to instantiate the Ganache provider
+      */
+-    constructor(opts: Ganache.GanacheOpts);
++    constructor(opts: any);
+     /**
+      * This method conforms to the web3-provider-engine interface.
+      * It is called internally by the ProviderEngine when it is this subproviders
+-- 
+2.17.1
+

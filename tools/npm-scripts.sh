@@ -29,14 +29,69 @@ function patch_package() {
     exit 1
   fi
 
-  patch -p1 --forward --directory="${package_path}" <  "${patch_path}" || ( \
+  echo "Patching: ${package_path}"
+
+  patch -p1 --forward --directory="${package_path}" < "${patch_path}" || ( \
     code=$?; [[ "${code}" -lt "2" ]] || exit ${code}; \
   )
 }
 
+#
+# Helper function
+#
+# Usage:
+#
+#   patch_package_recursive <package name> <patch name>
+#
+# To prevent conflicts of nested dependencies, the nested package versions can
+# be controlled using the "resolutions" field in package.json.
+#
+function patch_package_recursive() {
+  package=$1
+  patch=$2
+
+  patch_path="tools/depends/${package}/${patch}"
+
+  # Can't discern between missing patch and already-applied patch
+  if [ ! -f "${patch_path}" ]; then
+    echo "Missing ${patch}!"
+    exit 1
+  fi
+
+  for package_path in $(find "node_modules" -name "${package}"); do
+    # Skip rollup polyfills
+    if echo "${package_path}" | grep --quiet rollup-plugin-node-polyfills; then
+      continue
+    fi
+
+    echo "Patching: ${package_path}"
+
+    patch -p1 --forward --directory="${package_path}" < "${patch_path}" || ( \
+      code=$?; [[ "${code}" -lt "2" ]] || exit ${code}; \
+    )
+  done
+}
+
+function preinstall() {
+  # Create package-lock.json for npx
+  npm install --package-lock-only --ignore-scripts
+
+  # Force recursive dependencies based on "resolutions" field in package.json
+  npx npm-force-resolutions
+}
+
 function postinstall() {
+  # Patch 0x libraries
+  patch -p1 --forward --directory="node_modules/0x.js/node_modules/@0x/subproviders" < \
+    "tools/depends/0x.js/0001-Fix-build-error-due-to-ganache-version-mismatch.patch" || ( \
+      code=$?; [[ "${code}" -lt "2" ]] || exit ${code}; \
+    )
+
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+
+  # Patch eth-block-tracker library
+  patch_package "eth-block-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
@@ -48,8 +103,8 @@ function postinstall() {
   patch_package "p2p-media-loader-core" "0002-Fix-runtime-error-with-snowpack.patch"
   patch_package "p2p-media-loader-hlsjs" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
 
-  # Patch readable-stream library
-  patch_package "readable-stream" "0001-Fix-circular-dependency.patch"
+  # Patch readable-stream library (recursively)
+  patch_package_recursive "readable-stream" "0001-Fix-circular-dependency.patch"
 
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
@@ -151,6 +206,9 @@ function clean() {
 case $1 in
   start)
     start
+    ;;
+  preinstall)
+    preinstall
     ;;
   postinstall)
     postinstall

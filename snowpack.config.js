@@ -23,6 +23,7 @@ module.exports = {
   },
   plugins: ['@snowpack/plugin-typescript'],
   install: [
+    '0x.js',
     'cache-chunk-store',
     'dexie',
     'hls.js',
