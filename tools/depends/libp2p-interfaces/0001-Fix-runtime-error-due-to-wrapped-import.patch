@@ -1,0 +1,41 @@
+From 9bde5175e3b7508f3cbca261ce9e085d9c22ffaa Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 22 Oct 2020 08:35:00 -0700
+Subject: [PATCH] Fix runtime error due to wrapped import
+
+Error was:
+
+    Uncaught TypeError: Class extends value [object Object] is not a constructor or null
+---
+ src/pubsub/index.js        | 2 +-
+ src/pubsub/peer-streams.js | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/pubsub/index.js b/src/pubsub/index.js
+index 8728369..2461d6c 100644
+--- a/src/pubsub/index.js
++++ b/src/pubsub/index.js
+@@ -1,7 +1,7 @@
+ 'use strict'
+ 
+ const debug = require('debug')
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ const errcode = require('err-code')
+ 
+ const pipe = require('it-pipe')
+diff --git a/src/pubsub/peer-streams.js b/src/pubsub/peer-streams.js
+index a41e1d8..c001498 100644
+--- a/src/pubsub/peer-streams.js
++++ b/src/pubsub/peer-streams.js
+@@ -1,6 +1,6 @@
+ 'use strict'
+ 
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ 
+ const lp = require('it-length-prefixed')
+ const pushable = require('it-pushable')
+-- 
+2.17.1
+

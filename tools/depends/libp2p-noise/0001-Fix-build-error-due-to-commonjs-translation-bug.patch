@@ -1,0 +1,204 @@
+From c62399bef5f7c9dbcb233c03c48f34efa9f549d4 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Wed, 21 Oct 2020 22:27:04 -0700
+Subject: [PATCH] Fix build error due to commonjs translation bug
+
+Error was:
+
+    Duplicate export '__esModule' (4:33) in snowpack-wrap:./node_modules/libp2p-noise/dist/src/index.js
+---
+ dist/src/constants.js                     | 2 --
+ dist/src/crypto.js                        | 2 --
+ dist/src/encoder.js                       | 2 --
+ dist/src/errors.js                        | 2 --
+ dist/src/handshake-ik.js                  | 2 --
+ dist/src/handshake-xx-fallback.js         | 2 --
+ dist/src/handshake-xx.js                  | 2 --
+ dist/src/handshakes/abstract-handshake.js | 2 --
+ dist/src/handshakes/ik.js                 | 2 --
+ dist/src/handshakes/xx.js                 | 2 --
+ dist/src/index.js                         | 2 --
+ dist/src/keycache.js                      | 2 --
+ dist/src/logger.js                        | 2 --
+ dist/src/noise.js                         | 2 --
+ dist/src/utils.js                         | 2 --
+ 15 files changed, 30 deletions(-)
+
+diff --git a/dist/src/constants.js b/dist/src/constants.js
+index 2a94d25..396f901 100644
+--- a/dist/src/constants.js
++++ b/dist/src/constants.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.DUMP_SESSION_KEYS = exports.NOISE_MSG_MAX_LENGTH_BYTES_WITHOUT_TAG = exports.NOISE_MSG_MAX_LENGTH_BYTES = void 0;
+ exports.NOISE_MSG_MAX_LENGTH_BYTES = 65535;
+ exports.NOISE_MSG_MAX_LENGTH_BYTES_WITHOUT_TAG = exports.NOISE_MSG_MAX_LENGTH_BYTES - 16;
+ exports.DUMP_SESSION_KEYS = process.env.DUMP_SESSION_KEYS;
+diff --git a/dist/src/crypto.js b/dist/src/crypto.js
+index bc5af85..f2bd432 100644
+--- a/dist/src/crypto.js
++++ b/dist/src/crypto.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.decryptStream = exports.encryptStream = void 0;
+ const buffer_1 = require("buffer");
+ const constants_1 = require("./constants");
+ // Returns generator that encrypts payload from the user
+diff --git a/dist/src/encoder.js b/dist/src/encoder.js
+index 7f60a27..05625fa 100644
+--- a/dist/src/encoder.js
++++ b/dist/src/encoder.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.decode2 = exports.decode1 = exports.decode0 = exports.encode2 = exports.encode1 = exports.encode0 = exports.uint16BEDecode = exports.uint16BEEncode = void 0;
+ const buffer_1 = require("buffer");
+ exports.uint16BEEncode = (value, target, offset) => {
+     target = target || buffer_1.Buffer.allocUnsafe(2);
+diff --git a/dist/src/errors.js b/dist/src/errors.js
+index 7c28a79..d9097b6 100644
+--- a/dist/src/errors.js
++++ b/dist/src/errors.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.FailedIKError = void 0;
+ class FailedIKError extends Error {
+     constructor(initialMsg, message) {
+         super(message);
+diff --git a/dist/src/handshake-ik.js b/dist/src/handshake-ik.js
+index e385604..21cf081 100644
+--- a/dist/src/handshake-ik.js
++++ b/dist/src/handshake-ik.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.IKHandshake = void 0;
+ const ik_1 = require("./handshakes/ik");
+ const buffer_1 = require("buffer");
+ const encoder_1 = require("./encoder");
+diff --git a/dist/src/handshake-xx-fallback.js b/dist/src/handshake-xx-fallback.js
+index 4f9039b..b7749d7 100644
+--- a/dist/src/handshake-xx-fallback.js
++++ b/dist/src/handshake-xx-fallback.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.XXFallbackHandshake = void 0;
+ const buffer_1 = require("buffer");
+ const handshake_xx_1 = require("./handshake-xx");
+ const utils_1 = require("./utils");
+diff --git a/dist/src/handshake-xx.js b/dist/src/handshake-xx.js
+index 01795d1..95a4051 100644
+--- a/dist/src/handshake-xx.js
++++ b/dist/src/handshake-xx.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.XXHandshake = void 0;
+ const buffer_1 = require("buffer");
+ const xx_1 = require("./handshakes/xx");
+ const utils_1 = require("./utils");
+diff --git a/dist/src/handshakes/abstract-handshake.js b/dist/src/handshakes/abstract-handshake.js
+index 48160aa..b1fd3d2 100644
+--- a/dist/src/handshakes/abstract-handshake.js
++++ b/dist/src/handshakes/abstract-handshake.js
+@@ -2,8 +2,6 @@
+ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.AbstractHandshake = exports.MIN_NONCE = void 0;
+ const buffer_1 = require("buffer");
+ const aead_1 = __importDefault(require("bcrypto/lib/js/aead"));
+ const x25519_1 = __importDefault(require("bcrypto/lib/js/x25519"));
+diff --git a/dist/src/handshakes/ik.js b/dist/src/handshakes/ik.js
+index 018472c..da8d267 100644
+--- a/dist/src/handshakes/ik.js
++++ b/dist/src/handshakes/ik.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.IK = void 0;
+ const buffer_1 = require("buffer");
+ const utils_1 = require("../utils");
+ const abstract_handshake_1 = require("./abstract-handshake");
+diff --git a/dist/src/handshakes/xx.js b/dist/src/handshakes/xx.js
+index 23f1cec..e4a58c5 100644
+--- a/dist/src/handshakes/xx.js
++++ b/dist/src/handshakes/xx.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.XX = void 0;
+ const buffer_1 = require("buffer");
+ const utils_1 = require("../utils");
+ const abstract_handshake_1 = require("./abstract-handshake");
+diff --git a/dist/src/index.js b/dist/src/index.js
+index b404883..a2afaec 100644
+--- a/dist/src/index.js
++++ b/dist/src/index.js
+@@ -9,8 +9,6 @@ var __createBinding = (this && this.__createBinding) || (Object.create ? (functi
+ var __exportStar = (this && this.__exportStar) || function(m, exports) {
+     for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+ };
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.NOISE = void 0;
+ const noise_1 = require("./noise");
+ __exportStar(require("./noise"), exports);
+ /**
+diff --git a/dist/src/keycache.js b/dist/src/keycache.js
+index 0d4f3f4..9c62b45 100644
+--- a/dist/src/keycache.js
++++ b/dist/src/keycache.js
+@@ -1,6 +1,4 @@
+ "use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.KeyCache = void 0;
+ /**
+  * Storage for static keys of previously connected peers.
+  */
+diff --git a/dist/src/logger.js b/dist/src/logger.js
+index 6d4865d..e9cea18 100644
+--- a/dist/src/logger.js
++++ b/dist/src/logger.js
+@@ -2,8 +2,6 @@
+ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.logCipherState = exports.logRemoteEphemeralKey = exports.logRemoteStaticKey = exports.logLocalEphemeralKeys = exports.logLocalStaticKeys = exports.logger = void 0;
+ const debug_1 = __importDefault(require("debug"));
+ const constants_1 = require("./constants");
+ exports.logger = debug_1.default('libp2p:noise');
+diff --git a/dist/src/noise.js b/dist/src/noise.js
+index 389e39d..5ec6da1 100644
+--- a/dist/src/noise.js
++++ b/dist/src/noise.js
+@@ -2,8 +2,6 @@
+ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.Noise = void 0;
+ const x25519_1 = __importDefault(require("bcrypto/lib/js/x25519"));
+ const buffer_1 = require("buffer");
+ const it_pb_rpc_1 = __importDefault(require("it-pb-rpc"));
+diff --git a/dist/src/utils.js b/dist/src/utils.js
+index 2adb394..9bb17ef 100644
+--- a/dist/src/utils.js
++++ b/dist/src/utils.js
+@@ -2,8 +2,6 @@
+ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.isValidPublicKey = exports.getHkdf = exports.verifySignedPayload = exports.getHandshakePayload = exports.decodePayload = exports.getPeerIdFromPayload = exports.signPayload = exports.createHandshakePayload = exports.getPayload = exports.generateKeypair = void 0;
+ const hkdf_1 = __importDefault(require("bcrypto/lib/hkdf"));
+ const x25519_1 = __importDefault(require("bcrypto/lib/js/x25519"));
+ const sha256_1 = __importDefault(require("bcrypto/lib/js/sha256"));
+-- 
+2.17.1
+

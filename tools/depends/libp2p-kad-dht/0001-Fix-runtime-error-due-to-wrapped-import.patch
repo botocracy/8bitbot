@@ -1,0 +1,28 @@
+From c1a799edfdd329e34b3f1ac5fb8a2a90d600483f Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 22 Oct 2020 08:59:28 -0700
+Subject: [PATCH] Fix runtime error due to wrapped import
+
+Error was:
+
+    Uncaught TypeError: Class extends value [object Object] is not a constructor or null
+---
+ src/query/run.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/query/run.js b/src/query/run.js
+index ec5ce60..02b3d20 100644
+--- a/src/query/run.js
++++ b/src/query/run.js
+@@ -1,7 +1,7 @@
+ 'use strict'
+ 
+ const PeerDistanceList = require('../peer-list/peer-distance-list')
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ 
+ const Path = require('./path')
+ const WorkerQueue = require('./workerQueue')
+-- 
+2.17.1
+

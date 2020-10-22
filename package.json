@@ -45,6 +45,14 @@
     "dexie": "^3.0.2",
     "hls.js": "^0.14.16",
     "jsonld": "^3.2.0",
+    "libp2p": "^0.29.3",
+    "libp2p-bootstrap": "*",
+    "libp2p-kad-dht": "*",
+    "libp2p-mplex": "*",
+    "libp2p-noise": "*",
+    "libp2p-secio": "*",
+    "libp2p-webrtc-star": "*",
+    "libp2p-websockets": "*",
     "mediasource": "^2.3.0",
     "p2p-media-loader-core": "^0.6.2",
     "p2p-media-loader-hlsjs": "^0.6.2",
@@ -67,6 +75,7 @@
     "isomorphic-fetch": "^3.0.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^8.2.1",
+    "node-forge": "^0.10.0",
     "npm-force-resolutions": ">=0.0.3",
     "prettier": "^2.1.2",
     "prettier-plugin-organize-imports": "^1.1.1",
@@ -83,6 +92,8 @@
     "typescript": "^4.0.5"
   },
   "resolutions": {
+    "libp2p-interfaces": "0.7.2",
+    "node-forge": "0.10.0",
     "readable-stream": "3.6.0"
   },
   "bundleDependencies": false,
