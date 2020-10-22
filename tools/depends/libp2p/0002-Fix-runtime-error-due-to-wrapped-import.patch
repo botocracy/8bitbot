@@ -1,0 +1,68 @@
+From 3e35d773888ffa07896ea61c2708308f6c4508aa Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Wed, 21 Oct 2020 22:05:08 -0700
+Subject: [PATCH 2/2] Fix runtime error due to wrapped import
+
+Error was:
+
+    Uncaught TypeError: Class extends value [object Object] is not a constructor or null
+---
+ src/circuit/listener.js                             | 2 +-
+ src/connection-manager/latency-monitor.js           | 2 +-
+ src/connection-manager/visibility-change-emitter.js | 2 +-
+ src/metrics/stats.js                                | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/circuit/listener.js b/src/circuit/listener.js
+index 055b4ef..e7592a4 100644
+--- a/src/circuit/listener.js
++++ b/src/circuit/listener.js
+@@ -1,6 +1,6 @@
+ 'use strict'
+ 
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ const multiaddr = require('multiaddr')
+ 
+ const debug = require('debug')
+diff --git a/src/connection-manager/latency-monitor.js b/src/connection-manager/latency-monitor.js
+index 8af45ed..977a1de 100644
+--- a/src/connection-manager/latency-monitor.js
++++ b/src/connection-manager/latency-monitor.js
+@@ -6,7 +6,7 @@
+ 
+ /* global window */
+ const globalThis = require('ipfs-utils/src/globalthis')
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ const VisibilityChangeEmitter = require('./visibility-change-emitter')
+ const debug = require('debug')('latency-monitor:LatencyMonitor')
+ 
+diff --git a/src/connection-manager/visibility-change-emitter.js b/src/connection-manager/visibility-change-emitter.js
+index 152945e..7e8ac90 100644
+--- a/src/connection-manager/visibility-change-emitter.js
++++ b/src/connection-manager/visibility-change-emitter.js
+@@ -4,7 +4,7 @@
+  * This code is based on `latency-monitor` (https://github.com/mlucool/latency-monitor) by `mlucool` (https://github.com/mlucool), available under Apache License 2.0 (https://github.com/mlucool/latency-monitor/blob/master/LICENSE)
+  */
+ 'use strict'
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ 
+ const debug = require('debug')('latency-monitor:VisibilityChangeEmitter')
+ 
+diff --git a/src/metrics/stats.js b/src/metrics/stats.js
+index fa82527..de7e59b 100644
+--- a/src/metrics/stats.js
++++ b/src/metrics/stats.js
+@@ -1,6 +1,6 @@
+ 'use strict'
+ 
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ const Big = require('bignumber.js')
+ const MovingAverage = require('moving-average')
+ const retimer = require('retimer')
+-- 
+2.17.1
+
