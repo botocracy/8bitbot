@@ -94,6 +94,14 @@ function postinstall() {
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
 
+  # Patch libp2p libraries
+  patch_package "libp2p" "0001-Unexpected-token-building-libp2p.patch"
+  patch_package "libp2p" "0002-Fix-runtime-error-due-to-wrapped-import.patch"
+  patch_package "libp2p" "0003-Fix-runtime-error-due-to-wrapped-BigNumber.patch"
+  patch_package_recursive "libp2p-interfaces" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+  patch_package "libp2p-kad-dht" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+  patch_package "libp2p-noise" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
+
   # Patch p2p-media-loader libraries
   patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
   patch_package "p2p-media-loader-core" "0002-Fix-runtime-error-with-snowpack.patch"

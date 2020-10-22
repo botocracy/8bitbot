@@ -1,0 +1,28 @@
+From 8c669a36ba1b5e51161a9e3ee30809dba8ca4aa9 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 22 Oct 2020 10:13:24 -0700
+Subject: [PATCH 3/3] Fix runtime error due to wrapped BigNumber
+
+Error was:
+
+    stats.js:32 Uncaught (in promise) TypeError: Big is not a function
+---
+ src/metrics/stats.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/metrics/stats.js b/src/metrics/stats.js
+index 1419986..7361666 100644
+--- a/src/metrics/stats.js
++++ b/src/metrics/stats.js
+@@ -1,7 +1,7 @@
+ 'use strict'
+ 
+ const { EventEmitter } = require('events')
+-const Big = require('bignumber.js')
++const Big = require('bignumber.js').BigNumber
+ const MovingAverage = require('moving-average')
+ const retimer = require('retimer')
+ 
+-- 
+2.17.1
+
