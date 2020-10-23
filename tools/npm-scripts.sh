@@ -89,6 +89,10 @@ function postinstall() {
   # Patch eth-block-tracker library
   patch_package "eth-block-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
+  # Patch IPFS libraries
+  patch_package "ipfs-bitswap" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+  patch_package "ipfs-pubsub-peer-monitor" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
@@ -102,6 +106,9 @@ function postinstall() {
   patch_package "libp2p-kad-dht" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
   patch_package "libp2p-noise" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
 
+  # Patch OrbitDB libraries
+  patch_package "orbit-db-pubsub" "0001-Fix-unexpected-token-error.patch"
+
   # Patch p2p-media-loader libraries
   patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
   patch_package "p2p-media-loader-core" "0002-Fix-runtime-error-with-snowpack.patch"
@@ -109,6 +116,9 @@ function postinstall() {
 
   # Patch readable-stream library (recursively)
   patch_package_recursive "readable-stream" "0001-Fix-circular-dependency.patch"
+
+  # Patch rollup libraries
+  patch_package "rollup-plugin-node-globals" "0001-Fix-error-installing-js-ipfs-module.patch"
 
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"

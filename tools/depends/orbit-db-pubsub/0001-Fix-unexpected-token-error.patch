@@ -1,0 +1,28 @@
+From 71e57853cac4687f9799d9daafabc38948f8c324 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 22 Oct 2020 07:58:57 -0700
+Subject: [PATCH] Fix unexpected token error
+
+Error was:
+
+    Unexpected token (110:12) in ./node_modules/orbit-db-pubsub/src/ipfs-pubsub.js
+---
+ src/ipfs-pubsub.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/ipfs-pubsub.js b/src/ipfs-pubsub.js
+index 2f380a7..cf2dce9 100644
+--- a/src/ipfs-pubsub.js
++++ b/src/ipfs-pubsub.js
+@@ -100,7 +100,7 @@ class IPFSPubsub {
+     topicId = message.topicIDs[0]
+     try {
+       content = JSON.parse(Buffer.from(message.data).toString())
+-    } catch {
++    } catch(err) {
+       content = message.data; //Leave content alone. Meant for higher level code using custom serialization.
+     }
+     subscription = this._subscriptions[topicId]
+-- 
+2.17.1
+

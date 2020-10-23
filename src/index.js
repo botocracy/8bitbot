@@ -10,6 +10,9 @@
  * Application logic
  **/
 
+import Ipfs from 'ipfs';
+import OrbitDB from 'orbit-db';
+
 import Hls from 'hls.js';
 import WebTorrent from 'webtorrent';
 
@@ -135,32 +138,14 @@ const LOG_UI = 'UI    ';
 const LOG_MARKET = 'MARKET';
 
 //////////////////////////////////////////////////////////////////////////
-// External libraries
-//////////////////////////////////////////////////////////////////////////
-
-// CID for external libraries
-const DISTRO_CID = 'QmUATZDVu9A4m9kn2uNDgFafiDpkUKyPWdiunp1zNZ4NFs';
-
-// IPFS libraries
-const JS_IPFS_VERSION = '0.47.0';
-const ORBIT_DB_VERSION = '0.24.2';
-
-// URIs
-const JS_IPFS_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/ipfs_${JS_IPFS_VERSION}/index.min.js`;
-const ORBIT_DB_SRC = `${IPFS_GATEWAY}/ipfs/${DISTRO_CID}/orbit-db_${ORBIT_DB_VERSION}/orbitdb.min.js`;
-
-//////////////////////////////////////////////////////////////////////////
 // Application info
 //////////////////////////////////////////////////////////////////////////
 
 console.log('-------------------------------------');
 console.log(`${document.title}`);
-console.log(`js-ipfs version: ${JS_IPFS_VERSION}`);
-console.log(`OrbitDB version: ${ORBIT_DB_VERSION}`);
 console.log(`Gateway: ${IPFS_GATEWAY}`);
 console.log(`World version: ${world.version}`);
 console.log(`World: ${world.cid}`);
-console.log(`Libraries: ${DISTRO_CID}`);
 console.log('-------------------------------------');
 
 //////////////////////////////////////////////////////////////////////////
@@ -170,10 +155,6 @@ console.log('-------------------------------------');
 // Bootstraps IPFS and transfers control to our entry points
 async function bootstrapIpfs() {
   log_ipfs(`Bootstrapping IPFS`);
-
-  log_ipfs(`Downloading IPFS libraries`);
-  await Promise.all([loadScript(JS_IPFS_SRC), loadScript(ORBIT_DB_SRC)]);
-  log_ipfs(`Finished downloading IPFS libraries`);
 
   // IPFS options
   const options = {
@@ -228,7 +209,7 @@ async function handleMessage(message) {
 async function loadOrbitDB(ipfsNode) {
   // Create the database
   log_ipfs(`Creating OrbitDB database`);
-  const orbitdb = await window.OrbitDB.createInstance(ipfsNode);
+  const orbitdb = await OrbitDB.createInstance(ipfsNode);
 
   log_ipfs(`   DB name: ${DATABASE_NAME}`);
   const db = await orbitdb.log(DATABASE_NAME);

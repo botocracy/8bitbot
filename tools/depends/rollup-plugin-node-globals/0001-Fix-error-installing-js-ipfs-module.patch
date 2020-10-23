@@ -1,0 +1,58 @@
+From 970604dbcb41ed5acb8e37a12b0c59b5f71e0cfd Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 22 Oct 2020 08:12:37 -0700
+Subject: [PATCH] Fix error installing js-ipfs module
+
+Error was:
+
+    [snowpack] installing dependencies...
+    [snowpack] Failed to load node_modules/ipfs/src/core/index.js
+      Cannot read property '__handled' of undefined
+---
+ dist/rollup-plugin-node-globals.cjs.js | 2 +-
+ dist/rollup-plugin-node-globals.es6.js | 2 +-
+ src/inject/index.js                    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/dist/rollup-plugin-node-globals.cjs.js b/dist/rollup-plugin-node-globals.cjs.js
+index 2a94535..3355733 100644
+--- a/dist/rollup-plugin-node-globals.cjs.js
++++ b/dist/rollup-plugin-node-globals.cjs.js
+@@ -97,7 +97,7 @@ function inject (code, id, mod1, mod2, sourceMap) {
+ 
+   function handleReference(node, name, keypath, parent) {
+     if ((mod1.has(keypath) || mod2.has(keypath)) && !scope.contains(name) && !imports[name]) {
+-      if (mod2.has(keypath) && parent.__handled) {
++      if (mod2.has(keypath) && parent && parent.__handled) {
+         return;
+       }
+       var module = mod1.has(keypath) ? mod1.get(keypath) : mod2.get(keypath);
+diff --git a/dist/rollup-plugin-node-globals.es6.js b/dist/rollup-plugin-node-globals.es6.js
+index 9e78e03..e6a9aac 100644
+--- a/dist/rollup-plugin-node-globals.es6.js
++++ b/dist/rollup-plugin-node-globals.es6.js
+@@ -93,7 +93,7 @@ function inject (code, id, mod1, mod2, sourceMap) {
+ 
+   function handleReference(node, name, keypath, parent) {
+     if ((mod1.has(keypath) || mod2.has(keypath)) && !scope.contains(name) && !imports[name]) {
+-      if (mod2.has(keypath) && parent.__handled) {
++      if (mod2.has(keypath) && parent && parent.__handled) {
+         return;
+       }
+       var module = mod1.has(keypath) ? mod1.get(keypath) : mod2.get(keypath);
+diff --git a/src/inject/index.js b/src/inject/index.js
+index d695365..6e8ea2a 100644
+--- a/src/inject/index.js
++++ b/src/inject/index.js
+@@ -81,7 +81,7 @@ export default function(code, id, mod1, mod2, sourceMap) {
+ 
+   function handleReference(node, name, keypath, parent) {
+     if ((mod1.has(keypath) || mod2.has(keypath)) && !scope.contains(name) && !imports[name]) {
+-      if (mod2.has(keypath) && parent.__handled) {
++      if (mod2.has(keypath) && parent && parent.__handled) {
+         return;
+       }
+       let module = mod1.has(keypath) ? mod1.get(keypath) : mod2.get(keypath);
+-- 
+2.17.1
+

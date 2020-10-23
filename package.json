@@ -43,6 +43,7 @@
     "npm": ">=6.1.0"
   },
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^9.0.0",
     "@snowpack/plugin-typescript": "^1.0.1",
     "@snowpack/plugin-webpack": ">=1.4.0",
     "@types/chai": "^4.2.14",
@@ -71,6 +72,7 @@
     "dexie": "^3.0.2",
     "ganache-core": "<=2.12.1",
     "hls.js": "^0.13.2",
+    "ipfs": "^0.50.2",
     "jsonld": "^3.1.1",
     "libp2p": "^0.29.1",
     "libp2p-bootstrap": "*",
@@ -81,6 +83,7 @@
     "libp2p-webrtc-star": "*",
     "libp2p-websockets": "*",
     "mediasource": "^2.3.0",
+    "orbit-db": "^0.26.0",
     "p2p-media-loader-core": "^0.6.2",
     "p2p-media-loader-hlsjs": "^0.6.2",
     "path": "^0.12.7",
