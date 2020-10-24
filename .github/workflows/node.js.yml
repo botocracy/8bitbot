@@ -50,6 +50,14 @@ jobs:
       - name: Checkout main repo
         uses: actions/checkout@v2
 
+      - name: Use Nix
+        uses: cachix/install-nix-action@v11
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Run nix-build
+        run: nix-build
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
