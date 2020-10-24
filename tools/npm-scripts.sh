@@ -29,9 +29,9 @@ function patch_package() {
     exit 1
   fi
 
-  echo "Patching: ${package}"
+  echo "Patching: ${package_path}"
 
-  patch -p1 --forward --directory="${package_path}" <  "${patch_path}" > /dev/null || ( \
+  patch -p1 --forward --directory="${package_path}" < "${patch_path}" || ( \
     code=$?; [[ "${code}" -lt "2" ]] || exit ${code}; \
   )
 }
@@ -58,15 +58,15 @@ function patch_package_recursive() {
     exit 1
   fi
 
-  echo "Patching: ${package}"
-
   for package_path in $(find "node_modules" -name "${package}"); do
     # Skip rollup polyfills
     if echo "${package_path}" | grep --quiet rollup-plugin-node-polyfills; then
       continue
     fi
 
-    patch -p1 --forward --directory="${package_path}" <  "${patch_path}" > /dev/null || ( \
+    echo "Patching: ${package_path}"
+
+    patch -p1 --forward --directory="${package_path}" < "${patch_path}" || ( \
       code=$?; [[ "${code}" -lt "2" ]] || exit ${code}; \
     )
   done
