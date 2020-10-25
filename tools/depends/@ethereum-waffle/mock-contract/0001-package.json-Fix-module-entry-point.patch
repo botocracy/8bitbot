@@ -1,0 +1,25 @@
+From 667dc8edee3e524da333d332748885da2a7d92a8 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Sun, 1 Nov 2020 11:42:43 -0800
+Subject: [PATCH] package.json: Fix module entry point
+
+---
+ package.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/package.json b/package.json
+index a8b92a0..215b7c9 100644
+--- a/package.json
++++ b/package.json
+@@ -20,7 +20,7 @@
+     "url": "https://github.com/EthWorks/Waffle/issues"
+   },
+   "main": "dist/cjs/index.js",
+-  "module": "dist/esm/index.ts",
++  "module": "dist/esm/index.js",
+   "types": "dist/esm/index.d.ts",
+   "scripts": {
+     "prepublishOnly": "yarn build",
+-- 
+2.17.1
+

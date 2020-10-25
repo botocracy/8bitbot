@@ -1,0 +1,34 @@
+From a8ae2d9c5bbdbe5ac301b681e1137244eb2e5774 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Sun, 1 Nov 2020 11:17:35 -0800
+Subject: [PATCH] package.json: Fix module entry point
+
+Snowpack install error was:
+
+    Cannot find module 'ethereum-waffle/dist/esm/index.ts'
+    Require stack:
+    - esinstall/lib/index.js
+    - snowpack/lib/commands/install.js
+    - snowpack/lib/commands/add-rm.js
+    - snowpack/lib/index.js
+    - snowpack/index.bin.js
+---
+ package.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/package.json b/package.json
+index 1ffdb90..f6b1a44 100644
+--- a/package.json
++++ b/package.json
+@@ -21,7 +21,7 @@
+     "url": "https://github.com/EthWorks/Waffle/issues"
+   },
+   "main": "dist/cjs/index.js",
+-  "module": "dist/esm/index.ts",
++  "module": "dist/esm/index.js",
+   "types": "dist/esm/index.d.ts",
+   "bin": {
+     "waffle": "./bin/waffle"
+-- 
+2.17.1
+
