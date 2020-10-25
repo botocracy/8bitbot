@@ -43,6 +43,10 @@
     "npm": ">=6.1.0"
   },
   "devDependencies": {
+    "@eth-optimism/rollup-contracts": "0.0.1-alpha.37",
+    "@eth-optimism/rollup-dev-tools": "0.0.1-alpha.28",
+    "@eth-optimism/rollup-full-node": "0.0.1-alpha.29",
+    "@eth-optimism/solc": "^0.5.16-alpha.3",
     "@ethereum-waffle/provider": "^3.1.2",
     "@openzeppelin/contracts": "^3.2.0",
     "@snowpack/plugin-typescript": "^1.0.1",
