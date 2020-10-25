@@ -89,6 +89,14 @@ function postinstall() {
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
+  # Patch ethereum-waffle libraries
+  patch_package "@ethereum-waffle/chai" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "@ethereum-waffle/compiler" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "@ethereum-waffle/ens" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "@ethereum-waffle/mock-contract" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "@ethereum-waffle/provider" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "ethereum-waffle" "0001-package.json-Fix-module-entry-point.patch"
+
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
@@ -138,6 +146,11 @@ function depends-install() {
 }
 
 function build() {
+  # Build smart contracts
+  echo "Compiling contracts with waffle..."
+  waffle
+  echo "Finished compiling contracts"
+
   # Build snowpack package
   snowpack build
 }
@@ -160,6 +173,13 @@ function lint() {
 
 function test() {
   lint
+
+  # Build smart contracts if not already built
+  if [ ! -d "build-contracts" ]; then
+    echo "Compiling contracts with waffle..."
+    waffle
+    echo "Finished compiling contracts"
+  fi
 
   # Run test suite
   # TODO: Add --require canvas if ImageData or other APIs are needed for tests
