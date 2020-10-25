@@ -87,6 +87,11 @@ function depends-install() {
 }
 
 function build() {
+  # Build smart contracts
+  echo "Compiling contracts with waffle..."
+  waffle
+  echo "Finished compiling contracts"
+
   # Build snowpack package
   snowpack build
 }
@@ -109,6 +114,13 @@ function lint() {
 
 function test() {
   lint
+
+  # Build smart contracts if not already built
+  if [ ! -d "build-contracts" ]; then
+    echo "Compiling contracts with waffle..."
+    waffle
+    echo "Finished compiling contracts"
+  fi
 
   # Run test suite
   # TODO: Add --require canvas if ImageData or other APIs are needed for tests
