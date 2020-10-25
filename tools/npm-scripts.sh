@@ -73,10 +73,8 @@ function patch_package_recursive() {
 }
 
 function preinstall() {
-  # Create package-lock.json for npx if it doesn't exist
-  if [ ! -f "package-lock.json" ]; then
-    npm install --package-lock-only --ignore-scripts
-  fi
+  # Create package-lock.json for npx
+  npm install --package-lock-only --ignore-scripts
 
   # Force recursive dependencies based on "resolutions" field in package.json
   npx npm-force-resolutions
