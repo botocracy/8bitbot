@@ -1,0 +1,12 @@
+{
+  "compilerType": "native",
+  "sourceDirectory": "./contracts",
+  "outputDirectory": "./build-contracts",
+  "flattenOutputDirectory": "./flatten-contracts",
+  "compilerOptions": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    }
+  }
+}
