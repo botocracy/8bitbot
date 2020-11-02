@@ -38,6 +38,7 @@
     "npm": ">=6.1.0"
   },
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^9.0.0",
     "@snowpack/plugin-typescript": "^1.0.2",
     "@snowpack/plugin-webpack": "^2.0.17",
     "@types/chai": "^4.2.14",

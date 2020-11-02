@@ -8,6 +8,7 @@
 
 const globals = require('rollup-plugin-node-globals');
 const polyfills = require('rollup-plugin-node-polyfills');
+const resolve = require('@rollup/plugin-node-resolve').nodeResolve;
 
 module.exports = {
   scripts: {
@@ -26,7 +27,12 @@ module.exports = {
     sourceMap: true,
     treeshake: true,
     rollup: {
-      plugins: [globals(), polyfills()],
+      plugins: [
+        // Fix "Uncaught TypeError: bufferEs6.hasOwnProperty is not a function"
+        resolve({ preferBuiltins: false }),
+        globals(),
+        polyfills(),
+      ],
     },
   },
 };
