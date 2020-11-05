@@ -71,31 +71,31 @@ function clean() {
 
 # Dispatch script
 case $1 in
-  start)
-    start
-    ;;
-  postinstall)
-    postinstall
-    ;;
-  build)
-    build
-    ;;
-  audit)
-    audit
-    ;;
-  lint)
-    lint
-    ;;
-  test)
-    test
-    ;;
-  format)
-    format
-    ;;
-  clean)
-    clean
-    ;;
-  *)
-    exit 1
-    ;;
+start)
+  start
+  ;;
+postinstall)
+  postinstall
+  ;;
+build)
+  build
+  ;;
+audit)
+  audit
+  ;;
+lint)
+  lint
+  ;;
+test)
+  test
+  ;;
+format)
+  format
+  ;;
+clean)
+  clean
+  ;;
+*)
+  exit 1
+  ;;
 esac
