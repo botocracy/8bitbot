@@ -86,6 +86,15 @@ function preinstall() {
 }
 
 function postinstall() {
+  # Patch 0x libraries
+  rm -rf "node_modules/@0x/typescript-typings/types/chai" # Duplicate symbols
+  rm -rf "node_modules/@0x/typescript-typings/types/chai-as-promised" # Duplicate symbols
+  rm -rf "node_modules/@0x/typescript-typings/types/ganache-core" # Outdated symbols
+  patch -p1 --forward --directory="node_modules/0x.js/node_modules/@0x/subproviders" < \
+    "tools/depends/0x.js/0001-Fix-build-error-due-to-ganache-version-mismatch.patch" || ( \
+      code=$?; [[ "${code}" -lt "2" ]] || exit ${code}; \
+    )
+
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
@@ -96,6 +105,9 @@ function postinstall() {
   patch_package "@ethereum-waffle/mock-contract" "0001-package.json-Fix-module-entry-point.patch"
   patch_package "@ethereum-waffle/provider" "0001-package.json-Fix-module-entry-point.patch"
   patch_package "ethereum-waffle" "0001-package.json-Fix-module-entry-point.patch"
+
+  # Patch hdkey library
+  patch_package_recursive "hdkey" "0001-Replace-crypto-builtins-with-npm-packages.patch"
 
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
