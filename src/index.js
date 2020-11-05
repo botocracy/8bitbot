@@ -21,9 +21,137 @@ import { loadVideoInfo } from './peertube-api';
 import { VideoPlayer } from './player/video-player';
 import { World } from './world';
 
+import { BigNumber } from 'bignumber.js';
+
+//import { MnemonicWalletSubprovider } from '@0x/subproviders';
+//import { default as Web3ProviderEngine } from 'web3-provider-engine';
+//import { default as Web3 } from 'web3';
+//import { default as RPCSubprovider } from 'web3-provider-engine/subproviders/rpc';
+
+//import { NETWORK_CONFIGS } from './configs';
+//import { MNEMONIC } from './environment';
+import {
+  ONE_SECOND_MS,
+  TEN_MINUTES_MS,
+  GANACHE_NETWORK_ID,
+  KOVAN_NETWORK_ID,
+  RINKEBY_NETWORK_ID,
+  ROPSTEN_NETWORK_ID,
+} from './constants';
+import { createProviderEngine } from './web3-provider-engine';
+
 const world = new World();
 
 const VIDEO_ID = '5ea4b933-26e2-4813-a2b2-7c99c8626a60'; // Dubai Creek by Swedrone
+
+// Utilities
+function getNetworkName(networkId) {
+  switch (networkId) {
+    case ROPSTEN_NETWORK_ID:
+      return 'Ropsten';
+    case RINKEBY_NETWORK_ID:
+      return 'Rinkeby';
+    case KOVAN_NETWORK_ID:
+      return 'Kovan';
+    case GANACHE_NETWORK_ID:
+      return 'Ganache';
+  }
+  return `Unknown (${networkId})`;
+}
+
+// Entry point
+window.addEventListener('load', async () => {
+  // Detect if Web3 is found, if not, ask the user to install MetaMask
+  if (typeof web3 === 'undefined') {
+    // Show MetaMask install dialog
+    log_market(`Web 3 not detected, showing MetaMask install dialog`);
+
+    var dialog = document.getElementById('metamaskDialog');
+    var dialogBody = document.getElementById('metamaskDialogForegroundInstall');
+
+    dialog.style.display = 'block';
+    dialogBody.style.display = 'block';
+
+    // Require a page refresh
+    return;
+  } else {
+    log_market(`Web 3 support detected`);
+  }
+
+  const dialogLogin = document.getElementById('metamaskDialogForegroundLogin');
+
+  // Called on MetaMask login UI interaction
+  dialogLogin.onclick = async () => {
+    ethereum.enable();
+  };
+
+  // Run the marketplace
+  runMarketplace();
+});
+
+// Run the marketplace logic
+async function runMarketplace() {
+  // TODO: Wait for a Web 3 account
+  /*
+  if (!(await waitForLogin())) {
+    return;
+  }
+  */
+
+  log_market(`Running marketplace`);
+  log_market(`Creating exchange`);
+
+  // Create a Web 3 provider engine
+  const providerEngine = createProviderEngine();
+
+  // Log new blocks
+  providerEngine.on('block', function (block) {
+    // TODO: Accept 'block' as function parameter
+    console.log('================================');
+    console.log(
+      'BLOCK CHANGED: ',
+      '#' + block.number.toString('hex'),
+      '0x' + block.hash.toString('hex')
+    );
+    console.log('================================');
+  });
+
+  // Start provider engine
+  log_market(`Starting Web 3 provider`);
+  await providerEngine.start();
+
+  // Create Web 3 interface
+  log_market(`Creating Web 3 interface`);
+  const web3 = new Web3(providerEngine);
+  const web3Wrapper = new Web3Wrapper(providerEngine);
+
+  // Fetch the network ID
+  let networkId;
+
+  try {
+    networkId = await web3Wrapper.getNetworkIdAsync();
+  } catch (err) {
+    log_market(`Error determining network version:`);
+    console.error(err);
+  }
+
+  log_market(`   Ethereum network: ${getNetworkName(networkId)}`);
+
+  // Determine block height
+  var blockHeight;
+
+  try {
+    blockHeight = await web3Wrapper.getBlockNumberAsync();
+  } catch (err) {
+    log_market(`Error determining block height:`);
+    console.error(err);
+  }
+
+  log_market(`   Block height: ${blockHeight}`);
+
+  // TODO: Fetch token registry
+  // See https://github.com/vsergeev/0xtrades.info/blob/master/client/src/model.ts
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Application parameters
