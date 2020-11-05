@@ -1,0 +1,40 @@
+From 59ce3fe91a2a0f53695d1dd5d3a80c6d17f67e65 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 22 Oct 2020 09:08:06 -0700
+Subject: [PATCH] Fix runtime error due to wrapped import
+
+Error was:
+
+    Uncaught TypeError: Class extends value [object Object] is not a constructor or null
+---
+ src/stats/index.js | 2 +-
+ src/stats/stat.js  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/stats/index.js b/src/stats/index.js
+index a7a9e90..4c6f576 100644
+--- a/src/stats/index.js
++++ b/src/stats/index.js
+@@ -1,6 +1,6 @@
+ 'use strict'
+ 
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ const Stat = require('./stat')
+ 
+ const defaultOptions = {
+diff --git a/src/stats/stat.js b/src/stats/stat.js
+index da3e461..5b17640 100644
+--- a/src/stats/stat.js
++++ b/src/stats/stat.js
+@@ -1,6 +1,6 @@
+ 'use strict'
+ 
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ const Big = require('bignumber.js')
+ const MovingAverage = require('moving-average')
+ 
+-- 
+2.17.1
+

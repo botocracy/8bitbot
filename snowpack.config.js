@@ -36,6 +36,7 @@ module.exports = {
     'libp2p-secio',
     'libp2p-webrtc-star',
     'libp2p-websockets',
+    'orbit-db',
     'p2p-media-loader-core',
     'p2p-media-loader-hlsjs',
     'path',

@@ -1,0 +1,28 @@
+From 95c36a421d6286405d7d2a3a0a9ca7b9314cbb8e Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 22 Oct 2020 09:15:12 -0700
+Subject: [PATCH] Fix runtime error due to wrapped import
+
+Error was:
+
+    Uncaught TypeError: Class extends value [object Object] is not a constructor or null
+---
+ src/ipfs-pubsub-peer-monitor.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/ipfs-pubsub-peer-monitor.js b/src/ipfs-pubsub-peer-monitor.js
+index ccf6d58..be48214 100644
+--- a/src/ipfs-pubsub-peer-monitor.js
++++ b/src/ipfs-pubsub-peer-monitor.js
+@@ -1,7 +1,7 @@
+ 'use strict'
+ 
+ const { difference} = require('./utils')
+-const EventEmitter = require('events')
++const { EventEmitter } = require('events')
+ 
+ const DEFAULT_OPTIONS = {
+   start: true,
+-- 
+2.17.1
+

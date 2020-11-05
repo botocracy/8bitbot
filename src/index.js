@@ -6,6 +6,13 @@
  * See LICENSE.txt for more information.
  */
 
+/**
+ * Application logic
+ **/
+
+import Ipfs from 'ipfs';
+import OrbitDB from 'orbit-db';
+
 import Hls from 'hls.js';
 import WebTorrent from 'webtorrent';
 
@@ -29,6 +36,42 @@ const world = new World();
 
 const VIDEO_ID = '5ea4b933-26e2-4813-a2b2-7c99c8626a60'; // Dubai Creek by Swedrone
 
+// Utilities
+function getNetworkName(networkId) {
+  switch (networkId) {
+    case ROPSTEN_NETWORK_ID:
+      return 'Ropsten';
+    case RINKEBY_NETWORK_ID:
+      return 'Rinkeby';
+    case KOVAN_NETWORK_ID:
+      return 'Kovan';
+    case GANACHE_NETWORK_ID:
+      return 'Ganache';
+  }
+  return `Unknown (${networkId})`;
+}
+
+// Entry point
+window.addEventListener('load', async () => {
+  // Fetch the network ID
+  const networkId = NETWORK_CONFIGS.networkId;
+
+  log_market(`   Ethereum network ID: ${networkId}`);
+  log_market(`   Ethereum network: ${getNetworkName(networkId)}`);
+});
+
+//////////////////////////////////////////////////////////////////////////
+// Application parameters
+//////////////////////////////////////////////////////////////////////////
+
+// TODO
+const DATABASE_NAME = '8bitbot';
+
+// Logging prefixes
+const LOG_IPFS = 'IPFS  ';
+const LOG_UI = 'UI    ';
+const LOG_MARKET = 'MARKET';
+
 //////////////////////////////////////////////////////////////////////////
 // Application info
 //////////////////////////////////////////////////////////////////////////
@@ -39,6 +82,87 @@ console.log(`Gateway: ${IPFS_GATEWAY}`);
 console.log(`World version: ${world.version}`);
 console.log(`World: ${world.cid}`);
 console.log('-------------------------------------');
+
+//////////////////////////////////////////////////////////////////////////
+// Application logic
+//////////////////////////////////////////////////////////////////////////
+
+// Bootstraps IPFS and transfers control to our entry points
+async function bootstrapIpfs() {
+  log_ipfs(`Bootstrapping IPFS`);
+
+  // IPFS options
+  const options = {
+    repo: `ipfs-${Math.random()}`,
+    EXPERIMENTAL: {
+      ipnsPubsub: true,
+      sharding: true,
+    },
+  };
+
+  // Create IPFS node
+  const node = await Ipfs.create(options);
+
+  // Log node status
+  const status = node.isOnline() ? 'online' : 'offline';
+  log_ipfs(`IPFS node status: ${status}`);
+
+  //
+  // IPFS is ready to use!
+  // See https://github.com/ipfs/js-ipfs#core-api
+  //
+
+  // Load OrbitDB
+  await loadOrbitDB(node);
+}
+
+// Publish an object to OrbitDB
+async function publishMessage(message) {
+  log_ipfs(`Publishing message:`);
+  console.log(message);
+
+  // TODO: Fix global dependency
+  window.sellOrder = message;
+
+  // TODO
+  runBuyerAction(window.web3Wrapper);
+}
+
+// Handle an object received by OrbitDB
+async function handleMessage(message) {
+  // Recover the sell order
+  //sellOrder = decodeMessage(message);
+
+  // Expose the sell order to the user
+  window.sellOrder = sellOrder;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// OrbitDB (TODO)
+//////////////////////////////////////////////////////////////////////////
+
+async function loadOrbitDB(ipfsNode) {
+  // Create the database
+  log_ipfs(`Creating OrbitDB database`);
+  const orbitdb = await OrbitDB.createInstance(ipfsNode);
+
+  log_ipfs(`   DB name: ${DATABASE_NAME}`);
+  const db = await orbitdb.log(DATABASE_NAME);
+
+  log_ipfs(`   DB address: ${db.address.toString()}`);
+
+  /* TODO
+  dbAddress = db.address.toString();
+
+  db2 = await orbitdb.log(dbAddress);
+
+  db2.events.on('replicated', () => {
+    const result = db2.iterator({limit: -1}).collect().map(e => e.payload.value);
+    log_ipfs(`Result:`);
+    console.log(result);
+  });
+  */
+}
 
 //////////////////////////////////////////////////////////////////////////
 // UI logic

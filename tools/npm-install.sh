@@ -73,10 +73,17 @@ function postinstall() {
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
+  # Patch IPFS libraries
+  patch_package "ipfs-bitswap" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+  patch_package "ipfs-pubsub-peer-monitor" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
+
+  # Patch OrbitDB libraries
+  patch_package "orbit-db-pubsub" "0001-Fix-unexpected-token-error.patch"
 
   # Patch libp2p libraries
   patch_package "libp2p" "0001-Unexpected-token-building-libp2p.patch"
@@ -93,6 +100,9 @@ function postinstall() {
 
   # Patch readable-stream library (recursively)
   patch_package_recursive "readable-stream" "0001-Fix-circular-dependency.patch"
+
+  # Patch rollup libraries
+  patch_package "rollup-plugin-node-globals" "0001-Fix-error-installing-js-ipfs-module.patch"
 
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
