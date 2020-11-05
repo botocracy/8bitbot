@@ -44,6 +44,9 @@ DEPENDS_DIR="${TOOL_DIR}/depends"
 # Build system stamp directory
 STAMP_DIR="${TOOL_DIR}/stamps"
 
+# Location of native dependency binaries
+DEPENDS_BINARY_DIR="${TOOL_DIR}/bin"
+
 # Location of installed dependency files
 DISTRIBUTION_DIR="${TOOL_DIR}/dist"
 

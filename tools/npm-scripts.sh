@@ -113,6 +113,12 @@ function depends() {
     BUILD_DEPENDS+="opencv "
   fi
 
+  # Build Solidity
+  if [ ! -f "${DEPENDS_BINARY_DIR}/solc" ]; then
+    rm -f "${STAMP_DIR}/build-solidity"
+    BUILD_DEPENDS+="solidity "
+  fi
+
   make -C "${TOOL_DIR}" -j$(getconf _NPROCESSORS_ONLN) ${BUILD_DEPENDS}
 
   # Build C++ libraries
