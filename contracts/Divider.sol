@@ -10,10 +10,10 @@
  */
 pragma solidity ^0.5.11;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
+import '@openzeppelin/contracts/math/SafeMath.sol';
 
 /**
- * @title: Contract to divide funds evenly between two addresses 
+ * @title: Contract to divide funds evenly between two addresses
  */
 contract Divider {
   using SafeMath for uint256;
@@ -29,8 +29,8 @@ contract Divider {
    * 10^(-18) Ether, or an "atto-ether").
    */
   function divideFunds(address _a, address _b) public payable {
-    uint256 halfValue = msg.value.div(2)
-    _a.transfer(halfValue)
-    _b.transfer(halfValue)
+    uint256 halfValue = msg.value.div(2);
+    _a.transfer(halfValue);
+    _b.transfer(halfValue);
   }
 }
