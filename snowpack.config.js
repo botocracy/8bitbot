@@ -9,6 +9,7 @@
 const globals = require('rollup-plugin-node-globals');
 const polyfills = require('rollup-plugin-node-polyfills');
 const resolve = require('@rollup/plugin-node-resolve').nodeResolve;
+const terser = require('rollup-plugin-terser').terser;
 
 module.exports = {
   scripts: {
@@ -45,6 +46,11 @@ module.exports = {
         resolve({ preferBuiltins: false }),
         globals(),
         polyfills(),
+        terser({
+          output: {
+            comments: 'all',
+          },
+        }),
       ],
     },
   },
