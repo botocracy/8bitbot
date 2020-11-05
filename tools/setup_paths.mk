@@ -35,6 +35,9 @@ INSTALL_DIR = $(TOOL_DIR)/../src/generated
 # Directory to place C++ library dependencies
 DEPENDS_DIR = $(TOOL_DIR)/dist
 
+# Directory to place generated binaries
+BINARY_DIR = $(TOOL_DIR)/bin
+
 # Stamp files for build system stages
 CHECKOUT_DONE = $(STAMP_DIR)/.checkout-done
 BUILD_DONE = $(STAMP_DIR)/.build-done
