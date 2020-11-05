@@ -17,9 +17,44 @@ import { loadVideoInfo } from './peertube-api';
 import { VideoPlayer } from './player/video-player';
 import { World } from './world';
 
+import { NETWORK_CONFIGS } from './web3/configs';
+import { MNEMONIC } from './web3/environment';
+import {
+  ONE_SECOND_MS,
+  TEN_MINUTES_MS,
+  GANACHE_NETWORK_ID,
+  KOVAN_NETWORK_ID,
+  RINKEBY_NETWORK_ID,
+  ROPSTEN_NETWORK_ID,
+} from './web3/constants';
+
 const world = new World();
 
 const VIDEO_ID = '5ea4b933-26e2-4813-a2b2-7c99c8626a60'; // Dubai Creek by Swedrone
+
+// Utilities
+function getNetworkName(networkId) {
+  switch (networkId) {
+    case ROPSTEN_NETWORK_ID:
+      return 'Ropsten';
+    case RINKEBY_NETWORK_ID:
+      return 'Rinkeby';
+    case KOVAN_NETWORK_ID:
+      return 'Kovan';
+    case GANACHE_NETWORK_ID:
+      return 'Ganache';
+  }
+  return `Unknown (${networkId})`;
+}
+
+// Entry point
+window.addEventListener('load', async () => {
+  // Fetch the network ID
+  const networkId = NETWORK_CONFIGS.networkId;
+
+  log_market(`   Ethereum network ID: ${networkId}`);
+  log_market(`   Ethereum network: ${getNetworkName(networkId)}`);
+});
 
 //////////////////////////////////////////////////////////////////////////
 // Application info
