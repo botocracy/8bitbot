@@ -174,8 +174,11 @@ function audit() {
 }
 
 function lint() {
-  # Lint JavaScript package files
+  # Check formatting
   prettier --check .
+
+  # Lint JavaScript package files
+  eslint 'src/**/*.{js,jsx,ts,tsx}' 'test/**/*.{js,jsx,ts,tsx}'
 
   # Lint Python language files
   if command -v black &>/dev/null; then
