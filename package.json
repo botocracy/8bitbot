@@ -52,6 +52,7 @@
     "jsdom-global": "^3.0.2",
     "mocha": "^8.2.0",
     "prettier": "^2.1.2",
+    "prettier-plugin-organize-imports": "^1.1.1",
     "prettier-plugin-pkg": "^0.8.0",
     "prettier-plugin-sh": "^0.6.0",
     "prettier-plugin-solidity": "^1.0.0-alpha.59",
