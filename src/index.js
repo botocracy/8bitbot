@@ -21,9 +21,199 @@ import { loadVideoInfo } from './peertube-api';
 import { VideoPlayer } from './player/video-player';
 import { World } from './world';
 
+import {
+  assetDataUtils,
+  BigNumber,
+  generatePseudoRandomSalt,
+  signatureUtils,
+} from '0x.js';
+import { MnemonicWalletSubprovider } from '@0x/subproviders';
+import { Web3Wrapper } from '@0x/web3-wrapper';
+import { ContractWrappers } from '@0x/contract-wrappers';
+import { default as Web3ProviderEngine } from 'web3-provider-engine';
+import { default as Web3 } from 'web3';
+import { default as RPCSubprovider } from 'web3-provider-engine/subproviders/rpc';
+
+import { MNEMONIC, NETWORK_CONFIGS } from './configs';
+import {
+  ONE_SECOND_MS,
+  TEN_MINUTES_MS,
+  GANACHE_NETWORK_ID,
+  KOVAN_NETWORK_ID,
+  RINKEBY_NETWORK_ID,
+  ROPSTEN_NETWORK_ID,
+} from './constants';
+
 const world = new World();
 
 const VIDEO_ID = '5ea4b933-26e2-4813-a2b2-7c99c8626a60'; // Dubai Creek by Swedrone
+
+// Utilities
+function getNetworkName(networkId) {
+  switch (networkId) {
+    case ROPSTEN_NETWORK_ID:
+      return 'Ropsten';
+    case RINKEBY_NETWORK_ID:
+      return 'Rinkeby';
+    case KOVAN_NETWORK_ID:
+      return 'Kovan';
+    case GANACHE_NETWORK_ID:
+      return 'Ganache';
+  }
+  return `Unknown (${networkId})`;
+}
+
+// Entry point
+window.addEventListener('load', async () => {
+  // Detect if Web3 is found, if not, ask the user to install MetaMask
+  if (typeof web3 === 'undefined') {
+    // Show MetaMask install dialog
+    log_market(`Web 3 not detected, showing MetaMask install dialog`);
+
+    var dialog = document.getElementById('metamaskDialog');
+    var dialogBody = document.getElementById('metamaskDialogForegroundInstall');
+
+    dialog.style.display = 'block';
+    dialogBody.style.display = 'block';
+
+    // Require a page refresh
+    return;
+  } else {
+    log_market(`Web 3 support detected`);
+  }
+
+  const dialogLogin = document.getElementById('metamaskDialogForegroundLogin');
+
+  // Called on MetaMask login UI interaction
+  dialogLogin.onclick = async () => {
+    ethereum.enable();
+  };
+
+  // Run the marketplace
+  runMarketplace();
+});
+
+// Run the marketplace logic
+async function runMarketplace() {
+  // TODO: Wait for a Web 3 account
+  /*
+  if (!(await waitForLogin())) {
+    return;
+  }
+  */
+
+  log_market(`Running marketplace`);
+
+  // Create the exchange
+  const web3Wrapper = await createExchange();
+
+  // TODO: Order match callback needs access to web3Wrapper
+  window.web3Wrapper = web3Wrapper;
+
+  /*
+  botIcon.onclick = async () => {
+    await runSellerAction(web3Wrapper);
+  };
+
+  parachuteIcon.onclick = async () => {
+    // Run the auction
+    await runBuyerAction(web3Wrapper);
+  };
+  */
+
+  // TODO: Close the exchange when we're done with it
+  //await closeExchange(web3Wrapper);
+}
+
+// Create an 0x exchange
+async function createExchange() {
+  log_market(`Creating exchange`);
+
+  // Create a Web 3 provider engine
+  const providerEngine = new Web3ProviderEngine();
+  const web3 = new Web3(providerEngine);
+
+  // Compose our providers, order matters
+
+  // All account based and signing requests will go through the first provider
+  providerEngine.addProvider(
+    new MnemonicWalletSubprovider({
+      mnemonic: MNEMONIC,
+    })
+  );
+
+  // Use an RPC provider to route all other requests
+  providerEngine.addProvider(
+    new RPCSubprovider({ rpcUrl: NETWORK_CONFIGS.rpcUrl })
+  );
+
+  // Log new blocks
+  providerEngine.on('block', function (block) {
+    // TODO: Accept 'block' as function parameter
+    console.log('================================');
+    console.log(
+      'BLOCK CHANGED: ',
+      '#' + block.number.toString('hex'),
+      '0x' + block.hash.toString('hex')
+    );
+    console.log('================================');
+  });
+
+  // TODO: Handle network connectivity error?
+  providerEngine.on('error', function (err) {
+    // Connectivity errors are reported in the console
+  });
+
+  // Start provider engine
+  log_market(`Starting Web 3 provider`);
+  await providerEngine.start();
+
+  // Create Web 3 wrapper
+  log_market(`Creating Web 3 wrapper`);
+  const web3Wrapper = new Web3Wrapper(providerEngine);
+
+  // Fetch the network ID (TODO)
+  var networkId;
+
+  try {
+    networkId = await web3Wrapper.getNetworkIdAsync();
+  } catch (err) {
+    log_market(`Error determining network version:`);
+    console.error(err);
+  }
+
+  log_market(`   Ethereum network: ${getNetworkName(networkId)}`);
+
+  // TODO: Check ZEROEX_GENESIS_BLOCK for unsupported network IDs
+
+  /*
+  zeroEx = new ZeroEx(web3Wrapper.getProvider(), {
+    networkId: networkId,
+  });
+  */
+
+  // Set global exchange address (FIXME read-only override)
+  //ZEROEX_EXCHANGE_ADDRESS = zeroEx.exchange.getContractAddress();
+
+  // Determine block height
+  var blockHeight;
+
+  try {
+    blockHeight = await web3Wrapper.getBlockNumberAsync();
+  } catch (err) {
+    log_market(`Error determining block height:`);
+    console.error(err);
+  }
+
+  log_market(`   Block height: ${blockHeight}`);
+
+  // TODO: Fetch token registry
+  // See https://github.com/vsergeev/0xtrades.info/blob/master/client/src/model.ts
+
+  //await subscribeToExchange(web3Wrapper); // TODO
+
+  return web3Wrapper;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Application parameters

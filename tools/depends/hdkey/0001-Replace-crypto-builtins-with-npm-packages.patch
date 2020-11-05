@@ -1,0 +1,55 @@
+From 9ef252d7fe255a1c2219664bdb79d91bc43bdbf1 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Wed, 4 Nov 2020 08:22:52 -0800
+Subject: [PATCH] Replace crypto builtins with npm packages
+
+Fixes error with rollup:
+
+    Uncaught (in promise) TypeError: fs.createHmac is not a function
+---
+ lib/hdkey.js | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/lib/hdkey.js b/lib/hdkey.js
+index eba25e6..0a09de1 100644
+--- a/lib/hdkey.js
++++ b/lib/hdkey.js
+@@ -1,4 +1,6 @@
+ var assert = require('assert')
++var createHash = require('create-hash')
++var createHmac = require('create-hmac')
+ var crypto = require('crypto')
+ var cs = require('coinstring')
+ var secp256k1 = require('secp256k1')
+@@ -114,7 +116,7 @@ HDKey.prototype.deriveChild = function (index) {
+     data = Buffer.concat([this.publicKey, indexBuffer])
+   }
+ 
+-  var I = crypto.createHmac('sha512', this.chainCode).update(data).digest()
++  var I = createHmac('sha512', this.chainCode).update(data).digest()
+   var IL = I.slice(0, 32)
+   var IR = I.slice(32)
+ 
+@@ -159,7 +161,7 @@ HDKey.prototype.toJSON = function () {
+ }
+ 
+ HDKey.fromMasterSeed = function (seedBuffer, versions) {
+-  var I = crypto.createHmac('sha512', MASTER_SECRET).update(seedBuffer).digest()
++  var I = createHmac('sha512', MASTER_SECRET).update(seedBuffer).digest()
+   var IL = I.slice(0, 32)
+   var IR = I.slice(32)
+ 
+@@ -219,8 +221,8 @@ function serialize (hdkey, version, key) {
+ }
+ 
+ function hash160 (buf) {
+-  var sha = crypto.createHash('sha256').update(buf).digest()
+-  return crypto.createHash('rmd160').update(sha).digest()
++  var sha = createHash('sha256').update(buf).digest()
++  return createHash('rmd160').update(sha).digest()
+ }
+ 
+ HDKey.HARDENED_OFFSET = HARDENED_OFFSET
+-- 
+2.17.1
+
