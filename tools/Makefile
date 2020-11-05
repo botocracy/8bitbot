@@ -63,6 +63,7 @@ include depends/emscripten/package.mk
 include depends/google-flags/package.mk
 include depends/google-log/package.mk
 include depends/opencv/package.mk
+include depends/solidity/package.mk
 
 ################################################################################
 #
@@ -84,6 +85,7 @@ CHECKOUT_DEPENDS = \
   $(S)/checkout-gflags \
   $(S)/checkout-glog \
   $(S)/checkout-opencv \
+  $(S)/checkout-solidity \
   $(S)/patch-opencv
 
 ifeq ($(PLATFORM),darwin)
@@ -96,6 +98,7 @@ endif
 
 BUILD_DEPENDS = \
   $(S)/build-opencv \
+  $(S)/build-solidity \
 
 #
 # Define targets for "make install"
@@ -103,6 +106,7 @@ BUILD_DEPENDS = \
 
 INSTALL_DEPENDS = \
   $(S)/install-opencv \
+  $(S)/install-solidity \
 
 #
 # Inject targets
@@ -123,6 +127,7 @@ install: $(INSTALL_DEPENDS)
 .PHONY: gflags
 .PHONY: glog
 .PHONY: opencv
+.PHONY: solidity
 
 ade: \
   $(S)/install-ade
@@ -144,6 +149,9 @@ glog: \
 
 opencv: \
   $(S)/install-opencv
+
+solidity: \
+  $(S)/install-solidity
 
 ################################################################################
 #
