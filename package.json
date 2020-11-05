@@ -2,11 +2,17 @@
   "name": "8bitbot",
   "version": "1.0.0",
   "description": "8BitBot",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/botocracy/8bitbot.git"
   },
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0",
+    "npm": ">=6.1.0"
+  },
+  "main": "./src/index.js",
+  "browser": "./src/index.js",
   "keywords": [
     "bittorrent",
     "hls",
@@ -19,23 +25,19 @@
     "webrtc",
     "webtorrent"
   ],
-  "target": "web",
-  "bundleDependencies": false,
-  "main": "./src/index.js",
-  "browser": "./src/index.js",
   "scripts": {
+    "audit": "bash tools/npm-scripts.sh audit",
+    "build": "bash tools/npm-scripts.sh build",
+    "clean": "bash tools/npm-scripts.sh clean",
+    "format": "bash tools/npm-scripts.sh format",
+    "lint": "bash tools/npm-scripts.sh lint",
     "postinstall": "bash tools/npm-scripts.sh postinstall",
     "start": "bash tools/npm-scripts.sh start",
-    "build": "bash tools/npm-scripts.sh build",
-    "audit": "bash tools/npm-scripts.sh audit",
-    "lint": "bash tools/npm-scripts.sh lint",
-    "test": "bash tools/npm-scripts.sh test",
-    "format": "bash tools/npm-scripts.sh format",
-    "clean": "bash tools/npm-scripts.sh clean"
+    "test": "bash tools/npm-scripts.sh test"
   },
-  "engines": {
-    "node": ">=12.0.0",
-    "npm": ">=6.1.0"
+  "dependencies": {
+    "hls.js": "^0.13.2",
+    "jsonld": "^3.2.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^9.0.0",
@@ -50,21 +52,20 @@
     "jsdom-global": "^3.0.2",
     "mocha": "^8.2.0",
     "prettier": "^2.1.2",
+    "prettier-plugin-pkg": "^0.8.0",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "snowpack": "^2.15.1",
     "ts-mocha": "^8.0.0",
     "typescript": "^4.0.5"
   },
-  "dependencies": {
-    "hls.js": "^0.13.2",
-    "jsonld": "^3.2.0"
-  },
+  "bundleDependencies": false,
   "chromeapp": {
     "fs-chunk-store": "memory-chunk-store",
     "http": "http-node",
     "load-ip-set": false,
     "net": "chrome-net",
     "os": false
-  }
+  },
+  "target": "web"
 }
