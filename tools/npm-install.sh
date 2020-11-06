@@ -63,6 +63,13 @@ function preinstall() {
 }
 
 function postinstall() {
+  # Patch 0x libraries
+  echo "### node_modules/@0x/typescript"
+  rm -rf "node_modules/@0x/typescript-typings/types/chai"             # Duplicate symbols
+  rm -rf "node_modules/@0x/typescript-typings/types/chai-as-promised" # Duplicate symbols
+  rm -rf "node_modules/@0x/typescript-typings/types/ganache-core"     # Outdated symbols
+  echo
+
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
