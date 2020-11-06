@@ -108,50 +108,15 @@ jobs:
             tools/bin
           key: restore-binaries-${{ matrix.os }}-${{ hashFiles('tools/depends/solidity/*') }}
 
-      - name: apt update
+      - name: apt install <depends>
         if: matrix.os != 'macOS' && steps.restore-binaries.outputs.cache-hit != 'true'
         run: |
-          sudo apt update || :
+          (sudo apt update || true) && (dpkg -s build-essential || sudo apt install -y build-essential) && (dpkg -s cmake || sudo apt install -y cmake) && (dpkg -s git || sudo apt install -y git) && (dpkg -s libboost-all-dev || sudo apt install -y libboost-all-dev)
 
-      - name: apt install build-essential
-        if: matrix.os != 'macOS' && steps.restore-binaries.outputs.cache-hit != 'true'
-        run: |
-          dpkg -s build-essential 1> /dev/null 2> /dev/null || sudo apt install -y build-essential
-
-      - name: apt install cmake
-        if: matrix.os != 'macOS' && steps.restore-binaries.outputs.cache-hit != 'true'
-        run: |
-          dpkg -s cmake 1> /dev/null 2> /dev/null || sudo apt install -y cmake
-
-      - name: apt install git
-        if: matrix.os != 'macOS' && steps.restore-binaries.outputs.cache-hit != 'true'
-        run: |
-          dpkg -s git 1> /dev/null 2> /dev/null || sudo apt install -y git
-
-      - name: apt install libboost-all-dev
-        if: matrix.os != 'macOS' && steps.restore-binaries.outputs.cache-hit != 'true'
-        run: |
-          dpkg -s libboost-all-dev 1> /dev/null 2> /dev/null || sudo apt install -y libboost-all-dev
-
-      - name: brew update && brew upgrade
+      - name: brew install <depends>
         if: matrix.os == 'macOS' && steps.restore-binaries.outputs.cache-hit != 'true'
         run: |
-          brew update && brew upgrade
-
-      - name: brew install cmake
-        if: matrix.os == 'macOS' && steps.restore-binaries.outputs.cache-hit != 'true'
-        run: |
-          brew install cmake
-
-      - name: brew install git
-        if: matrix.os == 'macOS' && steps.restore-binaries.outputs.cache-hit != 'true'
-        run: |
-          brew install git
-
-      - name: brew install boost
-        if: matrix.os == 'macOS' && steps.restore-binaries.outputs.cache-hit != 'true'
-        run: |
-          brew install boost
+          brew update && brew install boost cmake git
 
       - name: Restore C++ libraries
         id: restore-libraries
@@ -236,10 +201,13 @@ jobs:
         if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true' || steps.restore-binaries.outputs.cache-hit != 'true'
         run: npm run depends
 
+      - name: npm run compile
+        run: npm run compile
+
+      - name: npm test
+        run: npm test
+
       - name: npm run build
         run: npm run build
         env:
           NODE_OPTIONS: --max_old_space_size=4096
-
-      - name: npm test
-        run: npm test
