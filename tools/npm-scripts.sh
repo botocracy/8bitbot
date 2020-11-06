@@ -56,6 +56,9 @@ function dispatch() {
   depends-install)
     depends-install
     ;;
+  compile)
+    compile
+    ;;
   build)
     build
     ;;
@@ -130,12 +133,42 @@ function depends-install() {
   make -C tools install
 }
 
-function build() {
+function compile() {
   # Build smart contracts
-  echo "Compiling contracts with waffle..."
-  PATH="tools/bin:${PATH}" waffle
+  echo "Compiling contracts..."
+  sol-compiler
   echo "Finished compiling contracts"
 
+  # Format ABI files
+  prettier --write --loglevel error \
+    test/generated-artifacts
+
+  # Generate contract artifacts
+  contracts-gen generate
+
+  # Format contract artifacts
+  prettier --write --loglevel error \
+    src/artifacts.ts \
+    src/wrappers.ts \
+    test/artifacts.ts \
+    test/wrappers.ts
+
+  # Generate contract wrappers
+  abi-gen \
+    --debug \
+    --abis ${npm_package_config_abis} \
+    --output test/generated-wrappers \
+    --backend ethers
+
+  # Format contract wrappers
+  prettier --write --loglevel error \
+    test/generated-wrappers
+
+  # Copy contract artifacts
+  contracts-gen copy
+}
+
+function build() {
   # Build snowpack package
   snowpack build
 }
@@ -169,11 +202,6 @@ function format() {
 function test() {
   lint
 
-  # Build smart contracts if
-  echo "Compiling contracts with waffle..."
-  PATH="tools/bin:${PATH}" waffle
-  echo "Finished compiling contracts"
-
   # Run test suite
   # TODO: Add --require canvas if ImageData or other APIs are needed for tests
   ts-mocha \
@@ -187,6 +215,11 @@ function test() {
 
 function clean() {
   node clean.js
+
+  rm -f src/artifacts.ts
+  rm -f src/wrappers.ts
+  rm -f test/artifacts.ts
+  rm -f test/wrappers.ts
 }
 
 # Perform the dispatch

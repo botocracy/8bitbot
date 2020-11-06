@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["./src/**/*", "./test/**/*", "./generated-wrappers/**/*"],
   "exclude": ["node_modules", "web_modules"],
   "compilerOptions": {
     "module": "esnext",
@@ -16,5 +16,16 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "resolveJsonModule": true
-  }
+  },
+  "files": [
+    "generated-artifacts/IOwnable.json",
+    "generated-artifacts/LibOwnableRichErrors.json",
+    "generated-artifacts/LibRichErrors.json",
+    "generated-artifacts/Ownable.json",
+    "test/generated-artifacts/IOwnable.json",
+    "test/generated-artifacts/LibOwnableRichErrors.json",
+    "test/generated-artifacts/LibRichErrors.json",
+    "test/generated-artifacts/Ownable.json",
+    "test/generated-artifacts/TestOwnable.json"
+  ]
 }

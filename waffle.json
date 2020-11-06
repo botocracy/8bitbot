@@ -1,7 +1,7 @@
 {
   "compilerType": "native",
   "sourceDirectory": "./contracts",
-  "outputDirectory": "./build-contracts",
+  "outputDirectory": "./test/generated-artifacts",
   "flattenOutputDirectory": "./flatten-contracts",
   "compilerOptions": {
     "optimizer": {
