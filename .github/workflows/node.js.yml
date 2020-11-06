@@ -62,7 +62,7 @@ jobs:
           path: |
             node_modules
             package-lock.json
-          key: npm-install-${{ matrix.node-version }}-${{ hashFiles('package.json') }}
+          key: npm-install-${{ matrix.node-version }}-${{ hashFiles('package.json', 'tools/npm-install.sh') }}
 
       - name: npm install
         if: steps.restore-node.outputs.cache-hit != 'true'
