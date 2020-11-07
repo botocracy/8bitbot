@@ -98,6 +98,9 @@ function postinstall() {
   # Patch merkle-patricia-tree library
   rm_dist "merkle-patricia-tree"
 
+  # Patch mocha
+  patch_package_recursive "mocha" "0001-Fix-circular-dependency.patch"
+
   # Patch p2p-media-loader libraries
   patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
   patch_package "p2p-media-loader-core" "0002-Fix-runtime-error-with-snowpack.patch"
