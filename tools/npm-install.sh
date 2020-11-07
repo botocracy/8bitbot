@@ -95,6 +95,9 @@ function postinstall() {
   patch_package "@ethereum-waffle/provider" "0001-package.json-Fix-module-entry-point.patch"
   patch_package "ethereum-waffle" "0001-package.json-Fix-module-entry-point.patch"
 
+  # Patch ganache-core library
+  patch_package_recursive "ganache-core" "0001-Update-for-new-version-of-ethereumjs-tx.patch"
+
   # Patch hdkey library
   patch_package_recursive "hdkey" "0001-Replace-crypto-builtins-with-npm-packages.patch"
 
