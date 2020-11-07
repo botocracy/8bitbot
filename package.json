@@ -115,6 +115,7 @@
     "jsdom-global": "^3.0.2",
     "level-sublevel": "^6.6.5",
     "level-ws": "^2.0.0",
+    "levelup": "^4.4.0",
     "ltgt": "^2.2.1",
     "merkle-patricia-tree": "^3.0.0",
     "mocha": "^8.2.0",
