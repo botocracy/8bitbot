@@ -1,4 +1,4 @@
-From 81cb420c9604c7feb99e215dc59b2f3be354312b Mon Sep 17 00:00:00 2001
+From c720f716932152c00e13d05e6ad60cd9ae430ac0 Mon Sep 17 00:00:00 2001
 From: Marquise Stein <botocratic@gmail.com>
 Date: Sat, 7 Nov 2020 06:51:48 -0800
 Subject: [PATCH] Fix circular dependency
@@ -7,11 +7,11 @@ At the time `inherits$1(Duplex, Readable);` is called, Readable is
 hoisted but not yet defined due to a circular dependency. Fix this
 by removing the circular depedency.
 ---
- mocha.js | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ mocha.js | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
 diff --git a/mocha.js b/mocha.js
-index 62c7838..4fa29b7 100644
+index d6a2a5c..bee90e5 100644
 --- a/mocha.js
 +++ b/mocha.js
 @@ -10132,12 +10132,12 @@
@@ -85,6 +85,37 @@ index 62c7838..4fa29b7 100644
  	  if (options && options.readable === false) this.readable = false;
  	  if (options && options.writable === false) this.writable = false;
  	  this.allowHalfOpen = true;
+@@ -11599,14 +11599,6 @@
+ 	};
+ 
+ 	inherits$1(Stream, EventEmitter);
+-	Stream.Readable = Readable;
+-	Stream.Writable = Writable;
+-	Stream.Duplex = Duplex;
+-	Stream.Transform = Transform;
+-	Stream.PassThrough = PassThrough; // Backwards-compat with node 0.4.x
+-
+-	Stream.Stream = Stream;
+-	// part of this class) is overridden in the Readable class.
+ 
+ 	function Stream() {
+ 	  EventEmitter.call(this);
+@@ -11685,6 +11677,15 @@
+ 	  return dest;
+ 	};
+ 
++	Stream.Readable = Readable;
++	Stream.Writable = Writable;
++	Stream.Duplex = Duplex;
++	Stream.Transform = Transform;
++	Stream.PassThrough = PassThrough;
++
++	// Backwards-compat with node 0.4.x
++	Stream.Stream = Stream;
++
+ 	var WritableStream = Stream.Writable;
+ 	var inherits$2 = util.inherits;
+ 	var browserStdout = BrowserStdout;
 -- 
 2.17.1
 
