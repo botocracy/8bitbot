@@ -111,6 +111,7 @@
     "isomorphic-fetch": "^2.2.1",
     "jsdom-global": "^3.0.2",
     "ltgt": "^2.2.1",
+    "merkle-patricia-tree": "^3.0.0",
     "mocha": "^8.2.0",
     "npm-force-resolutions": ">=0.0.3",
     "prettier": "^2.1.2",
