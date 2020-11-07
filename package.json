@@ -116,6 +116,7 @@
     "heap": "^0.2.6",
     "isomorphic-fetch": "^2.2.1",
     "jsdom-global": "^3.0.2",
+    "klaw": "^3.0.0",
     "level-sublevel": "^6.6.5",
     "level-ws": "^2.0.0",
     "levelup": "^4.4.0",
