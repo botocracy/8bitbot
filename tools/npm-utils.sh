@@ -87,3 +87,38 @@ function patch_package_recursive() {
     )
   done
 }
+
+#
+# Helper function
+#
+# Usage:
+#
+#   rm_dist <package name>
+#
+# Removes the "dist" folder of the given package, recursively.
+#
+function rm_dist() {
+  package=$1
+
+  for package_path in $(find "node_modules" -name "${package}"); do
+    # Skip rollup polyfills
+    if echo "${package_path}" | grep --quiet rollup-plugin-node-polyfills; then
+      continue
+    fi
+
+    # Skip type declarations
+    if echo "${package_path}" | grep --quiet "@types/${package}"; then
+      continue
+    fi
+
+    # Skip packages with no dist folder
+    if [ ! -d "${package_path}/dist"]; then
+      echo "Already removed dist: ${package_path}"
+      continue
+    fi
+
+    echo "Removing dist: ${package_path}"
+
+    rm -rf "${package_path}/dist"
+  done
+}
