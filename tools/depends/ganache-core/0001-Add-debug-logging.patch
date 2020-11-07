@@ -1,0 +1,24 @@
+From 0cc183f324ab93d2f8da87eca6df0d6632b4e190 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Sat, 7 Nov 2020 12:27:26 -0800
+Subject: [PATCH] Add debug logging
+
+---
+ lib/provider.js | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/provider.js b/lib/provider.js
+index 05882b9..0f15244 100644
+--- a/lib/provider.js
++++ b/lib/provider.js
+@@ -3,6 +3,7 @@ require("source-map-support/register");
+ 
+ const ProviderEngine = require("web3-provider-engine");
+ const SubscriptionSubprovider = require("web3-provider-engine/subproviders/subscriptions");
++console.dir(SubscriptionSubprovider);
+ 
+ const RequestFunnel = require("./subproviders/requestfunnel");
+ const DelayedBlockFilter = require("./subproviders/delayedblockfilter");
+-- 
+2.17.1
+
