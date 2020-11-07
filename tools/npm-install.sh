@@ -105,8 +105,8 @@ function postinstall() {
   patch_package_recursive "mocha" "0001-Fix-circular-dependency.patch"
 
   # Patch p2p-media-loader libraries
-  patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
-  patch_package "p2p-media-loader-core" "0002-Fix-runtime-error-with-snowpack.patch"
+  #patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
+  #patch_package "p2p-media-loader-core" "0002-Fix-runtime-error-with-snowpack.patch"
   patch_package "p2p-media-loader-hlsjs" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
 
   # Patch readable-stream library (recursively)
