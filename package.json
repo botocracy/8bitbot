@@ -138,6 +138,7 @@
     "eth-block-tracker": "4.4.3",
     "eth-sig-util": "2.5.3",
     "ethereumjs-abi": "0.6.8",
+    "hdkey": "2.0.1",
     "ltgt": "2.2.1",
     "merkle-patricia-tree": "3.0.0",
     "readable-stream": "3.6.0",
