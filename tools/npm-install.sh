@@ -99,6 +99,7 @@ function postinstall() {
   patch_package_recursive "ganache-core" "0001-Update-for-new-version-of-ethereumjs-tx.patch"
   patch_package_recursive "ganache-core" "0001-Add-debug-logging.patch"
   patch_package_recursive "ganache-core" "0001-More-debug-logging.patch"
+  patch_package_recursive "ganache-core" "0001-Fix-wrapped-import.patch"
 
   # Patch hdkey library
   patch_package_recursive "hdkey" "0001-Replace-crypto-builtins-with-npm-packages.patch"
