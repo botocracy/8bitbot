@@ -120,6 +120,9 @@ function patch_package_recursive() {
     if echo "${package_path}" | grep --quiet "@types/${package}"; then
       continue
     fi
+    if echo "${package_path}" | grep --quiet "@0x/typescript-typings"; then
+      continue
+    fi
 
     echo "### ${package_path}"
 
