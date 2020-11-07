@@ -38,7 +38,7 @@ function patch_package() {
     exit 1
   fi
 
-  echo "Patching: *** ${package_path} ***"
+  echo "### ${package_path}"
 
   patch \
     -p1 \
@@ -85,7 +85,7 @@ function patch_package_recursive() {
       continue
     fi
 
-    echo "Patching: *** ${package_path} ***"
+    echo "### ${package_path}"
 
     patch \
       -p1 \
