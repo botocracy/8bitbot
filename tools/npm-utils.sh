@@ -40,10 +40,16 @@ function patch_package() {
 
   echo "Patching: ${package_path}"
 
-  patch -p1 --forward --directory="${package_path}" <"${patch_path}" || (
-    code=$?
-    [[ "${code}" -lt "2" ]] || exit ${code}
-  )
+  patch \
+    -p1 \
+    --forward \
+    --directory="${package_path}" \
+    --reject-file="/dev/null" \
+    --no-backup-if-mismatch \
+    < "${patch_path}" || \
+    :
+
+  echo
 }
 
 #
@@ -81,10 +87,16 @@ function patch_package_recursive() {
 
     echo "Patching: ${package_path}"
 
-    patch -p1 --forward --directory="${package_path}" <"${patch_path}" || (
-      code=$?
-      [[ "${code}" -lt "2" ]] || exit ${code}
-    )
+    patch \
+      -p1 \
+      --forward \
+      --directory="${package_path}" \
+      --reject-file="/dev/null" \
+      --no-backup-if-mismatch \
+      < "${patch_path}" || \
+      :
+
+    echo
   done
 }
 
@@ -114,11 +126,12 @@ function rm_dist() {
     # Skip packages with no dist folder
     if [ ! -d "${package_path}/dist" ]; then
       echo "Already removed dist: ${package_path}"
+      echo
       continue
     fi
 
     echo "Removing dist: ${package_path}"
-
     rm -rf "${package_path}/dist"
+    echo
   done
 }

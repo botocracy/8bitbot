@@ -64,14 +64,19 @@ function preinstall() {
 
 function postinstall() {
   # Patch 0x libraries
+  echo "Patching: node_modules/@0x/typescript"
   rm -rf "node_modules/@0x/typescript-typings/types/chai"             # Duplicate symbols
   rm -rf "node_modules/@0x/typescript-typings/types/chai-as-promised" # Duplicate symbols
   rm -rf "node_modules/@0x/typescript-typings/types/ganache-core"     # Outdated symbols
+  echo
+
+  echo "Patching: node_modules/0x.js/node_modules/@0x/subproviders"
   patch -p1 --forward --directory="node_modules/0x.js/node_modules/@0x/subproviders" < \
     "tools/depends/0x.js/0001-Fix-build-error-due-to-ganache-version-mismatch.patch" || (
     code=$?
     [[ "${code}" -lt "2" ]] || exit ${code}
   )
+  echo
 
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
@@ -125,13 +130,15 @@ function postinstall() {
   rm_dist "web3-provider-engine"
 
   # Patch libraries with circular dependencies
-  rm -f "node_modules/decompress-tar/node_modules/tar-stream/pack.js"
-  rm -f "node_modules/fd-slicer/index.js"
-  rm -f "node_modules/klaw/src/index.js"
-  rm -f "node_modules/p2p-media-loader-core/build/p2p-media-loader-core.js"
-  rm -f "node_modules/tar-stream/pack.js"
-  rm -f "node_modules/watchpack-chokidar2/node_modules/readdirp/stream-api.js"
-  rm -f "node_modules/webtorrent/webtorrent.debug.js"
+  echo
+  rm -f -v "node_modules/decompress-tar/node_modules/tar-stream/pack.js"
+  rm -f -v "node_modules/fd-slicer/index.js"
+  rm -f -v "node_modules/klaw/src/index.js"
+  #rm -f "node_modules/p2p-media-loader-core/build/p2p-media-loader-core.js"
+  rm -f -v "node_modules/tar-stream/pack.js"
+  rm -f -v "node_modules/watchpack-chokidar2/node_modules/readdirp/stream-api.js"
+  rm -f -v "node_modules/webtorrent/webtorrent.debug.js"
+  echo
 }
 
 # Perform the dispatch
