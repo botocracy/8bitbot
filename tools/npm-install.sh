@@ -76,6 +76,9 @@ function postinstall() {
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
+  # Patch duplexer3 library
+  patch_package_recursive "duplexer3" "0001-Replace-stream-package-with-readable-stream.patch"
+
   # Patch ethereum-waffle libraries
   patch_package "@ethereum-waffle/chai" "0001-package.json-Fix-module-entry-point.patch"
   patch_package "@ethereum-waffle/compiler" "0001-package.json-Fix-module-entry-point.patch"
@@ -92,6 +95,9 @@ function postinstall() {
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
 
+  # Patch merkle-patricia-tree library
+  rm_dist "merkle-patricia-tree"
+
   # Patch p2p-media-loader libraries
   patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
   patch_package "p2p-media-loader-core" "0002-Fix-runtime-error-with-snowpack.patch"
@@ -105,6 +111,9 @@ function postinstall() {
 
   # Patch Videostream library
   patch_package "videostream" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+
+  # Patch web3-provider-engine library
+  rm_dist "web3-provider-engine"
 }
 
 # Perform the dispatch
