@@ -1,23 +1,25 @@
-From f7056bd1fb59b2ace9fba6d25cce65025f3bf3f4 Mon Sep 17 00:00:00 2001
+From 34b1ccb9116ccbf8358bd1cfe272311c25357516 Mon Sep 17 00:00:00 2001
 From: Marquise Stein <botocratic@gmail.com>
-Date: Sat, 7 Nov 2020 09:35:47 -0800
+Date: Sat, 7 Nov 2020 10:02:46 -0800
 Subject: [PATCH] Update for new version of ethereumjs-tx
 
 ---
- lib/utils/transaction.js | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ lib/utils/transaction.js | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/lib/utils/transaction.js b/lib/utils/transaction.js
-index 32ecb24..47d8067 100644
+index 32ecb24..adcdef6 100644
 --- a/lib/utils/transaction.js
 +++ b/lib/utils/transaction.js
-@@ -1,5 +1,7 @@
--const EthereumJsTransaction = require("ethereumjs-tx").Transaction;
--const EthereumJsFakeTransaction = require("ethereumjs-tx").FakeTransaction;
-+const EthereumJsTransaction = require("ethereumjs-tx");
-+console.dir(EthereumJsTransaction, { depth: null }); // `depth: null` ensures unlimited recursion
-+const EthereumJsFakeTransaction = require("ethereumjs-tx").FakeTransaction;
-+console.dir(EthereumJsFakeTransaction, { depth: null });
+@@ -1,5 +1,11 @@
+ const EthereumJsTransaction = require("ethereumjs-tx").Transaction;
++console.dir(EthereumJsTransaction);
++console.dir(EthereumJsTransaction.prototype);
++console.dir(EthereumJsTransaction.prototype.sign);
+ const EthereumJsFakeTransaction = require("ethereumjs-tx").FakeTransaction;
++console.dir(EthereumJsFakeTransaction);
++console.dir(EthereumJsFakeTransaction.prototype);
++console.dir(EthereumJsFakeTransaction.prototype.hash);
  const Common = require("ethereumjs-common").default;
  const ethUtil = require("ethereumjs-util");
  const assert = require("assert");
