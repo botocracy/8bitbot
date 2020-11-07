@@ -216,10 +216,10 @@ function test() {
 function clean() {
   node clean.js
 
-  rm -f src/artifacts.ts
-  rm -f src/wrappers.ts
-  rm -f test/artifacts.ts
-  rm -f test/wrappers.ts
+  #rm -f src/artifacts.ts
+  #rm -f src/wrappers.ts
+  #rm -f test/artifacts.ts
+  #rm -f test/wrappers.ts
 }
 
 # Perform the dispatch
