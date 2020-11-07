@@ -110,6 +110,7 @@
     "ethers": "^4.0.48",
     "ganache-core": "^2.13.1",
     "hdkey": "^2.0.1",
+    "heap": "^0.2.6",
     "isomorphic-fetch": "^2.2.1",
     "jsdom-global": "^3.0.2",
     "level-ws": "^2.0.0",
