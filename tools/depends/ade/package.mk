@@ -75,7 +75,8 @@ $(BUILD_FILE_ADE): $(S)/.prebuild $(ADE_BUILD_DEPENDS)
 	    -DCMAKE_BUILD_PARALLEL_LEVEL=$(shell getconf _NPROCESSORS_ONLN) \
 	    $(shell ! command -v ccache &> /dev/null || echo "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache") \
 
-	cmake --build "${BUILD_DIR_ADE}"
+	#cmake --build "${BUILD_DIR_ADE}"
+	make -C "${BUILD_DIR_ADE}" -j$(shell getconf _NPROCESSORS_ONLN)
 
 	touch "$@"
 

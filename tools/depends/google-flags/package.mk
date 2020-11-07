@@ -75,7 +75,8 @@ $(BUILD_FILE_GFLAGS): $(S)/.prebuild $(GFLAGS_BUILD_DEPENDS)
 	    -DCMAKE_BUILD_PARALLEL_LEVEL=$(shell getconf _NPROCESSORS_ONLN) \
 	    $(shell ! command -v ccache &> /dev/null || echo "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache") \
 
-	cmake --build "${BUILD_DIR_GFLAGS}"
+	#cmake --build "${BUILD_DIR_GFLAGS}"
+	make -C "${BUILD_DIR_GFLAGS}" -j$(shell getconf _NPROCESSORS_ONLN)
 
 	touch "$@"
 
