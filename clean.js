@@ -37,14 +37,14 @@ deleteFolderRecursive('./node_modules');
 deleteFolderRecursive('./web_modules');
 
 // Waffle directories
-deleteFolderRecursive('./build-contracts');
-deleteFolderRecursive('./cache');
-deleteFolderRecursive('./flatten-contracts');
+//deleteFolderRecursive('./build-contracts');
+//deleteFolderRecursive('./cache');
+//deleteFolderRecursive('./flatten-contracts');
 
 console.log('Successfully cleaned working tree!');
 
 // Contract directories
-deleteFolderRecursive('./generated-artifacts');
-deleteFolderRecursive('./generated-wrappers');
-deleteFolderRecursive('./test/generated-artifacts');
-deleteFolderRecursive('./test/generated-wrappers');
+//deleteFolderRecursive('./generated-artifacts');
+//deleteFolderRecursive('./generated-wrappers');
+//deleteFolderRecursive('./test/generated-artifacts');
+//deleteFolderRecursive('./test/generated-wrappers');
