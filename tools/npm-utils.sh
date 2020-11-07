@@ -68,7 +68,7 @@ function patch_package_recursive() {
     exit 1
   fi
 
-  for package_path in $(find "node_modules" -name "${package}"); do
+  for package_path in $(find "node_modules" -name "${package}" -type d); do
     # Skip rollup polyfills
     if echo "${package_path}" | grep --quiet rollup-plugin-node-polyfills; then
       continue
@@ -100,7 +100,7 @@ function patch_package_recursive() {
 function rm_dist() {
   package=$1
 
-  for package_path in $(find "node_modules" -name "${package}"); do
+  for package_path in $(find "node_modules" -name "${package}" -type d); do
     # Skip rollup polyfills
     if echo "${package_path}" | grep --quiet rollup-plugin-node-polyfills; then
       continue
