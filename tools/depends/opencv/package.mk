@@ -209,7 +209,7 @@ $(BUILD_FILE_OPENCV): $(S)/.prebuild $(OPENCV_BUILD_DEPENDS)
 	    " \
 
 	OPENCV_JS_WHITELIST="$(TOOL_DIR)/depends/opencv/opencv_js.config.py" \
-	  make -C "${BUILD_DIR_OPENCV}" -j$(shell getconf _NPROCESSORS_ONLN)
+	  cmake --build "${BUILD_DIR_OPENCV}"
 
 	touch "$@"
 

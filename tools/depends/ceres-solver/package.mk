@@ -82,10 +82,7 @@ $(BUILD_FILE_CERES): $(S)/.prebuild $(CERES_BUILD_DEPENDS)
 	    -DBUILD_BENCHMARKS=OFF \
 	    $(shell ! command -v ccache &> /dev/null || echo "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache") \
 
-	# Rebuilding takes a long time
-	[ -f "$(BUILD_FILE_CERES)" ] || ( \
-	  make -C "${BUILD_DIR_CERES}" -j$(shell getconf _NPROCESSORS_ONLN) \
-	)
+	cmake --build "${BUILD_DIR_CERES}"
 
 	touch "$@"
 
