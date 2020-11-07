@@ -112,7 +112,7 @@ function rm_dist() {
     fi
 
     # Skip packages with no dist folder
-    if [ ! -d "${package_path}/dist"]; then
+    if [ ! -d "${package_path}/dist" ]; then
       echo "Already removed dist: ${package_path}"
       continue
     fi
