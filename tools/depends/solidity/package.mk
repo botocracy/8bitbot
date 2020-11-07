@@ -109,8 +109,7 @@ $(BUILD_FILE_SOLIDITY): $(S)/.prebuild $(SOLIDITY_BUILD_DEPENDS)
 	  $(shell ! command -v ccache &> /dev/null || echo "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache") \
 	  -DTESTS=OFF \
 
-	#cmake --build "${BUILD_DIR_SOLIDITY}"
-	make -C "${BUILD_DIR_SOLIDITY}" -j$(shell getconf _NPROCESSORS_ONLN)
+	cmake --build "${BUILD_DIR_SOLIDITY}"
 
 	touch "$@"
 
