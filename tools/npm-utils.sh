@@ -46,8 +46,44 @@ function patch_package() {
     --directory="${package_path}" \
     --reject-file="/dev/null" \
     --no-backup-if-mismatch \
-    < "${patch_path}" || \
-    :
+    <"${patch_path}" \
+    || :
+
+  echo
+}
+
+#
+# Helper function
+#
+# Usage:
+#
+#   patch_subpackage <parent path> <package name> <patch name>
+#
+function patch_subpackage() {
+  parent_path=$1
+  package=$2
+  patch=$3
+
+  package_path="${parent_path}/node_modules/${package}"
+  patch_path="tools/depends/${package}/${patch}"
+
+  # Can't discern between missing patch and already-applied patch
+  if [ ! -f "${patch_path}" ]; then
+    echo "Missing ${patch_path}!"
+    exit 1
+  fi
+
+  echo "?????"
+  echo "### ${package_path}"
+
+  patch \
+    -p1 \
+    --forward \
+    --directory="${package_path}" \
+    --reject-file="/dev/null" \
+    --no-backup-if-mismatch \
+    <"${patch_path}" \
+    || :
 
   echo
 }
@@ -93,8 +129,8 @@ function patch_package_recursive() {
       --directory="${package_path}" \
       --reject-file="/dev/null" \
       --no-backup-if-mismatch \
-      < "${patch_path}" || \
-      :
+      <"${patch_path}" \
+      || :
 
     echo
   done

@@ -64,13 +64,13 @@ function preinstall() {
 
 function postinstall() {
   # Patch 0x libraries
-  echo "Patching: node_modules/@0x/typescript"
+  echo "### node_modules/@0x/typescript"
   rm -rf "node_modules/@0x/typescript-typings/types/chai"             # Duplicate symbols
   rm -rf "node_modules/@0x/typescript-typings/types/chai-as-promised" # Duplicate symbols
   rm -rf "node_modules/@0x/typescript-typings/types/ganache-core"     # Outdated symbols
   echo
 
-  echo "Patching: node_modules/0x.js/node_modules/@0x/subproviders"
+  echo "### node_modules/0x.js/node_modules/@0x/subproviders"
   patch -p1 --forward --directory="node_modules/0x.js/node_modules/@0x/subproviders" < \
     "tools/depends/0x.js/0001-Fix-build-error-due-to-ganache-version-mismatch.patch" || (
     code=$?
@@ -109,6 +109,9 @@ function postinstall() {
 
   # Patch mocha
   patch_package_recursive "mocha" "0001-Fix-circular-dependency.patch"
+
+  # TODO: Why doesn't the above patch recursively?
+  patch_subpackage "node_modules/@0x/contracts-test-utils" "mocha" "0001-Fix-circular-dependency.patch"
 
   # Patch p2p-media-loader libraries
   #patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
