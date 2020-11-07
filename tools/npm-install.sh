@@ -123,6 +123,15 @@ function postinstall() {
 
   # Patch web3-provider-engine library
   rm_dist "web3-provider-engine"
+
+  # Patch libraries with circular dependencies
+  rm -f "node_modules/decompress-tar/node_modules/tar-stream/pack.js"
+  rm -f "node_modules/fd-slicer/index.js"
+  rm -f "node_modules/klaw/src/index.js"
+  rm -f "node_modules/p2p-media-loader-core/build/p2p-media-loader-core.js"
+  rm -f "node_modules/tar-stream/pack.js"
+  rm -f "node_modules/watchpack-chokidar2/node_modules/readdirp/stream-api.js"
+  rm -f "node_modules/webtorrent/webtorrent.debug.js"
 }
 
 # Perform the dispatch
