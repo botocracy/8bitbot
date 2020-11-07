@@ -1,4 +1,4 @@
-From 9ef252d7fe255a1c2219664bdb79d91bc43bdbf1 Mon Sep 17 00:00:00 2001
+From 3b60ce5ba48be9b9ce5dbccd1ee9890576ca0f64 Mon Sep 17 00:00:00 2001
 From: Marquise Stein <botocratic@gmail.com>
 Date: Wed, 4 Nov 2020 08:22:52 -0800
 Subject: [PATCH] Replace crypto builtins with npm packages
@@ -8,20 +8,22 @@ Fixes error with rollup:
     Uncaught (in promise) TypeError: fs.createHmac is not a function
 ---
  lib/hdkey.js | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ package.json |  2 ++
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/lib/hdkey.js b/lib/hdkey.js
-index eba25e6..0a09de1 100644
+index c7dc805..e70aec2 100644
 --- a/lib/hdkey.js
 +++ b/lib/hdkey.js
-@@ -1,4 +1,6 @@
+@@ -1,5 +1,7 @@
  var assert = require('assert')
+ var Buffer = require('safe-buffer').Buffer
 +var createHash = require('create-hash')
 +var createHmac = require('create-hmac')
  var crypto = require('crypto')
- var cs = require('coinstring')
+ var bs58check = require('bs58check')
  var secp256k1 = require('secp256k1')
-@@ -114,7 +116,7 @@ HDKey.prototype.deriveChild = function (index) {
+@@ -115,7 +117,7 @@ HDKey.prototype.deriveChild = function (index) {
      data = Buffer.concat([this.publicKey, indexBuffer])
    }
  
@@ -30,7 +32,7 @@ index eba25e6..0a09de1 100644
    var IL = I.slice(0, 32)
    var IR = I.slice(32)
  
-@@ -159,7 +161,7 @@ HDKey.prototype.toJSON = function () {
+@@ -178,7 +180,7 @@ HDKey.prototype.toJSON = function () {
  }
  
  HDKey.fromMasterSeed = function (seedBuffer, versions) {
@@ -39,17 +41,30 @@ index eba25e6..0a09de1 100644
    var IL = I.slice(0, 32)
    var IR = I.slice(32)
  
-@@ -219,8 +221,8 @@ function serialize (hdkey, version, key) {
+@@ -238,8 +240,8 @@ function serialize (hdkey, version, key) {
  }
  
  function hash160 (buf) {
 -  var sha = crypto.createHash('sha256').update(buf).digest()
--  return crypto.createHash('rmd160').update(sha).digest()
+-  return crypto.createHash('ripemd160').update(sha).digest()
 +  var sha = createHash('sha256').update(buf).digest()
-+  return createHash('rmd160').update(sha).digest()
++  return createHash('ripemd160').update(sha).digest()
  }
  
  HDKey.HARDENED_OFFSET = HARDENED_OFFSET
+diff --git a/package.json b/package.json
+index 5664628..21802c0 100644
+--- a/package.json
++++ b/package.json
+@@ -35,6 +35,8 @@
+   },
+   "dependencies": {
+     "bs58check": "^2.1.2",
++    "create-hash": "^1.2.0",
++    "create-hmac": "^1.1.7",
+     "safe-buffer": "^5.1.1",
+     "secp256k1": "^4.0.0"
+   },
 -- 
 2.17.1
 
