@@ -79,6 +79,9 @@ function postinstall() {
   # Patch duplexer3 library
   patch_package_recursive "duplexer3" "0001-Replace-stream-package-with-readable-stream.patch"
 
+  # Patch eosjs-ecc library
+  rm -f "node_modules/eosjs-ecc/lib/eosjs-ecc.js"
+
   # Patch ethereum-waffle libraries
   patch_package "@ethereum-waffle/chai" "0001-package.json-Fix-module-entry-point.patch"
   patch_package "@ethereum-waffle/compiler" "0001-package.json-Fix-module-entry-point.patch"
