@@ -15,9 +15,9 @@ index 32ecb24..47d8067 100644
 -const EthereumJsTransaction = require("ethereumjs-tx").Transaction;
 -const EthereumJsFakeTransaction = require("ethereumjs-tx").FakeTransaction;
 +const EthereumJsTransaction = require("ethereumjs-tx");
-+console.log(EthereumJsTransaction);
-+const EthereumJsFakeTransaction = require("ethereumjs-tx");
-+console.log(EthereumJsFakeTransaction);
++console.dir(EthereumJsTransaction, { depth: null }); // `depth: null` ensures unlimited recursion
++const EthereumJsFakeTransaction = require("ethereumjs-tx").FakeTransaction;
++console.dir(EthereumJsFakeTransaction, { depth: null });
  const Common = require("ethereumjs-common").default;
  const ethUtil = require("ethereumjs-util");
  const assert = require("assert");
