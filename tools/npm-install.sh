@@ -108,6 +108,9 @@ function postinstall() {
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
 
+  # Patch keccak library
+  patch_package "keccak" "0001-Fix-Patch-keccak-to-prevent-node-14-segfault.patch"
+
   # Patch merkle-patricia-tree library
   rm_dist "merkle-patricia-tree"
   echo
