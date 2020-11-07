@@ -124,6 +124,7 @@
     "readable-stream": "^3.6.0",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
+    "scrypt.js": "^0.3.0",
     "snowpack": "^2.15.1",
     "solc": "^0.7.4",
     "solc-js": "^0.5.5",
