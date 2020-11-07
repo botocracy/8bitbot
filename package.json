@@ -155,6 +155,7 @@
     "web3-eth-iban": "^1.3.0",
     "web3-eth-personal": "^1.3.0",
     "web3-net": "^1.3.0",
+    "web3-providers-ws": "^1.3.0",
     "web3-utils": "^1.3.0",
     "xtend": "^4.0.2"
   },
@@ -189,6 +190,7 @@
     "web3-eth-personal": "1.3.0",
     "web3-net": "1.3.0",
     "web3-provider-engine": "16.0.1",
+    "web3-provider-ws": "1.3.0",
     "web3-utils": "1.3.0"
   },
   "bundleDependencies": false,
