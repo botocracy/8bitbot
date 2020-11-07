@@ -38,7 +38,7 @@ function patch_package() {
     exit 1
   fi
 
-  echo "Patching: ${package_path}"
+  echo "Patching: *** ${package_path} ***"
 
   patch \
     -p1 \
@@ -85,7 +85,7 @@ function patch_package_recursive() {
       continue
     fi
 
-    echo "Patching: ${package_path}"
+    echo "Patching: *** ${package_path} ***"
 
     patch \
       -p1 \
@@ -109,6 +109,10 @@ function patch_package_recursive() {
 #
 # Removes the "dist" folder of the given package, recursively.
 #
+# This function is currently unused. However, when you have 6 millions lines
+# of raw dependency, and you need to track down a single bug, this function
+# can help by narrowing down the search space.
+#
 function rm_dist() {
   package=$1
 
@@ -126,12 +130,10 @@ function rm_dist() {
     # Skip packages with no dist folder
     if [ ! -d "${package_path}/dist" ]; then
       echo "Already removed dist: ${package_path}"
-      echo
       continue
     fi
 
     echo "Removing dist: ${package_path}"
     rm -rf "${package_path}/dist"
-    echo
   done
 }

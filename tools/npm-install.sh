@@ -105,6 +105,7 @@ function postinstall() {
 
   # Patch merkle-patricia-tree library
   rm_dist "merkle-patricia-tree"
+  echo
 
   # Patch mocha
   patch_package_recursive "mocha" "0001-Fix-circular-dependency.patch"
@@ -128,9 +129,9 @@ function postinstall() {
 
   # Patch web3-provider-engine library
   rm_dist "web3-provider-engine"
+  echo
 
   # Patch libraries with circular dependencies
-  echo
   rm -f -v "node_modules/decompress-tar/node_modules/tar-stream/pack.js"
   rm -f -v "node_modules/fd-slicer/index.js"
   rm -f -v "node_modules/klaw/src/index.js"
