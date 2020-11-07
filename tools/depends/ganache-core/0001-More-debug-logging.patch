@@ -1,0 +1,25 @@
+From 25d35168ee2e7882171a166042ccf50a76180a3b Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Sat, 7 Nov 2020 12:44:31 -0800
+Subject: [PATCH] More debug logging
+
+---
+ lib/provider.js | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/lib/provider.js b/lib/provider.js
+index 0f15244..8711f1b 100644
+--- a/lib/provider.js
++++ b/lib/provider.js
+@@ -29,6 +29,8 @@ function Provider(options) {
+     blockTracker: new BlockTracker({ blockchain: gethApiDouble.state.blockchain })
+   });
+ 
++  console.dir(SubscriptionSubprovider);
++
+   const subscriptionSubprovider = new SubscriptionSubprovider();
+ 
+   this.engine.manager = gethApiDouble;
+-- 
+2.17.1
+
