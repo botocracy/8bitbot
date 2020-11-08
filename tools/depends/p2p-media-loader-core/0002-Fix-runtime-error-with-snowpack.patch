@@ -1,0 +1,113 @@
+From 87b68eddc7efd3e2bc3506d9d8f37cbfd5a57e62 Mon Sep 17 00:00:00 2001
+From: Garrett Brown <garrett.brown@aclima.io>
+Date: Fri, 16 Oct 2020 23:01:00 -0700
+Subject: [PATCH] Fix runtime error with snowpack
+
+When compiling with snowpack and typescript, the variable `index_1` is replaced
+with the folder that `./index.js` resides in (`dist`).
+
+As a result, the version comparison compiles to:
+
+    const PEER_ID_VERSION_STRING = dist.version.replace(...);
+
+Error was:
+
+    Uncaught (in promise) TypeError: dist is undefined
+---
+ dist/index.d.ts           |  1 -
+ dist/index.js             |  1 -
+ dist/p2p-media-manager.js |  4 ++--
+ dist/version.d.ts         | 17 +++++++++++++++++
+ dist/version.js           | 18 ++++++++++++++++++
+ 5 files changed, 37 insertions(+), 4 deletions(-)
+ create mode 100644 dist/version.d.ts
+ create mode 100644 dist/version.js
+
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 4165ec0..1f3a7df 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -14,6 +14,5 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-export declare const version = "0.6.2";
+ export * from "./loader-interface";
+ export * from "./hybrid-loader";
+diff --git a/dist/index.js b/dist/index.js
+index f69687a..69109eb 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -18,6 +18,5 @@
+ function __export(m) {
+     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+ }
+-exports.version = "0.6.2";
+ __export(require("./loader-interface"));
+ __export(require("./hybrid-loader"));
+diff --git a/dist/p2p-media-manager.js b/dist/p2p-media-manager.js
+index 55ba502..a147334 100644
+--- a/dist/p2p-media-manager.js
++++ b/dist/p2p-media-manager.js
+@@ -20,9 +20,9 @@ const stringly_typed_event_emitter_1 = require("./stringly-typed-event-emitter")
+ const media_peer_1 = require("./media-peer");
+ const buffer_1 = require("buffer");
+ const sha1 = require("sha.js/sha1");
+-const index_1 = require("./index");
++const version = require("./version");
+ const PEER_PROTOCOL_VERSION = 2;
+-const PEER_ID_VERSION_STRING = index_1.version.replace(/\d*./g, v => `0${parseInt(v, 10) % 100}`.slice(-2)).slice(0, 4);
++const PEER_ID_VERSION_STRING = version.version.replace(/\d*./g, v => `0${parseInt(v, 10) % 100}`.slice(-2)).slice(0, 4);
+ const PEER_ID_VERSION_PREFIX = `-WW${PEER_ID_VERSION_STRING}-`; // Using WebTorrent client ID in order to not be banned by websocket trackers
+ class PeerSegmentRequest {
+     constructor(peerId, segment) {
+diff --git a/dist/version.d.ts b/dist/version.d.ts
+new file mode 100644
+index 0000000..3deac6f
+--- /dev/null
++++ b/dist/version.d.ts
+@@ -0,0 +1,17 @@
++/**
++ * @license Apache-2.0
++ * Copyright 2018 Novage LLC.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++export declare const version = "0.6.2";
+diff --git a/dist/version.js b/dist/version.js
+new file mode 100644
+index 0000000..8315aa5
+--- /dev/null
++++ b/dist/version.js
+@@ -0,0 +1,18 @@
++"use strict";
++/**
++ * @license Apache-2.0
++ * Copyright 2018 Novage LLC.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++exports.version = "0.6.2";
+-- 
+2.17.1
+
