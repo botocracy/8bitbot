@@ -44,6 +44,9 @@ function dispatch() {
   start)
     start
     ;;
+  preinstall)
+    preinstall
+    ;;
   postinstall)
     postinstall
     ;;
@@ -89,6 +92,11 @@ function start() {
   snowpack dev
 }
 
+function preinstall() {
+  # Bridge to installation entry point
+  "${SCRIPT_DIR}/npm-install.sh" preinstall
+}
+
 function postinstall() {
   # Bridge to installation entry point
   "${SCRIPT_DIR}/npm-install.sh" postinstall
@@ -131,7 +139,7 @@ function build() {
 function audit() {
   # Run audit which fails on discovery of moderate severity
   # Add --pass-enoaudit when using depedencies on their master branch
-  audit-ci --moderate --package-manager npm
+  audit-ci --moderate --package-manager npm --pass-enoaudit
 }
 
 function lint() {

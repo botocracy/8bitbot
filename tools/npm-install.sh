@@ -45,6 +45,9 @@ source "${SCRIPT_DIR}/npm-utils.sh"
 #
 function dispatch() {
   case $1 in
+  preinstall)
+    preinstall
+    ;;
   postinstall)
     postinstall
     ;;
@@ -55,14 +58,36 @@ function dispatch() {
   esac
 }
 
+function preinstall() {
+  # Create/update package-lock.json for npx
+  npm install --package-lock-only --ignore-scripts
+
+  # Force recursive dependencies based on "resolutions" field in package.json
+  npx npm-force-resolutions
+}
+
 function postinstall() {
+  # Patch bittorrent library
+  patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
+
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
 
+  # Patch p2p-media-loader libraries
+  patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
+  patch_package "p2p-media-loader-core" "0002-Fix-runtime-error-with-snowpack.patch"
+  patch_package "p2p-media-loader-hlsjs" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
+
+  # Patch readable-stream library (recursively)
+  patch_package_recursive "readable-stream" "0001-Fix-circular-dependency.patch"
+
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
+
+  # Patch Videostream library
+  patch_package "videostream" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 }
 
 # Perform the dispatch
