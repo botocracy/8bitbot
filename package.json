@@ -36,13 +36,22 @@
     "format": "bash tools/npm-scripts.sh format",
     "lint": "bash tools/npm-scripts.sh lint",
     "postinstall": "bash tools/npm-scripts.sh postinstall",
+    "preinstall": "bash tools/npm-scripts.sh preinstall",
     "start": "bash tools/npm-scripts.sh start",
     "test": "bash tools/npm-scripts.sh test"
   },
   "dependencies": {
+    "cache-chunk-store": "^3.0.0",
+    "dexie": "^3.0.2",
     "hls.js": "^0.13.2",
     "jsonld": "^3.2.0",
+    "mediasource": "^2.3.0",
+    "p2p-media-loader-core": "^0.6.2",
+    "p2p-media-loader-hlsjs": "^0.6.2",
+    "path": "^0.12.7",
+    "simple-peer": "git+https://github.com/feross/simple-peer.git#master",
     "three": "^0.121.1",
+    "video.js": "^7.8.4",
     "webtorrent": "^0.108.6"
   },
   "devDependencies": {
@@ -51,17 +60,21 @@
     "@snowpack/plugin-webpack": "^2.0.17",
     "@types/chai": "^4.2.14",
     "@types/mocha": "^8.0.3",
+    "@types/video.js": "^7.3.11",
+    "@videojs/vhs-utils": "^2.2.1",
     "audit-ci": "^3.1.1",
     "chai": "^4.2.0",
     "esm": "^3.2.25",
     "isomorphic-fetch": "^2.2.1",
     "jsdom-global": "^3.0.2",
     "mocha": "^8.2.0",
+    "npm-force-resolutions": ">=0.0.3",
     "prettier": "^2.1.2",
     "prettier-plugin-organize-imports": "^1.1.1",
     "prettier-plugin-pkg": "^0.8.0",
     "prettier-plugin-sh": "^0.6.0",
     "prettier-plugin-solidity": "^1.0.0-alpha.59",
+    "readable-stream": "^3.6.0",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "snowpack": "^2.15.1",
@@ -69,6 +82,9 @@
     "threads-plugin": "^1.3.3",
     "ts-mocha": "^8.0.0",
     "typescript": "^4.0.5"
+  },
+  "resolutions": {
+    "readable-stream": "3.6.0"
   },
   "bundleDependencies": false,
   "chromeapp": {
