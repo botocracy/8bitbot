@@ -9,10 +9,17 @@
  * See LICENSE.txt for more information.
  */
 
-import { blockchainTests } from '@0x/contracts-test-utils';
 import {
-  //IOwnableEvents,
-  //IOwnableOwnershipTransferredEventArgs,
+  blockchainTests,
+  constants,
+  expect,
+  filterLogsToArguments,
+} from '@0x/contracts-test-utils';
+import { OwnableRevertErrors } from '@0x/utils';
+import { artifacts } from '../artifacts';
+import {
+  IOwnableEvents,
+  IOwnableOwnershipTransferredEventArgs,
   TestOwnableContract,
 } from '../wrappers';
 
@@ -25,19 +32,16 @@ blockchainTests.resets('Ownable', (env) => {
     const accounts = await env.getAccountAddressesAsync();
     owner = await accounts[0];
     nonOwner = await accounts[1];
-    /*
     ownable = await TestOwnableContract.deployFrom0xArtifactAsync(
       artifacts.TestOwnable,
       env.provider,
       { ...env.txDefaults, from: owner },
       artifacts
     );
-    */
   });
 
   describe('onlyOwner', () => {
     it('should revert if sender is not the owner', async () => {
-      /*
       const expectedError = new OwnableRevertErrors.OnlyOwnerError(
         nonOwner,
         owner
@@ -45,20 +49,16 @@ blockchainTests.resets('Ownable', (env) => {
       return expect(
         ownable.externalOnlyOwner().callAsync({ from: nonOwner })
       ).to.revertWith(expectedError);
-      */
     });
 
     it('should succeed if sender is the owner', async () => {
-      /*
       const isSuccessful = await ownable
         .externalOnlyOwner()
         .callAsync({ from: owner });
       expect(isSuccessful).to.be.true;
-      */
     });
   });
 
-  /*
   describe('transferOwnership', () => {
     it('should revert if the specified new owner is the zero address', async () => {
       const expectedError = new OwnableRevertErrors.TransferOwnerToZeroError();
@@ -85,5 +85,4 @@ blockchainTests.resets('Ownable', (env) => {
       expect(updatedOwner).to.be.eq(nonOwner);
     });
   });
-  */
 });
