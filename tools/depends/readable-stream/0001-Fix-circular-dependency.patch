@@ -1,0 +1,153 @@
+From 4d93c4dcf71d3a4f9afca83729c6cc56dcdd7f59 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Tue, 20 Oct 2020 06:07:55 -0700
+Subject: [PATCH] Fix circular dependency
+
+At the time `require('inherits')(Duplex, Readable)` is called, Readable
+is hoisted but not yet defined due to a circular dependency. Fix this
+by removing the circular depedency.
+---
+ lib/_stream_duplex.js   |  4 ++--
+ lib/_stream_readable.js | 16 +++++-----------
+ lib/_stream_writable.js | 19 ++++++-------------
+ 3 files changed, 13 insertions(+), 26 deletions(-)
+
+diff --git a/lib/_stream_duplex.js b/lib/_stream_duplex.js
+index 6752519..50914a0 100644
+--- a/lib/_stream_duplex.js
++++ b/lib/_stream_duplex.js
+@@ -57,8 +57,8 @@ require('inherits')(Duplex, Readable);
+ 
+ function Duplex(options) {
+   if (!(this instanceof Duplex)) return new Duplex(options);
+-  Readable.call(this, options);
+-  Writable.call(this, options);
++  Readable.call(this, options, true);
++  Writable.call(this, options, true);
+   this.allowHalfOpen = true;
+ 
+   if (options) {
+diff --git a/lib/_stream_readable.js b/lib/_stream_readable.js
+index 192d451..8de341a 100644
+--- a/lib/_stream_readable.js
++++ b/lib/_stream_readable.js
+@@ -21,10 +21,6 @@
+ 'use strict';
+ 
+ module.exports = Readable;
+-/*<replacement>*/
+-
+-var Duplex;
+-/*</replacement>*/
+ 
+ Readable.ReadableState = ReadableState;
+ /*<replacement>*/
+@@ -72,6 +68,7 @@ if (debugUtil && debugUtil.debuglog) {
+ var BufferList = require('./internal/streams/buffer_list');
+ 
+ var destroyImpl = require('./internal/streams/destroy');
++const { exception } = require('console');
+ 
+ var _require = require('./internal/streams/state'),
+     getHighWaterMark = _require.getHighWaterMark;
+@@ -104,16 +101,12 @@ function prependListener(emitter, event, fn) {
+ }
+ 
+ function ReadableState(options, stream, isDuplex) {
+-  Duplex = Duplex || require('./_stream_duplex');
+   options = options || {}; // Duplex streams are both readable and writable, but share
+   // the same options object.
+   // However, some cases require setting options to different
+   // values for the readable and the writable sides of the duplex stream.
+   // These options can be provided separately as readableXXX and writableXXX.
+ 
+-  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Duplex; // object stream flag. Used to make read(n) ignore n and to
+-  // make all the buffer merging and length checks go away
+-
+   this.objectMode = !!options.objectMode;
+   if (isDuplex) this.objectMode = this.objectMode || !!options.readableObjectMode; // the point at which it stops calling _read() to fill the buffer
+   // Note: 0 is a valid value, means "don't call _read preemptively ever"
+@@ -166,12 +159,13 @@ function ReadableState(options, stream, isDuplex) {
+   }
+ }
+ 
+-function Readable(options) {
+-  Duplex = Duplex || require('./_stream_duplex');
++function Readable(options, isDuplex) {
+   if (!(this instanceof Readable)) return new Readable(options); // Checking for a Stream.Duplex instance is faster here instead of inside
+   // the ReadableState constructor, at least with V8 6.5
+ 
+-  var isDuplex = this instanceof Duplex;
++  if (typeof isDuplex !== 'boolean') isDuplex = false; // object stream flag. Used to make read(n) ignore n and to
++  // make all the buffer merging and length checks go away
++
+   this._readableState = new ReadableState(options, this, isDuplex); // legacy
+ 
+   this.readable = true;
+diff --git a/lib/_stream_writable.js b/lib/_stream_writable.js
+index a2634d7..3f1fddb 100644
+--- a/lib/_stream_writable.js
++++ b/lib/_stream_writable.js
+@@ -47,12 +47,6 @@ function CorkedRequest(state) {
+ }
+ /* </replacement> */
+ 
+-/*<replacement>*/
+-
+-
+-var Duplex;
+-/*</replacement>*/
+-
+ Writable.WritableState = WritableState;
+ /*<replacement>*/
+ 
+@@ -80,6 +74,7 @@ function _isUint8Array(obj) {
+ }
+ 
+ var destroyImpl = require('./internal/streams/destroy');
++const { exception } = require('console');
+ 
+ var _require = require('./internal/streams/state'),
+     getHighWaterMark = _require.getHighWaterMark;
+@@ -101,16 +96,12 @@ require('inherits')(Writable, Stream);
+ function nop() {}
+ 
+ function WritableState(options, stream, isDuplex) {
+-  Duplex = Duplex || require('./_stream_duplex');
+   options = options || {}; // Duplex streams are both readable and writable, but share
+   // the same options object.
+   // However, some cases require setting options to different
+   // values for the readable and the writable sides of the duplex stream,
+   // e.g. options.readableObjectMode vs. options.writableObjectMode, etc.
+ 
+-  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Duplex; // object stream flag to indicate whether or not this stream
+-  // contains buffers or objects.
+-
+   this.objectMode = !!options.objectMode;
+   if (isDuplex) this.objectMode = this.objectMode || !!options.writableObjectMode; // the point at which write() starts returning false
+   // Note: 0 is a valid value, means that we always return false if
+@@ -226,8 +217,8 @@ if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.protot
+   };
+ }
+ 
+-function Writable(options) {
+-  Duplex = Duplex || require('./_stream_duplex'); // Writable ctor is applied to Duplexes, too.
++function Writable(options, isDuplex) {
++  // Writable ctor is applied to Duplexes, too.
+   // `realHasInstance` is necessary because using plain `instanceof`
+   // would return false, as no `_writableState` property is attached.
+   // Trying to use the custom `instanceof` for Writable here will also break the
+@@ -236,7 +227,9 @@ function Writable(options) {
+   // Checking for a Stream.Duplex instance is faster here instead of inside
+   // the WritableState constructor, at least with V8 6.5
+ 
+-  var isDuplex = this instanceof Duplex;
++  if (typeof isDuplex !== 'boolean') isDuplex = false; // object stream flag to indicate whether or not this stream
++  // contains buffers or objects.
++
+   if (!isDuplex && !realHasInstance.call(Writable, this)) return new Writable(options);
+   this._writableState = new WritableState(options, this, isDuplex); // legacy.
+ 
+-- 
+2.17.1
+
