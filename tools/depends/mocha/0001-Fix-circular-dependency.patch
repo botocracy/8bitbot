@@ -1,0 +1,121 @@
+From c720f716932152c00e13d05e6ad60cd9ae430ac0 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Sat, 7 Nov 2020 06:51:48 -0800
+Subject: [PATCH] Fix circular dependency
+
+At the time `inherits$1(Duplex, Readable);` is called, Readable is
+hoisted but not yet defined due to a circular dependency. Fix this
+by removing the circular depedency.
+---
+ mocha.js | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
+
+diff --git a/mocha.js b/mocha.js
+index d6a2a5c..bee90e5 100644
+--- a/mocha.js
++++ b/mocha.js
+@@ -10132,12 +10132,12 @@
+ 	  return emitter.listeners(type).length;
+ 	}
+ 
+-	function ReadableState(options, stream) {
++	function ReadableState(options, stream, isDuplex) {
+ 	  options = options || {}; // object stream flag. Used to make read(n) ignore n and to
+ 	  // make all the buffer merging and length checks go away
+ 
+ 	  this.objectMode = !!options.objectMode;
+-	  if (stream instanceof Duplex) this.objectMode = this.objectMode || !!options.readableObjectMode; // the point at which it stops calling _read() to fill the buffer
++	  if (isDuplex) this.objectMode = this.objectMode || !!options.readableObjectMode; // the point at which it stops calling _read() to fill the buffer
+ 	  // Note: 0 is a valid value, means "don't call _read preemptively ever"
+ 
+ 	  var hwm = options.highWaterMark;
+@@ -10186,9 +10186,9 @@
+ 	    this.encoding = options.encoding;
+ 	  }
+ 	}
+-	function Readable(options) {
++	function Readable(options, isDuplex) {
+ 	  if (!(this instanceof Readable)) return new Readable(options);
+-	  this._readableState = new ReadableState(options, this); // legacy
++	  this._readableState = new ReadableState(options, this, isDuplex); // legacy
+ 
+ 	  this.readable = true;
+ 	  if (options && typeof options.read === 'function') this._read = options.read;
+@@ -11007,7 +11007,7 @@
+ 	  this.next = null;
+ 	}
+ 
+-	function WritableState(options, stream) {
++	function WritableState(options, stream, isDuplex) {
+ 	  Object.defineProperty(this, 'buffer', {
+ 	    get: deprecate(function () {
+ 	      return this.getBuffer();
+@@ -11017,7 +11017,7 @@
+ 	  // contains buffers or objects.
+ 
+ 	  this.objectMode = !!options.objectMode;
+-	  if (stream instanceof Duplex) this.objectMode = this.objectMode || !!options.writableObjectMode; // the point at which write() starts returning false
++	  if (isDuplex) this.objectMode = this.objectMode || !!options.writableObjectMode; // the point at which write() starts returning false
+ 	  // Note: 0 is a valid value, means that we always return false if
+ 	  // the entire buffer is not flushed immediately on write()
+ 
+@@ -11096,11 +11096,11 @@
+ 
+ 	  return out;
+ 	};
+-	function Writable(options) {
++	function Writable(options, isDuplex) {
+ 	  // Writable ctor is applied to Duplexes, though they're not
+ 	  // instanceof Writable, they're instanceof Readable.
+-	  if (!(this instanceof Writable) && !(this instanceof Duplex)) return new Writable(options);
+-	  this._writableState = new WritableState(options, this); // legacy.
++	  if (!(this instanceof Writable) && !isDuplex) return new Writable(options);
++	  this._writableState = new WritableState(options, this, isDuplex); // legacy.
+ 
+ 	  this.writable = true;
+ 
+@@ -11451,8 +11451,8 @@
+ 	}
+ 	function Duplex(options) {
+ 	  if (!(this instanceof Duplex)) return new Duplex(options);
+-	  Readable.call(this, options);
+-	  Writable.call(this, options);
++	  Readable.call(this, options, true);
++	  Writable.call(this, options, true);
+ 	  if (options && options.readable === false) this.readable = false;
+ 	  if (options && options.writable === false) this.writable = false;
+ 	  this.allowHalfOpen = true;
+@@ -11599,14 +11599,6 @@
+ 	};
+ 
+ 	inherits$1(Stream, EventEmitter);
+-	Stream.Readable = Readable;
+-	Stream.Writable = Writable;
+-	Stream.Duplex = Duplex;
+-	Stream.Transform = Transform;
+-	Stream.PassThrough = PassThrough; // Backwards-compat with node 0.4.x
+-
+-	Stream.Stream = Stream;
+-	// part of this class) is overridden in the Readable class.
+ 
+ 	function Stream() {
+ 	  EventEmitter.call(this);
+@@ -11685,6 +11677,15 @@
+ 	  return dest;
+ 	};
+ 
++	Stream.Readable = Readable;
++	Stream.Writable = Writable;
++	Stream.Duplex = Duplex;
++	Stream.Transform = Transform;
++	Stream.PassThrough = PassThrough;
++
++	// Backwards-compat with node 0.4.x
++	Stream.Stream = Stream;
++
+ 	var WritableStream = Stream.Writable;
+ 	var inherits$2 = util.inherits;
+ 	var browserStdout = BrowserStdout;
+-- 
+2.17.1
+

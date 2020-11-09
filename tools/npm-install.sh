@@ -70,6 +70,9 @@ function postinstall() {
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
+  # Patch duplexer3 library
+  patch_package_recursive "duplexer3" "0001-Replace-stream-package-with-readable-stream.patch"
+
   # Patch ethereum-waffle libraries
   patch_package "@ethereum-waffle/chai" "0001-package.json-Fix-module-entry-point.patch"
   patch_package "@ethereum-waffle/compiler" "0001-package.json-Fix-module-entry-point.patch"
@@ -78,10 +81,19 @@ function postinstall() {
   patch_package "@ethereum-waffle/provider" "0001-package.json-Fix-module-entry-point.patch"
   patch_package "ethereum-waffle" "0001-package.json-Fix-module-entry-point.patch"
 
+  # Patch hdkey library
+  patch_package_recursive "hdkey" "0001-Replace-crypto-builtins-with-npm-packages.patch"
+
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
   patch_package "jsonld" "0003-Fix-exception-with-empty-process.version.patch"
+
+  # Patch keccak library
+  patch_package_recursive "keccak" "0001-Fix-Patch-keccak-to-prevent-node-14-segfault.patch"
+
+  # Patch mocha
+  patch_package_recursive "mocha" "0001-Fix-circular-dependency.patch"
 
   # Patch p2p-media-loader libraries
   patch_package "p2p-media-loader-core" "0001-Fix-build-error-due-to-commonjs-translation-bug.patch"
@@ -90,6 +102,9 @@ function postinstall() {
 
   # Patch readable-stream library (recursively)
   patch_package_recursive "readable-stream" "0001-Fix-circular-dependency.patch"
+
+  # Patch rollup-plugin-node-polyfills library
+  patch_package "rollup-plugin-node-polyfills" "0001-Fix-circular-dependency.patch"
 
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
