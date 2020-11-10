@@ -73,6 +73,14 @@ function postinstall() {
   # Patch duplexer3 library
   patch_package_recursive "duplexer3" "0001-Replace-stream-package-with-readable-stream.patch"
 
+  # Patch ethereum-waffle libraries
+  patch_package "@ethereum-waffle/chai" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "@ethereum-waffle/compiler" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "@ethereum-waffle/ens" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "@ethereum-waffle/mock-contract" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "@ethereum-waffle/provider" "0001-package.json-Fix-module-entry-point.patch"
+  patch_package "ethereum-waffle" "0001-package.json-Fix-module-entry-point.patch"
+
   # Patch hdkey library
   patch_package_recursive "hdkey" "0001-Replace-crypto-builtins-with-npm-packages.patch"
 
