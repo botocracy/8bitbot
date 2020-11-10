@@ -12,11 +12,24 @@
 #
 # Utility functions for NPM scripting
 #
+# Import via:
+#
+#   source npm-utils.sh
+#
 
 # Enable strict mode
 set -o errexit
 set -o pipefail
 set -o nounset
+
+# Absolute path to this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+#
+# Source includes
+#
+
+source "${SCRIPT_DIR}/npm-paths.sh"
 
 #
 # Helper function
@@ -30,7 +43,7 @@ function patch_package() {
   patch=$2
 
   package_path="node_modules/${package}"
-  patch_path="tools/depends/${package}/${patch}"
+  patch_path="${DEPENDS_DIR}/${package}/${patch}"
 
   # Can't discern between missing patch and already-applied patch
   if [ ! -f "${patch_path}" ]; then
@@ -65,7 +78,7 @@ function patch_subpackage() {
   patch=$3
 
   package_path="${parent_path}/node_modules/${package}"
-  patch_path="tools/depends/${package}/${patch}"
+  patch_path="${DEPENDS_DIR}/${package}/${patch}"
 
   # Can't discern between missing patch and already-applied patch
   if [ ! -f "${patch_path}" ]; then
@@ -102,7 +115,7 @@ function patch_package_recursive() {
   package=$1
   patch=$2
 
-  patch_path="tools/depends/${package}/${patch}"
+  patch_path="${DEPENDS_DIR}/${package}/${patch}"
 
   # Can't discern between missing patch and already-applied patch
   if [ ! -f "${patch_path}" ]; then

@@ -24,8 +24,14 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-# Get the absolute path to this script
+# Absolute path to this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+#
+# Source includes
+#
+
+source "${SCRIPT_DIR}/npm-paths.sh"
 
 #
 # Dispatch function
