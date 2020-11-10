@@ -36,4 +36,9 @@ deleteFolderRecursive('./build');
 deleteFolderRecursive('./node_modules');
 deleteFolderRecursive('./web_modules');
 
+// Waffle directories
+deleteFolderRecursive('./build-contracts');
+deleteFolderRecursive('./cache');
+deleteFolderRecursive('./flatten-contracts');
+
 console.log('Successfully cleaned working tree!');

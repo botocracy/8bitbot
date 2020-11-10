@@ -62,6 +62,9 @@ function dispatch() {
   depends-install)
     depends-install
     ;;
+  compile)
+    compile
+    ;;
   build)
     build
     ;;
@@ -129,6 +132,26 @@ function depends-build() {
 
 function depends-install() {
   make -C "${TOOL_DIR}" install
+}
+
+function compile() {
+  # Build smart contracts
+  echo "Compiling contracts with waffle..."
+  PATH="${DEPENDS_BINARY_DIR}:${PATH}" \
+    waffle
+  echo "Finished compiling contracts"
+  echo
+
+  prettier --write --loglevel error "${CONTRACT_BUILD_DIR}"
+
+  # Flatten smart contracts
+  echo "Flattening contracts with waffle..."
+  PATH="${DEPENDS_BINARY_DIR}:${PATH}" \
+    waffle flatten
+  echo "Finished flattening contracts"
+  echo
+
+  prettier --write --loglevel error "${CONTRACT_FLATTEN_DIR}"
 }
 
 function build() {
