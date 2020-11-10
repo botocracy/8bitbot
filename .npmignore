@@ -1,3 +1,11 @@
-.build
-build
-web_modules
+# Blocklist all files
+.*
+*
+
+# Allowlist src (TODO: Change to the destination for compiled ts files)
+!src/**/*
+
+# Allowlist Solidity contracts
+!contracts/src/**/*
+
+# Package specific ignore
