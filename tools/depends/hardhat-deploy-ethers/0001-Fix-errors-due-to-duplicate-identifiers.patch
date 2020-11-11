@@ -1,0 +1,41 @@
+From 53a780b7a0b9764bdd62ee64de2eebea42ec9a61 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Mon, 16 Nov 2020 05:57:46 -0800
+Subject: [PATCH] Fix errors due to duplicate identifiers
+
+Errors were:
+
+    type-extensions.d.ts(6,10): error TS2300: Duplicate identifier 'Libraries'.
+    type-extensions.d.ts(7,10): error TS2300: Duplicate identifier 'FactoryOptions'.
+---
+ dist/src/type-extensions.d.ts | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/dist/src/type-extensions.d.ts b/dist/src/type-extensions.d.ts
+index 6e71f4f..07946cc 100644
+--- a/dist/src/type-extensions.d.ts
++++ b/dist/src/type-extensions.d.ts
+@@ -1,10 +1,7 @@
+ import * as ethers from "ethers";
+ import "hardhat/types/runtime";
+-import type { FactoryOptions as FactoryOptionsT, Libraries as LibrariesT } from "./helpers";
+ import type { SignerWithAddress } from "./signer-with-address";
+ declare module "hardhat/types/runtime" {
+-    type Libraries = LibrariesT;
+-    type FactoryOptions = FactoryOptionsT;
+     type EthersExtenstion = {
+         provider: ethers.providers.JsonRpcProvider;
+         getContractFactory: typeof getContractFactory;
+@@ -32,8 +29,5 @@ declare module "hardhat/types/runtime" {
+     };
+     function getContractFactory(name: string, signerOrOptions?: ethers.Signer | FactoryOptions): Promise<ethers.ContractFactory>;
+     function getContractFactory(abi: any[], bytecode: ethers.utils.BytesLike, signer?: ethers.Signer): Promise<ethers.ContractFactory>;
+-    interface HardhatRuntimeEnvironment {
+-        ethers: EthersExtenstion;
+-    }
+ }
+ //# sourceMappingURL=type-extensions.d.ts.map
+\ No newline at end of file
+-- 
+2.17.1
+
