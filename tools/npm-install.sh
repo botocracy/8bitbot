@@ -73,6 +73,11 @@ function postinstall() {
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
+  # Patch hardhat libraries
+  patch_package "hardhat" "0001-Ignore-exception-when-decoding-rich-errors.patch"
+  patch_package "hardhat-deploy" "0001-Fix-error-detecing-license-in-block.patch"
+  patch_package "hardhat-deploy-ethers" "0001-Fix-errors-due-to-duplicate-identifiers.patch"
+
   # Patch jsonld.js
   patch_package "jsonld" "0001-Add-missing-webpack.config.js.patch"
   patch_package "jsonld" "0002-Switch-to-core-js-3.patch"
