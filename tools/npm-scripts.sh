@@ -80,6 +80,9 @@ function dispatch() {
   test)
     test
     ;;
+  coverage)
+    coverage
+    ;;
   clean)
     clean
     ;;
@@ -136,22 +139,9 @@ function depends-install() {
 
 function compile() {
   # Build smart contracts
-  echo "Compiling contracts with waffle..."
-  PATH="${DEPENDS_BINARY_DIR}:${PATH}" \
-    waffle
+  echo "Compiling contracts with Hardhat..."
+  hardhat compile
   echo "Finished compiling contracts"
-  echo
-
-  prettier --write --loglevel error "${CONTRACT_BUILD_DIR}"
-
-  # Flatten smart contracts
-  echo "Flattening contracts with waffle..."
-  PATH="${DEPENDS_BINARY_DIR}:${PATH}" \
-    waffle flatten
-  echo "Finished flattening contracts"
-  echo
-
-  prettier --write --loglevel error "${CONTRACT_FLATTEN_DIR}"
 }
 
 function build() {
@@ -194,9 +184,15 @@ function test() {
     --recursive \
     --extension js \
     --extension ts \
+    --require dotenv-defaults/config \
     --require esm \
+    --require hardhat \
     --require isomorphic-fetch \
     --require jsdom-global/register
+}
+
+function coverage() {
+  hardhat coverage --temp artifacts --network coverage
 }
 
 function clean() {
