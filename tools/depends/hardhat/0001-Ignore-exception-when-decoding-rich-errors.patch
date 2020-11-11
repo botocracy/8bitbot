@@ -1,0 +1,76 @@
+From aeafb8de488ea04d126e15cbd01e14b26fb6ffd1 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Sat, 14 Nov 2020 04:51:30 -0800
+Subject: [PATCH] Ignore exception when decoding rich errors
+
+Exception was:
+
+    Error: Number can only safely store up to 53 bits
+---
+ .../stack-traces/revert-reasons.d.ts.map               |  2 +-
+ .../hardhat-network/stack-traces/revert-reasons.js     | 10 ++++++++--
+ .../hardhat-network/stack-traces/revert-reasons.js.map |  2 +-
+ .../hardhat-network/stack-traces/revert-reasons.ts     |  9 +++++++--
+ 4 files changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/internal/hardhat-network/stack-traces/revert-reasons.d.ts.map b/internal/hardhat-network/stack-traces/revert-reasons.d.ts.map
+index 33f107e..6cbc31b 100644
+--- a/internal/hardhat-network/stack-traces/revert-reasons.d.ts.map
++++ b/internal/hardhat-network/stack-traces/revert-reasons.d.ts.map
+@@ -1 +1 @@
+-{"version":3,"file":"revert-reasons.d.ts","sourceRoot":"","sources":["../../../src/internal/hardhat-network/stack-traces/revert-reasons.ts"],"names":[],"mappings":";AAEA,wBAAgB,kBAAkB,CAAC,UAAU,EAAE,MAAM,GAAG,MAAM,CAS7D"}
+\ No newline at end of file
++{"version":3,"file":"revert-reasons.d.ts","sourceRoot":"","sources":["../../../src/internal/hardhat-network/stack-traces/revert-reasons.ts"],"names":[],"mappings":";AAEA,wBAAgB,kBAAkB,CAAC,UAAU,EAAE,MAAM,GAAG,MAAM,CAc7D"}
+\ No newline at end of file
+diff --git a/internal/hardhat-network/stack-traces/revert-reasons.js b/internal/hardhat-network/stack-traces/revert-reasons.js
+index a84ea27..b68cb45 100644
+--- a/internal/hardhat-network/stack-traces/revert-reasons.js
++++ b/internal/hardhat-network/stack-traces/revert-reasons.js
+@@ -7,8 +7,14 @@ function decodeRevertReason(returnData) {
+         return "";
+     }
+     // TODO: What should happen if the reason fails to be decoded?
+-    const decoded = ethereumjs_abi_1.rawDecode(["string"], returnData.slice(4));
+-    return decoded.toString("utf8");
++    // TODO: Handle rich errors
++    try {
++        const decoded = ethereumjs_abi_1.rawDecode(["string"], returnData.slice(4));
++        return decoded.toString("utf8");
++    }
++    catch (error) {
++        return "";
++    }
+ }
+ exports.decodeRevertReason = decodeRevertReason;
+ //# sourceMappingURL=revert-reasons.js.map
+\ No newline at end of file
+diff --git a/internal/hardhat-network/stack-traces/revert-reasons.js.map b/internal/hardhat-network/stack-traces/revert-reasons.js.map
+index ec306e4..2d4a3ec 100644
+--- a/internal/hardhat-network/stack-traces/revert-reasons.js.map
++++ b/internal/hardhat-network/stack-traces/revert-reasons.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"revert-reasons.js","sourceRoot":"","sources":["../../../src/internal/hardhat-network/stack-traces/revert-reasons.ts"],"names":[],"mappings":";;;AAAA,mDAA2C;AAE3C,SAAgB,kBAAkB,CAAC,UAAkB;IACnD,IAAI,UAAU,CAAC,MAAM,KAAK,CAAC,EAAE;QAC3B,OAAO,EAAE,CAAC;KACX;IAED,8DAA8D;IAE9D,MAAM,OAAO,GAAG,0BAAS,CAAC,CAAC,QAAQ,CAAC,EAAE,UAAU,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC;IAC3D,OAAO,OAAO,CAAC,QAAQ,CAAC,MAAM,CAAC,CAAC;AAClC,CAAC;AATD,gDASC"}
+\ No newline at end of file
++{"version":3,"file":"revert-reasons.js","sourceRoot":"","sources":["../../../src/internal/hardhat-network/stack-traces/revert-reasons.ts"],"names":[],"mappings":";;;AAAA,mDAA2C;AAE3C,SAAgB,kBAAkB,CAAC,UAAkB;IACnD,IAAI,UAAU,CAAC,MAAM,KAAK,CAAC,EAAE;QAC3B,OAAO,EAAE,CAAC;KACX;IAED,8DAA8D;IAE9D,2BAA2B;IAC3B,IAAI;QACF,MAAM,OAAO,GAAG,0BAAS,CAAC,CAAC,QAAQ,CAAC,EAAE,UAAU,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC,CAAC;QAC3D,OAAO,OAAO,CAAC,QAAQ,CAAC,MAAM,CAAC,CAAC;KACjC;IAAC,OAAO,KAAK,EAAE;QACd,OAAO,EAAE,CAAC;KACX;AACH,CAAC;AAdD,gDAcC"}
+\ No newline at end of file
+diff --git a/src/internal/hardhat-network/stack-traces/revert-reasons.ts b/src/internal/hardhat-network/stack-traces/revert-reasons.ts
+index dbb3beb..54fd6df 100644
+--- a/src/internal/hardhat-network/stack-traces/revert-reasons.ts
++++ b/src/internal/hardhat-network/stack-traces/revert-reasons.ts
+@@ -7,6 +7,11 @@ export function decodeRevertReason(returnData: Buffer): string {
+ 
+   // TODO: What should happen if the reason fails to be decoded?
+ 
+-  const decoded = rawDecode(["string"], returnData.slice(4));
+-  return decoded.toString("utf8");
++  // TODO: Handle rich errors
++  try {
++    const decoded = rawDecode(["string"], returnData.slice(4));
++    return decoded.toString("utf8");
++  } catch (error) {
++    return "";
++  }
+ }
+-- 
+2.17.1
+

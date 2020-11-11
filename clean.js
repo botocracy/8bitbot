@@ -36,4 +36,9 @@ deleteFolderRecursive('./build');
 deleteFolderRecursive('./node_modules');
 deleteFolderRecursive('./web_modules');
 
+// Hardhat directories
+deleteFolderRecursive('./artifacts');
+deleteFolderRecursive('./cache');
+deleteFolderRecursive('./deployments');
+
 console.log('Successfully cleaned working tree!');
