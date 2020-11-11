@@ -1,0 +1,39 @@
+From 5aecff9b805debd749af1f4035f061bd883f5258 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Tue, 17 Nov 2020 00:56:01 -0800
+Subject: [PATCH] Fix error detecing license in /**/ block
+
+---
+ dist/src/etherscan.js | 2 +-
+ src/etherscan.ts      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dist/src/etherscan.js b/dist/src/etherscan.js
+index c38bcf9..d53b131 100644
+--- a/dist/src/etherscan.js
++++ b/dist/src/etherscan.js
+@@ -32,7 +32,7 @@ function extractOneLicenseFromSourceFile(source) {
+     return licenses[0]; // TODO error out on multiple SPDX ?
+ }
+ function extractLicenseFromSources(metadata) {
+-    const regex = /\/\/ SPDX-License-Identifier: (.*?)[\s\\]/g;
++    const regex = /SPDX-License-Identifier: (.*?)[\s\\]/g;
+     const matches = match_all_1.default(metadata, regex).toArray();
+     const licensesFound = {};
+     const licenses = [];
+diff --git a/src/etherscan.ts b/src/etherscan.ts
+index b675328..85d340f 100644
+--- a/src/etherscan.ts
++++ b/src/etherscan.ts
+@@ -33,7 +33,7 @@ function extractOneLicenseFromSourceFile(source: string): string | undefined {
+ }
+ 
+ function extractLicenseFromSources(metadata: string): string[] {
+-  const regex = /\/\/ SPDX-License-Identifier: (.*?)[\s\\]/g;
++  const regex = /SPDX-License-Identifier: (.*?)[\s\\]/g;
+   const matches = matchAll(metadata, regex).toArray();
+   const licensesFound: {[license: string]: boolean} = {};
+   const licenses = [];
+-- 
+2.17.1
+
