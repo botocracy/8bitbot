@@ -99,6 +99,7 @@
     "ltgt": "^2.2.1",
     "mocha": "^8.2.1",
     "npm-force-resolutions": ">=0.0.3",
+    "once": "^1.4.0",
     "prettier": "^2.1.2",
     "prettier-plugin-organize-imports": "^1.1.1",
     "prettier-plugin-pkg": "^0.8.0",
@@ -125,6 +126,7 @@
     "keccak": "3.0.1",
     "ltgt": "2.2.1",
     "mocha": "8.2.1",
+    "once": "1.4.0",
     "readable-stream": "3.6.0",
     "wrappy": "1.0.2"
   },
