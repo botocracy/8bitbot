@@ -44,7 +44,7 @@ module.exports = {
         // Fix "Uncaught TypeError: bufferEs6.hasOwnProperty is not a function"
         resolve({ preferBuiltins: false }),
         globals(),
-        polyfills(),
+        polyfills({ util: false }),
         commonjs(),
       ],
     },

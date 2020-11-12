@@ -109,6 +109,8 @@ function postinstall() {
   # Patch rollup-plugin-node-polyfills library
   patch_package "rollup-plugin-node-polyfills" "0001-Fix-circular-dependency.patch"
   patch_package "rollup-plugin-node-polyfills" "0001-Fix-runtime-error.patch"
+  (cd node_modules/rollup-plugin-node-polyfills && npm install --save-dev utils)
+  #patch_package "rollup-plugin-node-polyfills" "0001-package.json-Add-util-0.12.3.patch"
 
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
