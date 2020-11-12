@@ -1,0 +1,47 @@
+From 67c6fc4d8dbea55441934e6ca6d4c262c509e710 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 12 Nov 2020 11:21:53 -0800
+Subject: [PATCH] Fix runtime error
+
+This fixes a runtime error while trying to rollup Google Cloud
+IoT Core libraries.
+
+Error was:
+
+    Unhandled Runtime Error
+    Uncaught TypeError: wrappy$1 is not a function
+---
+ package.json               | 3 ++-
+ polyfills/browserify-fs.js | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/package.json b/package.json
+index 0d8e020..62c04be 100644
+--- a/package.json
++++ b/package.json
+@@ -42,7 +42,8 @@
+     "rollup-plugin-license": "^0.9.0",
+     "rollup-plugin-node-resolve": "^5.0.2",
+     "serve": "^11.0.1",
+-    "typescript": "^3.5.2"
++    "typescript": "^3.5.2",
++    "wrappy": "^1.0.2"
+   },
+   "repository": {
+     "type": "git",
+diff --git a/polyfills/browserify-fs.js b/polyfills/browserify-fs.js
+index 9921240..ac2676a 100644
+--- a/polyfills/browserify-fs.js
++++ b/polyfills/browserify-fs.js
+@@ -14314,7 +14314,7 @@ var levelPeek_2 = levelPeek.last;
+ // presumably different callback function.
+ // This makes sure that own properties are retained, so that
+ // decorations and such are not lost along the way.
+-var wrappy_1 = wrappy;
++var wrappy_1 = require('wrappy');
+ function wrappy (fn, cb) {
+   if (fn && cb) return wrappy(fn)(cb)
+ 
+-- 
+2.17.1
+

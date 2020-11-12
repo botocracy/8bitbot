@@ -108,6 +108,7 @@ function postinstall() {
 
   # Patch rollup-plugin-node-polyfills library
   patch_package "rollup-plugin-node-polyfills" "0001-Fix-circular-dependency.patch"
+  patch_package "rollup-plugin-node-polyfills" "0001-Fix-runtime-error.patch"
 
   # Patch Threads library
   patch_package "threads" "0001-Fix-browser-error-bundling-with-Snowpack.patch"
