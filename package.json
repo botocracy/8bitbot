@@ -64,14 +64,9 @@
     "@videojs/vhs-utils": "^2.2.1",
     "audit-ci": "^3.1.1",
     "chai": "^4.2.0",
-    "create-hash": "^1.2.0",
-    "create-hmac": "^1.1.7",
-    "duplexer3": "^0.1.4",
     "esm": "^3.2.25",
-    "hdkey": "^2.0.1",
     "isomorphic-fetch": "^2.2.1",
     "jsdom-global": "^3.0.2",
-    "keccak": "^3.0.1",
     "mocha": "^8.2.1",
     "npm-force-resolutions": ">=0.0.3",
     "prettier": "^2.1.2",
@@ -89,10 +84,6 @@
     "typescript": "^4.0.5"
   },
   "resolutions": {
-    "duplexer3": "0.1.4",
-    "hdkey": "2.0.1",
-    "keccak": "3.0.1",
-    "mocha": "8.2.1",
     "readable-stream": "3.6.0"
   },
   "bundleDependencies": false,
