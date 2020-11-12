@@ -71,6 +71,18 @@ jobs:
       - name: npm run audit
         run: npm run audit
 
+      - name: Restore OpenCV library
+        id: restore-opencv
+        uses: actions/cache@v2
+        with:
+          path: |
+            src/generated/opencv.js
+          key: restore-opencv-${{ matrix.os }}-${{ hashFiles('tools/depends/emscripten/*') }}-${{ hashFiles('tools/depends/opencv/*') }}
+
+      - name: Build depends
+        if: steps.restore-opencv.outputs.cache-hit != 'true'
+        run: npm run depends
+
       - name: npm test
         run: npm test
 
