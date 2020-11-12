@@ -1,0 +1,27 @@
+From d027ef534958aeea7078081c7fb9a99884a0e305 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Thu, 12 Nov 2020 09:02:09 -0800
+Subject: [PATCH] Debug loggin
+
+---
+ src/browser.js | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/browser.js b/src/browser.js
+index ac3f7e1..1e947bf 100644
+--- a/src/browser.js
++++ b/src/browser.js
+@@ -242,7 +242,9 @@ function localstorage() {
+ 	}
+ }
+ 
+-module.exports = require('./common')(exports);
++setup = require('./common');
++console.log(setup);
++module.exports = setup(exports);
+ 
+ const {formatters} = module.exports;
+ 
+-- 
+2.17.1
+

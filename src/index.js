@@ -21,6 +21,9 @@ import { loadVideoInfo } from './peertube-api';
 import { VideoPlayer } from './player/video-player';
 import { World } from './world';
 
+import * as iot from '@google-cloud/iot';
+console.log(iot);
+
 const world = new World();
 
 const VIDEO_ID = '5ea4b933-26e2-4813-a2b2-7c99c8626a60'; // Dubai Creek by Swedrone

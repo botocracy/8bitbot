@@ -70,6 +70,9 @@ function postinstall() {
   # Patch bittorrent library
   patch_package "bittorrent-tracker" "0001-Fix-runtime-error-due-to-wrapped-import.patch"
 
+  # Patch debug library
+  patch_package "debug" "0001-Debug-loggin.patch"
+
   # Patch duplexer3 library
   patch_package_recursive "duplexer3" "0001-Replace-stream-package-with-readable-stream.patch"
 

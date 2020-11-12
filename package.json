@@ -43,6 +43,7 @@
     "test": "bash tools/npm-scripts.sh test"
   },
   "dependencies": {
+    "@google-cloud/iot": "^2.1.1",
     "cache-chunk-store": "^3.0.0",
     "dexie": "^3.0.2",
     "hls.js": "^0.13.2",
@@ -66,6 +67,7 @@
     "@nomiclabs/hardhat-etherscan": "^2.0.1",
     "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@openzeppelin/contracts": "^3.2.0",
+    "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@snowpack/plugin-typescript": "^1.0.2",
     "@snowpack/plugin-webpack": "^2.0.17",
@@ -80,6 +82,7 @@
     "chai-as-promised": "^7.1.1",
     "create-hash": "^1.2.0",
     "create-hmac": "^1.1.7",
+    "debug": "^4.2.0",
     "dotenv-defaults": "^2.0.1",
     "duplexer3": "^0.1.4",
     "esm": "^3.2.25",
@@ -110,9 +113,11 @@
     "ts-mocha": "^8.0.0",
     "ts-node": "^9.0.0",
     "typechain": "^4.0.0",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "wrappy": "^1.0.2"
   },
   "resolutions": {
+    "debug": "4.2.0",
     "duplexer3": "0.1.4",
     "eth-block-tracker": "4.4.3",
     "ethereumjs-abi": "0.6.8",
@@ -120,7 +125,8 @@
     "keccak": "3.0.1",
     "ltgt": "2.2.1",
     "mocha": "8.2.1",
-    "readable-stream": "3.6.0"
+    "readable-stream": "3.6.0",
+    "wrappy": "1.0.2"
   },
   "bundleDependencies": false,
   "chromeapp": {
