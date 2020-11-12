@@ -14,7 +14,8 @@
 #
 # Required parameters:
 #
-#   USE_CONTRIB - Set to 1 to build with OpenCV's extra modules from contributory repo
+#   USE_CONTRIB - Set to 1 to build with OpenCV's extra modules from
+#                 contributory repo
 #
 # SPDX-License-Identifier: Apache-2.0
 #
