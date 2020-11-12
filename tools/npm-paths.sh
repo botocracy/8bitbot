@@ -29,8 +29,14 @@ set -o nounset
 # Typescript/Javascript source directory
 SOURCE_DIR="src"
 
+# Directory for generated source
+GENERATED_SOURCE_DIR="${SOURCE_DIR}/generated"
+
 # Tooling directory
 TOOL_DIR="tools"
 
 # Depends directory
 DEPENDS_DIR="${TOOL_DIR}/depends"
+
+# Build system stamp directory
+STAMP_DIR="${TOOL_DIR}/stamps"
