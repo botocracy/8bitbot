@@ -32,8 +32,8 @@ jobs:
         include:
           - os: Linux
             node-version: 14
-          - os: macOS
-            node-version: 14
+          #- os: macOS
+          #  node-version: 14
           - os: ubuntu-18.04
             node-version: 12
           - os: ubuntu-20.04
