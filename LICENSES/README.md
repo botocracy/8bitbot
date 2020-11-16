@@ -70,5 +70,6 @@ License-Text:
 
 - **[AGPL-3.0-or-later](AGPL-3.0-or-later.txt)**: GNU Affero General Public License v3.0 or later
 - **[Apache-2.0](Apache-2.0.txt)**: Apache License 2.0
+- **[MIT](MIT.txt)**: MIT License
 
 These licensing rules were adapted from the **[Linux kernel licensing rules](https://github.com/torvalds/linux/blob/master/Documentation/process/license-rules.rst)**.
