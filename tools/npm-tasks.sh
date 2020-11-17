@@ -14,7 +14,7 @@
 #
 # Call via:
 #
-#   npm-scripts.sh <task>
+#   npm-tasks.sh <task>
 #
 # See the function dispatch() for the available tasks that can be run.
 #
@@ -44,14 +44,8 @@ function dispatch() {
   start)
     start
     ;;
-  postinstall)
-    postinstall
-    ;;
   build)
     build
-    ;;
-  audit)
-    audit
     ;;
   lint)
     lint
@@ -77,20 +71,9 @@ function start() {
   snowpack dev
 }
 
-function postinstall() {
-  # Bridge to installation entry point
-  "${SCRIPT_DIR}/npm-install.sh" postinstall
-}
-
 function build() {
   # Build snowpack package
   snowpack build
-}
-
-function audit() {
-  # Run audit which fails on discovery of moderate severity
-  # Add --pass-enoaudit when using depedencies on their master branch
-  audit-ci --moderate --package-manager npm
 }
 
 function lint() {

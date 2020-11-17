@@ -26,14 +26,14 @@
     "webtorrent"
   ],
   "scripts": {
-    "audit": "bash tools/npm-scripts.sh audit",
-    "build": "bash tools/npm-scripts.sh build",
-    "clean": "bash tools/npm-scripts.sh clean",
-    "format": "bash tools/npm-scripts.sh format",
-    "lint": "bash tools/npm-scripts.sh lint",
-    "postinstall": "bash tools/npm-scripts.sh postinstall",
-    "start": "bash tools/npm-scripts.sh start",
-    "test": "bash tools/npm-scripts.sh test"
+    "audit": "bash tools/npm-install.sh audit",
+    "build": "bash tools/npm-tasks.sh build",
+    "clean": "bash tools/npm-tasks.sh clean",
+    "format": "bash tools/npm-tasks.sh format",
+    "lint": "bash tools/npm-tasks.sh lint",
+    "postinstall": "bash tools/npm-install.sh postinstall",
+    "start": "bash tools/npm-tasks.sh start",
+    "test": "bash tools/npm-tasks.sh test"
   },
   "dependencies": {
     "hls.js": "^0.14.16",
