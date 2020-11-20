@@ -121,6 +121,14 @@ jobs:
             tools/dist
           key: restore-library-depends-${{ matrix.os }}-${{ hashFiles('tools/depends/ade/*', 'tools/depends/ceres-solver/*', 'tools/depends/eigen/*', 'tools/depends/emscripten/*', 'tools/depends/google-flags/*', 'tools/depends/google-log/*', 'tools/depends/opencv/*') }}
 
+      - name: Restore 0x contracts
+        id: restore-0x
+        uses: actions/cache@v2
+        with:
+          path: |
+            contracts/depends/0x
+          key: restore-0x-${{ matrix.os }}-${{ hashFiles('tools/depends/0x/**') }}
+
       - name: Restore Yearn contracts
         id: restore-yearn
         uses: actions/cache@v2
@@ -140,7 +148,7 @@ jobs:
           brew update && brew install python
 
       - name: Build depends
-        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true' || steps.restore-yearn.outputs.cache-hit != 'true'
+        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true' || steps.restore-0x.outputs.cache-hit != 'true' || steps.restore-yearn.outputs.cache-hit != 'true'
         run: npm run depends
         env:
           ETHERSCAN_TOKEN: ${{ secrets.ETHERSCAN_API_KEY }}

@@ -1,0 +1,100 @@
+From 6757a9f20641082011b51535cebbb8c643d67492 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Fri, 20 Nov 2020 17:27:36 -0800
+Subject: [PATCH 4/7] Fix Typescript errors in @0x/contracts-erc20
+
+Errors were:
+
+ | unlimited_allowance_token.ts(82,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | unlimited_allowance_token.ts(107,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | unlimited_allowance_token.ts(121,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | zrx_token.ts(101,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | zrx_token.ts(119,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | zrx_token.ts(128,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | zrx_token.ts(133,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | zrx_token.ts(141,13): error TS2554: Expected 1-2 arguments, but got 0.
+---
+ contracts/erc20/test/unlimited_allowance_token.ts |  6 +++---
+ contracts/erc20/test/zrx_token.ts                 | 10 +++++-----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/contracts/erc20/test/unlimited_allowance_token.ts b/contracts/erc20/test/unlimited_allowance_token.ts
+index f361e00e6..77161d22a 100644
+--- a/contracts/erc20/test/unlimited_allowance_token.ts
++++ b/contracts/erc20/test/unlimited_allowance_token.ts
+@@ -79,7 +79,7 @@ describe('UnlimitedAllowanceToken', () => {
+             const didReturnTrue = await token.transfer(spender, new BigNumber(0)).callAsync({
+                 from: owner,
+             });
+-            expect(didReturnTrue).to.be.true();
++            expect(didReturnTrue).to.be.true;
+         });
+     });
+ 
+@@ -104,7 +104,7 @@ describe('UnlimitedAllowanceToken', () => {
+ 
+             const spenderAllowance = await token.allowance(owner, spender).callAsync();
+             const isSpenderAllowanceInsufficient = spenderAllowance.comparedTo(amountToTransfer) < 0;
+-            expect(isSpenderAllowanceInsufficient).to.be.true();
++            expect(isSpenderAllowanceInsufficient).to.be.true;
+ 
+             return expect(
+                 token.transferFrom(owner, spender, amountToTransfer).callAsync({
+@@ -118,7 +118,7 @@ describe('UnlimitedAllowanceToken', () => {
+             const didReturnTrue = await token.transferFrom(owner, spender, amountToTransfer).callAsync({
+                 from: spender,
+             });
+-            expect(didReturnTrue).to.be.true();
++            expect(didReturnTrue).to.be.true;
+         });
+ 
+         it('should not modify spender allowance if spender allowance is 2^256 - 1', async () => {
+diff --git a/contracts/erc20/test/zrx_token.ts b/contracts/erc20/test/zrx_token.ts
+index 82d7dfc88..7e03ed18b 100644
+--- a/contracts/erc20/test/zrx_token.ts
++++ b/contracts/erc20/test/zrx_token.ts
+@@ -98,7 +98,7 @@ describe('ZRXToken', () => {
+             const didReturnTrue = await zrxToken.transfer(spender, new BigNumber(0)).callAsync({
+                 from: owner,
+             });
+-            expect(didReturnTrue).to.be.true();
++            expect(didReturnTrue).to.be.true;
+         });
+     });
+ 
+@@ -116,7 +116,7 @@ describe('ZRXToken', () => {
+             const didReturnTrue = await zrxToken.transferFrom(owner, spender, amountToTransfer).callAsync({
+                 from: spender,
+             });
+-            expect(didReturnTrue).to.be.false();
++            expect(didReturnTrue).to.be.false;
+         });
+ 
+         it('should return false if spender has insufficient allowance', async () => {
+@@ -125,12 +125,12 @@ describe('ZRXToken', () => {
+ 
+             const spenderAllowance = await zrxToken.allowance(owner, spender).callAsync();
+             const isSpenderAllowanceInsufficient = spenderAllowance.comparedTo(amountToTransfer) < 0;
+-            expect(isSpenderAllowanceInsufficient).to.be.true();
++            expect(isSpenderAllowanceInsufficient).to.be.true;
+ 
+             const didReturnTrue = await zrxToken.transferFrom(owner, spender, amountToTransfer).callAsync({
+                 from: spender,
+             });
+-            expect(didReturnTrue).to.be.false();
++            expect(didReturnTrue).to.be.false;
+         });
+ 
+         it('should return true on a 0 value transfer', async () => {
+@@ -138,7 +138,7 @@ describe('ZRXToken', () => {
+             const didReturnTrue = await zrxToken.transferFrom(owner, spender, amountToTransfer).callAsync({
+                 from: spender,
+             });
+-            expect(didReturnTrue).to.be.true();
++            expect(didReturnTrue).to.be.true;
+         });
+ 
+         it('should not modify spender allowance if spender allowance is 2^256 - 1', async () => {
+-- 
+2.17.1
+

@@ -1,0 +1,316 @@
+From 067eea754bfbfed07c7d46bf8e069a22f94fc9d3 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Fri, 20 Nov 2020 17:36:27 -0800
+Subject: [PATCH 6/7] Fix Typescript errors in @0x/contracts-exchange
+
+Errors were:
+
+ | internal.ts(297,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | internal.ts(483,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | internal.ts(577,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | reentrancy_tests.ts(107,17): error TS2554: Expected 1-2 arguments, but got 0.
+ | reentrancy_tests.ts(118,17): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(150,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(170,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(177,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(191,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(199,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(215,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(233,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(273,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(316,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(323,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(400,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(414,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(492,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(507,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(519,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(620,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(637,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(651,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(816,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(831,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(843,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(955,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(972,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_validator.ts(986,13): error TS2554: Expected 1-2 arguments, but got 0.
+---
+ contracts/exchange/test/internal.ts           |  6 +--
+ contracts/exchange/test/reentrancy_tests.ts   |  4 +-
+ .../exchange/test/signature_validator.ts      | 48 +++++++++----------
+ 3 files changed, 29 insertions(+), 29 deletions(-)
+
+diff --git a/contracts/exchange/test/internal.ts b/contracts/exchange/test/internal.ts
+index 98fca2e9f..8f6ca77e2 100644
+--- a/contracts/exchange/test/internal.ts
++++ b/contracts/exchange/test/internal.ts
+@@ -294,7 +294,7 @@ blockchainTests('Exchange core internal functions', env => {
+                 LogWithDecodedArgs<TestExchangeInternalsDispatchTransferFromCalledEventArgs>
+             >;
+             expect(logs.length === 4);
+-            expect(_.every(logs, log => log.event === 'DispatchTransferFromCalled')).to.be.true();
++            expect(_.every(logs, log => log.event === 'DispatchTransferFromCalled')).to.be.true;
+             // taker -> maker
+             expect(logs[0].args.orderHash).to.eq(orderHash);
+             expect(logs[0].args.assetData).to.eq(order.takerAssetData);
+@@ -480,7 +480,7 @@ blockchainTests('Exchange core internal functions', env => {
+ 
+             // Ensure that the logs have the correct lengths and names
+             expect(logs.length).to.be.eq(7);
+-            expect(_.every(logs, log => log.event === 'DispatchTransferFromCalled')).to.be.true();
++            expect(_.every(logs, log => log.event === 'DispatchTransferFromCalled')).to.be.true;
+ 
+             // Right maker asset -> left maker
+             expect(logs[0].args.orderHash).to.be.eq(rightOrderHash);
+@@ -574,7 +574,7 @@ blockchainTests('Exchange core internal functions', env => {
+ 
+             // Ensure that the logs have the correct lengths and names
+             expect(logs.length).to.be.eq(8);
+-            expect(_.every(logs, log => log.event === 'DispatchTransferFromCalled')).to.be.true();
++            expect(_.every(logs, log => log.event === 'DispatchTransferFromCalled')).to.be.true;
+ 
+             // Right maker asset -> left maker
+             expect(logs[0].args.orderHash).to.be.eq(rightOrderHash);
+diff --git a/contracts/exchange/test/reentrancy_tests.ts b/contracts/exchange/test/reentrancy_tests.ts
+index 0a4f3ede5..2085888ee 100644
+--- a/contracts/exchange/test/reentrancy_tests.ts
++++ b/contracts/exchange/test/reentrancy_tests.ts
+@@ -104,7 +104,7 @@ blockchainTests.resets('Reentrancy Tests', env => {
+                 const inputs = createFunctionInputs(fn.inputs);
+                 const callData = (testerContract as any)[fn.name](...inputs).getABIEncodedTransactionData();
+                 const isReentrant = await testerContract.isReentrant(callData).callAsync();
+-                expect(isReentrant).to.be.false();
++                expect(isReentrant).to.be.false;
+             });
+         }
+     });
+@@ -115,7 +115,7 @@ blockchainTests.resets('Reentrancy Tests', env => {
+                 const inputs = createFunctionInputs(fn.inputs);
+                 const callData = (testerContract as any)[fn.name](...inputs).getABIEncodedTransactionData();
+                 const isReentrant = await testerContract.isReentrant(callData).callAsync();
+-                expect(isReentrant).to.be.true();
++                expect(isReentrant).to.be.true;
+             });
+         }
+     });
+diff --git a/contracts/exchange/test/signature_validator.ts b/contracts/exchange/test/signature_validator.ts
+index 07d66760d..941dc643f 100644
+--- a/contracts/exchange/test/signature_validator.ts
++++ b/contracts/exchange/test/signature_validator.ts
+@@ -147,7 +147,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+             const hashHex = getCurrentHashHex();
+             const signatureHex = hexUtils.concat(SignatureType.Invalid);
+             const isValidSignature = await validateAsync(hashHex, signerAddress, signatureHex);
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should revert when SignatureType=Invalid and signature length is non-zero', async () => {
+@@ -167,14 +167,14 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+             const hashHex = getCurrentHashHex();
+             const signatureHex = hexUtils.concat(signDataHex(hashHex, signerPrivateKey), SignatureType.EIP712);
+             const isValidSignature = await validateAsync(hashHex, signerAddress, signatureHex);
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         it('should return false when SignatureType=EIP712 and signature is invalid', async () => {
+             const hashHex = getCurrentHashHex();
+             const signatureHex = hexUtils.concat(generateRandomSignature(), SignatureType.EIP712);
+             const isValidSignature = await validateAsync(hashHex, signerAddress, signatureHex);
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should return true when SignatureType=EthSign and signature is valid', async () => {
+@@ -188,7 +188,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 SignatureType.EthSign,
+             );
+             const isValidSignature = await validateAsync(hashHex, signerAddress, signatureHex);
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         it('should return false when SignatureType=EthSign and signature is invalid', async () => {
+@@ -196,7 +196,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+             // Create EthSign signature
+             const signatureHex = hexUtils.concat(generateRandomSignature(), SignatureType.EthSign);
+             const isValidSignature = await validateAsync(hashHex, signerAddress, signatureHex);
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should return true when SignatureType=Wallet and signature is valid', async () => {
+@@ -212,7 +212,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         it('should return false when SignatureType=Wallet and signature is invalid', async () => {
+@@ -230,7 +230,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should revert when validator attempts to update state and SignatureType=Wallet', async () => {
+@@ -270,7 +270,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 signatureHex,
+                 ValidatorWalletAction.ReturnTrue,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should revert when validator returns nothing and SignatureType=Wallet', async () => {
+@@ -313,14 +313,14 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+             // Validate presigned signature
+             const signatureHex = hexUtils.concat(SignatureType.PreSigned);
+             const isValidSignature = await validateAsync(hashHex, signerAddress, signatureHex);
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         it('should return false when SignatureType=Presigned and signer has not presigned hash', async () => {
+             const hashHex = getCurrentHashHex();
+             const signatureHex = hexUtils.concat(SignatureType.PreSigned);
+             const isValidSignature = await validateAsync(hashHex, signerAddress, signatureHex);
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+     };
+ 
+@@ -397,7 +397,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+             const signature = Buffer.concat([v, r, s, trezorSignatureType]);
+             const signatureHex = ethUtil.bufferToHex(signature);
+             const isValidSignature = await exchange.isValidHashSignature(messageHash, signer, signatureHex).callAsync();
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         it('should return true when message was signed by a Trezor Model T (firmware version 2.0.7)', async () => {
+@@ -411,7 +411,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+             const signature = Buffer.concat([v, r, s, trezorSignatureType]);
+             const signatureHex = ethUtil.bufferToHex(signature);
+             const isValidSignature = await exchange.isValidHashSignature(messageHash, signer, signatureHex).callAsync();
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         createHashSignatureTests((_signerAddress?: string) => hashHex, validateAsync);
+@@ -489,7 +489,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         it('should return false when SignatureType=Validator, signature is invalid and validator is approved', async () => {
+@@ -504,7 +504,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should return false when validator returns `true` and SignatureType=Validator', async () => {
+@@ -516,7 +516,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.ReturnTrue,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should revert when validator returns nothing and SignatureType=Validator', async () => {
+@@ -617,7 +617,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         it('should return false when SignatureType=EIP1271Wallet and signature is invalid', async () => {
+@@ -634,7 +634,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should return false when validator returns `true` and SignatureType=EIP1271Wallet', async () => {
+@@ -648,7 +648,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.ReturnTrue,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should revert when validator returns nothing and SignatureType=EIP1271Wallet', async () => {
+@@ -813,7 +813,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         it('should return false when SignatureType=Validator, signature is invalid and validator is approved', async () => {
+@@ -828,7 +828,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should return false when validator returns `true` and SignatureType=Validator', async () => {
+@@ -840,7 +840,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.ReturnTrue,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should revert when SignatureType=Validator and signature is shorter than 21 bytes', async () => {
+@@ -952,7 +952,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.true();
++            expect(isValidSignature).to.be.true;
+         });
+ 
+         it('should return false when SignatureType=EIP1271Wallet and signature is invalid', async () => {
+@@ -969,7 +969,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.MatchSignatureHash,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should return false when validator returns `true` and SignatureType=EIP1271Wallet', async () => {
+@@ -983,7 +983,7 @@ blockchainTests.resets('MixinSignatureValidator', env => {
+                 ValidatorWalletAction.ReturnTrue,
+                 signatureDataHex,
+             );
+-            expect(isValidSignature).to.be.false();
++            expect(isValidSignature).to.be.false;
+         });
+ 
+         it('should revert when validator returns nothing and SignatureType=EIP1271Wallet', async () => {
+-- 
+2.17.1
+

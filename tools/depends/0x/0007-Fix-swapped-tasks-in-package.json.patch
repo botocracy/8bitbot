@@ -1,0 +1,31 @@
+From bc25920f1e62e02546579c8da6535a46fad5c181 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Fri, 20 Nov 2020 17:54:19 -0800
+Subject: [PATCH 7/7] Fix swapped tasks in package.json
+
+Caused the following error when building single package:
+
+$ mocha --require source-map-support/register --require make-promises-safe lib/test/**/*_test.js --bail --exit
+ | Error: No test files found: "lib/test/**/*_test.js"
+---
+ package.json | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/package.json b/package.json
+index 224c9a766..f6909050a 100644
+--- a/package.json
++++ b/package.json
+@@ -40,8 +40,8 @@
+         "contracts:watch": "wsrun watch $PKG --parallel --exclude-missing",
+         "remove_node_modules": "lerna clean --yes; rm -rf node_modules",
+         "rebuild": "run-s clean build",
+-        "test": "wsrun test $(echo $(echo ${npm_package_config_contractsPackages} ${npm_package_config_nonContractPackages} | tr ' ' '\n' | sort | uniq) ${npm_package_config_ignoreTestsForPackages} | tr ' ' '\n' | sort | uniq -u | tr '\n' ' ') --fast-exit --serial --exclude-missing",
+-        "test:all": "wsrun test $PKG --fast-exit --serial --exclude-missing",
++        "test": "wsrun test $PKG --fast-exit --serial --exclude-missing",
++        "test:all": "wsrun test $(echo $(echo ${npm_package_config_contractsPackages} ${npm_package_config_nonContractPackages} | tr ' ' '\n' | sort | uniq) ${npm_package_config_ignoreTestsForPackages} | tr ' ' '\n' | sort | uniq -u | tr '\n' ' ') --fast-exit --serial --exclude-missing",
+         "test:contracts": "wsrun test --serial -p $(echo ${npm_package_config_contractsPackages} ${npm_package_config_ignoreTestsForPackages} | tr ' ' '\n' | sort | uniq -u | tr '\n' ' ') -c --fast-exit --exclude-missing",
+         "test:contracts:all": "wsrun test --serial -p ${npm_package_config_contractsPackages} -c --fast-exit --exclude-missing",
+         "generate_doc": "node ./node_modules/@0x/monorepo-scripts/lib/doc_generate.js --config ./doc-gen-config.json",
+-- 
+2.17.1
+

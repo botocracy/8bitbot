@@ -1,0 +1,58 @@
+From d6f7f1a57a6ada1b3c3ee67b335879aa43ef4e54 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Fri, 20 Nov 2020 17:24:22 -0800
+Subject: [PATCH 3/7] Fix Typescript errors in @0x/contracts-erc1155
+
+Errors were:
+
+ | erc1155_token.ts(367,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | erc1155_token.ts(394,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | erc1155_token.ts(414,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | erc1155_token.ts(441,13): error TS2554: Expected 1-2 arguments, but got 0.
+---
+ contracts/erc1155/test/erc1155_token.ts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/contracts/erc1155/test/erc1155_token.ts b/contracts/erc1155/test/erc1155_token.ts
+index 2236ea801..d9200db3c 100644
+--- a/contracts/erc1155/test/erc1155_token.ts
++++ b/contracts/erc1155/test/erc1155_token.ts
+@@ -364,7 +364,7 @@ describe('ERC1155Token', () => {
+             const isApprovedForAll = true;
+             await erc1155Wrapper.setApprovalForAllAsync(spender, delegatedSpender, isApprovedForAll);
+             const isApprovedForAllCheck = await erc1155Wrapper.isApprovedForAllAsync(spender, delegatedSpender);
+-            expect(isApprovedForAllCheck).to.be.true();
++            expect(isApprovedForAllCheck).to.be.true;
+             // setup test parameters
+             const tokenHolders = [spender, receiver];
+             const tokenToTransfer = fungibleToken;
+@@ -391,7 +391,7 @@ describe('ERC1155Token', () => {
+         it('should revert if trying to transfer tokens via safeTransferFrom by an unapproved account', async () => {
+             // check approval not set
+             const isApprovedForAllCheck = await erc1155Wrapper.isApprovedForAllAsync(spender, delegatedSpender);
+-            expect(isApprovedForAllCheck).to.be.false();
++            expect(isApprovedForAllCheck).to.be.false;
+             // setup test parameters
+             const tokenHolders = [spender, receiver];
+             const tokenToTransfer = fungibleToken;
+@@ -411,7 +411,7 @@ describe('ERC1155Token', () => {
+             const isApprovedForAll = true;
+             await erc1155Wrapper.setApprovalForAllAsync(spender, delegatedSpender, isApprovedForAll);
+             const isApprovedForAllCheck = await erc1155Wrapper.isApprovedForAllAsync(spender, delegatedSpender);
+-            expect(isApprovedForAllCheck).to.be.true();
++            expect(isApprovedForAllCheck).to.be.true;
+             // setup test parameters
+             const tokenHolders = [spender, receiver];
+             const tokensToTransfer = [fungibleToken];
+@@ -438,7 +438,7 @@ describe('ERC1155Token', () => {
+         it('should revert if trying to transfer tokens via safeBatchTransferFrom by an unapproved account', async () => {
+             // check approval not set
+             const isApprovedForAllCheck = await erc1155Wrapper.isApprovedForAllAsync(spender, delegatedSpender);
+-            expect(isApprovedForAllCheck).to.be.false();
++            expect(isApprovedForAllCheck).to.be.false;
+             // setup test parameters
+             const tokenHolders = [spender, receiver];
+             const tokensToTransfer = [fungibleToken];
+-- 
+2.17.1
+
