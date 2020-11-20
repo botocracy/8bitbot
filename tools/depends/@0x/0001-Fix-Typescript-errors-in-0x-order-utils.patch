@@ -1,0 +1,121 @@
+From a439b8ed1f0cb0990e24a0ff9b6fa2962af2cac0 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Fri, 20 Nov 2020 17:18:01 -0800
+Subject: [PATCH 1/7] Fix Typescript errors in @0x/order-utils
+
+Errors were:
+
+ | eip712_utils_test.ts(25,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | eip712_utils_test.ts(26,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | eip712_utils_test.ts(48,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | eip712_utils_test.ts(49,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | eip712_utils_test.ts(71,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | remaining_fillable_calculator_test.ts(171,17): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_utils_test.ts(71,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_utils_test.ts(75,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_utils_test.ts(79,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_utils_test.ts(83,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_utils_test.ts(89,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_utils_test.ts(93,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | signature_utils_test.ts(96,13): error TS2554: Expected 1-2 arguments, but got 0.
+---
+ packages/order-utils/test/eip712_utils_test.ts     | 10 +++++-----
+ .../test/remaining_fillable_calculator_test.ts     |  2 +-
+ packages/order-utils/test/signature_utils_test.ts  | 14 +++++++-------
+ 3 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/packages/order-utils/test/eip712_utils_test.ts b/packages/order-utils/test/eip712_utils_test.ts
+index 984c187e3..190d693be 100644
+--- a/packages/order-utils/test/eip712_utils_test.ts
++++ b/packages/order-utils/test/eip712_utils_test.ts
+@@ -22,8 +22,8 @@ describe('EIP712 Utils', () => {
+                 { testValue: '1' },
+                 { chainId: CHAIN_ID, verifyingContract: constants.NULL_ADDRESS },
+             );
+-            expect(typedData.domain).to.not.be.undefined();
+-            expect(typedData.types.EIP712Domain).to.not.be.undefined();
++            expect(typedData.domain).to.not.be.undefined;
++            expect(typedData.types.EIP712Domain).to.not.be.undefined;
+             const domainObject = typedData.domain;
+             expect(domainObject.name).to.eq(constants.EXCHANGE_DOMAIN_NAME);
+             expect(domainObject.version).to.eq(constants.EXCHANGE_DOMAIN_VERSION);
+@@ -45,8 +45,8 @@ describe('EIP712 Utils', () => {
+                     verifyingContract: constants.NULL_ADDRESS,
+                 },
+             );
+-            expect(typedData.domain).to.not.be.undefined();
+-            expect(typedData.types.EIP712Domain).to.not.be.undefined();
++            expect(typedData.domain).to.not.be.undefined;
++            expect(typedData.types.EIP712Domain).to.not.be.undefined;
+             const domainObject = typedData.domain;
+             expect(domainObject.name).to.eq(domainName);
+             expect(domainObject.version).to.eq(domainVersion);
+@@ -68,7 +68,7 @@ describe('EIP712 Utils', () => {
+                 },
+             });
+             expect(typedData.primaryType).to.eq(constants.EXCHANGE_ZEROEX_TRANSACTION_SCHEMA.name);
+-            expect(typedData.types.EIP712Domain).to.not.be.undefined();
++            expect(typedData.types.EIP712Domain).to.not.be.undefined;
+             const domainObject = typedData.domain;
+             expect(domainObject.name).to.eq(constants.EXCHANGE_DOMAIN_NAME);
+             expect(domainObject.version).to.eq(constants.EXCHANGE_DOMAIN_VERSION);
+diff --git a/packages/order-utils/test/remaining_fillable_calculator_test.ts b/packages/order-utils/test/remaining_fillable_calculator_test.ts
+index c04b38e01..e79a99beb 100644
+--- a/packages/order-utils/test/remaining_fillable_calculator_test.ts
++++ b/packages/order-utils/test/remaining_fillable_calculator_test.ts
+@@ -168,7 +168,7 @@ describe('RemainingFillableCalculator', () => {
+                     remainingMakeAssetAmount,
+                 );
+                 const calculatedFillableAmount = calculator.computeRemainingFillable();
+-                expect(calculatedFillableAmount.isLessThanOrEqualTo(transferrableMakeAssetAmount)).to.be.true();
++                expect(calculatedFillableAmount.isLessThanOrEqualTo(transferrableMakeAssetAmount)).to.be.true;
+                 expect(calculatedFillableAmount).to.be.bignumber.greaterThan(new BigNumber(0));
+                 const orderToFeeRatio = signedOrder.makerAssetAmount.dividedBy(signedOrder.makerFee);
+                 const calculatedFeeAmount = calculatedFillableAmount.dividedBy(orderToFeeRatio);
+diff --git a/packages/order-utils/test/signature_utils_test.ts b/packages/order-utils/test/signature_utils_test.ts
+index 8d691812a..3f7f4aa0b 100644
+--- a/packages/order-utils/test/signature_utils_test.ts
++++ b/packages/order-utils/test/signature_utils_test.ts
+@@ -68,32 +68,32 @@ describe('Signature utils', () => {
+         const address = '0x0e5cb767cce09a7f3ca594df118aa519be5e2b5a';
+ 
+         it("should return false if the data doesn't pertain to the signature & address", async () => {
+-            expect(isValidECSignature('0x0', signature, address)).to.be.false();
++            expect(isValidECSignature('0x0', signature, address)).to.be.false;
+         });
+         it("should return false if the address doesn't pertain to the signature & data", async () => {
+             const validUnrelatedAddress = '0x8b0292b11a196601ed2ce54b665cafeca0347d42';
+-            expect(isValidECSignature(data, signature, validUnrelatedAddress)).to.be.false();
++            expect(isValidECSignature(data, signature, validUnrelatedAddress)).to.be.false;
+         });
+         it("should return false if the signature doesn't pertain to the data & address", async () => {
+             const wrongSignature = _.assign({}, signature, { v: 28 });
+-            expect(isValidECSignature(data, wrongSignature, address)).to.be.false();
++            expect(isValidECSignature(data, wrongSignature, address)).to.be.false;
+         });
+         it('should return true if the signature does pertain to the data & address', async () => {
+             const isValidSignatureLocal = isValidECSignature(data, signature, address);
+-            expect(isValidSignatureLocal).to.be.true();
++            expect(isValidSignatureLocal).to.be.true;
+         });
+     });
+     describe('#generateSalt', () => {
+         it('generates different salts', () => {
+             const isEqual = generatePseudoRandomSalt().eq(generatePseudoRandomSalt());
+-            expect(isEqual).to.be.false();
++            expect(isEqual).to.be.false;
+         });
+         it('generates salt in range [0..2^256)', () => {
+             const salt = generatePseudoRandomSalt();
+-            expect(salt.isGreaterThanOrEqualTo(0)).to.be.true();
++            expect(salt.isGreaterThanOrEqualTo(0)).to.be.true;
+             // tslint:disable-next-line:custom-no-magic-numbers
+             const twoPow256 = new BigNumber(2).pow(256);
+-            expect(salt.isLessThan(twoPow256)).to.be.true();
++            expect(salt.isLessThan(twoPow256)).to.be.true;
+         });
+     });
+     describe('#parseValidatorSignature', () => {
+-- 
+2.17.1
+

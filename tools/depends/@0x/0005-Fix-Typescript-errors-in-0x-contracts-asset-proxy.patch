@@ -1,0 +1,48 @@
+From 766868d385254d086bdccb5bcd839e929d5cedad Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Fri, 20 Nov 2020 17:29:58 -0800
+Subject: [PATCH 5/7] Fix Typescript errors in @0x/contracts-asset-proxy
+
+Errors were:
+
+ | authorizable.ts(35,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | authorizable.ts(56,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | authorizable.ts(111,13): error TS2554: Expected 1-2 arguments, but got 0.
+---
+ contracts/asset-proxy/test/authorizable.ts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/contracts/asset-proxy/test/authorizable.ts b/contracts/asset-proxy/test/authorizable.ts
+index d531bdd59..417fe1206 100644
+--- a/contracts/asset-proxy/test/authorizable.ts
++++ b/contracts/asset-proxy/test/authorizable.ts
+@@ -32,7 +32,7 @@ blockchainTests.resets('Authorizable', () => {
+         it('should allow owner to add an authorized address', async () => {
+             await authorizable.addAuthorizedAddress(address).awaitTransactionSuccessAsync({ from: owner });
+             const isAuthorized = await authorizable.authorized(address).callAsync();
+-            expect(isAuthorized).to.be.true();
++            expect(isAuthorized).to.be.true;
+         });
+ 
+         it('should revert if owner attempts to authorize a duplicate address', async () => {
+@@ -53,7 +53,7 @@ blockchainTests.resets('Authorizable', () => {
+             await authorizable.addAuthorizedAddress(address).awaitTransactionSuccessAsync({ from: owner });
+             await authorizable.removeAuthorizedAddress(address).awaitTransactionSuccessAsync({ from: owner });
+             const isAuthorized = await authorizable.authorized(address).callAsync();
+-            expect(isAuthorized).to.be.false();
++            expect(isAuthorized).to.be.false;
+         });
+ 
+         it('should revert if owner attempts to remove an address that is not authorized', async () => {
+@@ -108,7 +108,7 @@ blockchainTests.resets('Authorizable', () => {
+                 from: owner,
+             });
+             const isAuthorized = await authorizable.authorized(address).callAsync();
+-            expect(isAuthorized).to.be.false();
++            expect(isAuthorized).to.be.false;
+         });
+     });
+ 
+-- 
+2.17.1
+

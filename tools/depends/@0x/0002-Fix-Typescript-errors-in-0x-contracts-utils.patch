@@ -1,0 +1,190 @@
+From 7a22bbaada7b3dd4a7af6136865bd045648d6f26 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Fri, 20 Nov 2020 17:21:31 -0800
+Subject: [PATCH 2/7] Fix Typescript errors in @0x/contracts-utils
+
+Errors were:
+
+ | authorizable.ts(35,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | authorizable.ts(84,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | authorizable.ts(144,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | lib_address.ts(35,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | lib_address.ts(40,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | lib_bytes.ts(85,20): error TS2554: Expected 1-2 arguments, but got 0.
+ | lib_bytes.ts(91,20): error TS2554: Expected 1-2 arguments, but got 0.
+ | lib_bytes.ts(97,20): error TS2554: Expected 1-2 arguments, but got 0.
+ | lib_bytes.ts(103,20): error TS2554: Expected 1-2 arguments, but got 0.
+ | lib_bytes.ts(109,20): error TS2554: Expected 1-2 arguments, but got 0.
+ | lib_bytes.ts(115,20): error TS2554: Expected 1-2 arguments, but got 0.
+ | lib_bytes.ts(121,24): error TS2554: Expected 1-2 arguments, but got 0.
+ | log_decoding.ts(65,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | log_decoding.ts(75,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | ownable.ts(32,13): error TS2554: Expected 1-2 arguments, but got 0.
+ | reentrancy_guard.ts(41,13): error TS2554: Expected 1-2 arguments, but got 0.
+---
+ contracts/utils/test/authorizable.ts     |  6 +++---
+ contracts/utils/test/lib_address.ts      |  4 ++--
+ contracts/utils/test/lib_bytes.ts        | 14 +++++++-------
+ contracts/utils/test/log_decoding.ts     |  4 ++--
+ contracts/utils/test/ownable.ts          |  2 +-
+ contracts/utils/test/reentrancy_guard.ts |  4 ++--
+ 6 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/contracts/utils/test/authorizable.ts b/contracts/utils/test/authorizable.ts
+index c48852500..983b7c7a3 100644
+--- a/contracts/utils/test/authorizable.ts
++++ b/contracts/utils/test/authorizable.ts
+@@ -32,7 +32,7 @@ blockchainTests.resets('Authorizable', env => {
+         it('should allow owner to add an authorized address', async () => {
+             await authorizable.addAuthorizedAddress(address).awaitTransactionSuccessAsync({ from: owner });
+             const isAuthorized = await authorizable.authorized(address).callAsync();
+-            expect(isAuthorized).to.be.true();
++            expect(isAuthorized).to.be.true;
+         });
+ 
+         it('should revert if owner attempts to authorize the zero address', async () => {
+@@ -81,7 +81,7 @@ blockchainTests.resets('Authorizable', env => {
+             await authorizable.addAuthorizedAddress(address).awaitTransactionSuccessAsync({ from: owner });
+             await authorizable.removeAuthorizedAddress(address).awaitTransactionSuccessAsync({ from: owner });
+             const isAuthorized = await authorizable.authorized(address).callAsync();
+-            expect(isAuthorized).to.be.false();
++            expect(isAuthorized).to.be.false;
+         });
+ 
+         it('should revert if owner attempts to remove an address that is not authorized', async () => {
+@@ -141,7 +141,7 @@ blockchainTests.resets('Authorizable', env => {
+                 from: owner,
+             });
+             const isAuthorized = await authorizable.authorized(address).callAsync();
+-            expect(isAuthorized).to.be.false();
++            expect(isAuthorized).to.be.false;
+         });
+     });
+ 
+diff --git a/contracts/utils/test/lib_address.ts b/contracts/utils/test/lib_address.ts
+index 72a67f6a6..ec32f5cd3 100644
+--- a/contracts/utils/test/lib_address.ts
++++ b/contracts/utils/test/lib_address.ts
+@@ -32,12 +32,12 @@ describe('LibAddress', () => {
+     describe('isContract', () => {
+         it('should return false for a non-contract address', async () => {
+             const isContract = await lib.externalIsContract(nonContract).callAsync();
+-            expect(isContract).to.be.false();
++            expect(isContract).to.be.false;
+         });
+ 
+         it('should return true for a non-contract address', async () => {
+             const isContract = await lib.externalIsContract(lib.address).callAsync();
+-            expect(isContract).to.be.true();
++            expect(isContract).to.be.true;
+         });
+     });
+ });
+diff --git a/contracts/utils/test/lib_bytes.ts b/contracts/utils/test/lib_bytes.ts
+index e8feeb61d..93deb5008 100644
+--- a/contracts/utils/test/lib_bytes.ts
++++ b/contracts/utils/test/lib_bytes.ts
+@@ -82,43 +82,43 @@ blockchainTests('LibBytes', env => {
+             const isEqual = await libBytes
+                 .publicEquals(byteArrayShorterThan32Bytes, byteArrayShorterThan32Bytes)
+                 .callAsync();
+-            return expect(isEqual).to.be.true();
++            return expect(isEqual).to.be.true;
+         });
+         it('should return true if byte arrays are equal (both arrays > 32 bytes)', async () => {
+             const isEqual = await libBytes
+                 .publicEquals(byteArrayLongerThan32Bytes, byteArrayLongerThan32Bytes)
+                 .callAsync();
+-            return expect(isEqual).to.be.true();
++            return expect(isEqual).to.be.true;
+         });
+         it('should return false if byte arrays are not equal (first array < 32 bytes, second array > 32 bytes)', async () => {
+             const isEqual = await libBytes
+                 .publicEquals(byteArrayShorterThan32Bytes, byteArrayLongerThan32Bytes)
+                 .callAsync();
+-            return expect(isEqual).to.be.false();
++            return expect(isEqual).to.be.false;
+         });
+         it('should return false if byte arrays are not equal (first array > 32 bytes, second array < 32 bytes)', async () => {
+             const isEqual = await libBytes
+                 .publicEquals(byteArrayLongerThan32Bytes, byteArrayShorterThan32Bytes)
+                 .callAsync();
+-            return expect(isEqual).to.be.false();
++            return expect(isEqual).to.be.false;
+         });
+         it('should return false if byte arrays are not equal (same length, but a byte in first word differs)', async () => {
+             const isEqual = await libBytes
+                 .publicEquals(byteArrayLongerThan32BytesFirstBytesSwapped, byteArrayLongerThan32Bytes)
+                 .callAsync();
+-            return expect(isEqual).to.be.false();
++            return expect(isEqual).to.be.false;
+         });
+         it('should return false if byte arrays are not equal (same length, but a byte in last word differs)', async () => {
+             const isEqual = await libBytes
+                 .publicEquals(byteArrayLongerThan32BytesLastBytesSwapped, byteArrayLongerThan32Bytes)
+                 .callAsync();
+-            return expect(isEqual).to.be.false();
++            return expect(isEqual).to.be.false;
+         });
+ 
+         describe('should ignore trailing data', () => {
+             it('should return true when both < 32 bytes', async () => {
+                 const isEqual = await libBytes.publicEqualsPop1('0x0102', '0x0103').callAsync();
+-                return expect(isEqual).to.be.true();
++                return expect(isEqual).to.be.true;
+             });
+         });
+     });
+diff --git a/contracts/utils/test/log_decoding.ts b/contracts/utils/test/log_decoding.ts
+index c73fb2a08..07d560f14 100644
+--- a/contracts/utils/test/log_decoding.ts
++++ b/contracts/utils/test/log_decoding.ts
+@@ -62,7 +62,7 @@ describe('TestLogDecoding', () => {
+                 .awaitTransactionSuccessAsync();
+             expect(txReceipt.logs.length).to.be.equal(1);
+             // tslint:disable no-unnecessary-type-assertion
+-            expect((txReceipt.logs[0] as LogWithDecodedArgs<DecodedLogArgs>).args).to.be.undefined();
++            expect((txReceipt.logs[0] as LogWithDecodedArgs<DecodedLogArgs>).args).to.be.undefined;
+         });
+         it('should decode args for local but not downstream event when no dependencies are passed into wrapper', async () => {
+             const txReceipt = await testLogDecodingDeployedWithoutDependencies
+@@ -72,7 +72,7 @@ describe('TestLogDecoding', () => {
+             // tslint:disable no-unnecessary-type-assertion
+             expect((txReceipt.logs[0] as LogWithDecodedArgs<DecodedLogArgs>).args).to.be.deep.equal(expectedEvent);
+             // tslint:disable no-unnecessary-type-assertion
+-            expect((txReceipt.logs[1] as LogWithDecodedArgs<DecodedLogArgs>).args).to.be.undefined();
++            expect((txReceipt.logs[1] as LogWithDecodedArgs<DecodedLogArgs>).args).to.be.undefined;
+         });
+         it('should decode locally emitted event args when dependencies are passed into wrapper', async () => {
+             const txReceipt = await testLogDecodingWithDependencies.emitEvent().awaitTransactionSuccessAsync();
+diff --git a/contracts/utils/test/ownable.ts b/contracts/utils/test/ownable.ts
+index 471edcd9a..a10c7e0db 100644
+--- a/contracts/utils/test/ownable.ts
++++ b/contracts/utils/test/ownable.ts
+@@ -29,7 +29,7 @@ blockchainTests.resets('Ownable', env => {
+ 
+         it('should succeed if sender is the owner', async () => {
+             const isSuccessful = await ownable.externalOnlyOwner().callAsync({ from: owner });
+-            expect(isSuccessful).to.be.true();
++            expect(isSuccessful).to.be.true;
+         });
+     });
+ 
+diff --git a/contracts/utils/test/reentrancy_guard.ts b/contracts/utils/test/reentrancy_guard.ts
+index ec8d6ff28..be588cb10 100644
+--- a/contracts/utils/test/reentrancy_guard.ts
++++ b/contracts/utils/test/reentrancy_guard.ts
+@@ -37,8 +37,8 @@ describe('ReentrancyGuard', () => {
+         });
+ 
+         it('should succeed if reentrancy does not occur', async () => {
+-            const isSuccessful = await guard.guarded(false).callAsync();
+-            expect(isSuccessful).to.be.true();
++            const isSuccessful = await guard.guarded(false).callAsync;
++            expect(isSuccessful).to.be.true;
+         });
+     });
+ });
+-- 
+2.17.1
+

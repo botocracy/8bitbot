@@ -55,11 +55,16 @@ SHELL := /bin/bash
 #
 ################################################################################
 
+# Build tools
+include depends/emscripten/package.mk
+include depends/nvm/package.mk
+
+# Dependencies
+include depends/@0x/package.mk
 include depends/ade/package.mk
 include depends/android-sdk/package.mk
 include depends/ceres-solver/package.mk
 include depends/eigen/package.mk
-include depends/emscripten/package.mk
 include depends/google-flags/package.mk
 include depends/google-log/package.mk
 include depends/opencv/package.mk
@@ -77,12 +82,14 @@ include depends/opencv/package.mk
 #
 
 CHECKOUT_DEPENDS = \
+  $(S)/checkout-0x \
   $(S)/checkout-ade \
   $(S)/checkout-ceres \
   $(S)/checkout-eigen \
   $(S)/checkout-emsdk \
   $(S)/checkout-gflags \
   $(S)/checkout-glog \
+  $(S)/checkout-nvm \
   $(S)/checkout-opencv \
   $(S)/patch-opencv
 
@@ -95,6 +102,7 @@ endif
 #
 
 BUILD_DEPENDS = \
+  $(S)/build-0x \
   $(S)/build-opencv \
 
 #
@@ -102,6 +110,7 @@ BUILD_DEPENDS = \
 #
 
 INSTALL_DEPENDS = \
+  $(S)/install-0x \
   $(S)/install-opencv \
 
 #
@@ -116,13 +125,18 @@ install: $(INSTALL_DEPENDS)
 # Define targets for building individual depends via "make <depend>"
 #
 
+.PHONY: 0x
 .PHONY: ade
 .PHONY: ceres
 .PHONY: eigen
 .PHONY: emscripten
 .PHONY: gflags
 .PHONY: glog
+.PHONY: nvm
 .PHONY: opencv
+
+0x: \
+  $(S)/install-0x
 
 ade: \
   $(S)/install-ade
@@ -141,6 +155,9 @@ gflags: \
 
 glog: \
   $(S)/install-glog
+
+nvm: \
+  $(S)/checkout-nvm
 
 opencv: \
   $(S)/install-opencv
