@@ -50,6 +50,9 @@ function dispatch() {
   build)
     depends-build
     ;;
+  test)
+    depends-test
+    ;;
   install)
     depends-install
     ;;
@@ -71,6 +74,14 @@ function depends-all() {
     BUILD_DEPENDS+="opencv "
   fi
 
+  # Build Yearn
+  if [ ! -d "${GENERATED_CONTRACTS_DIR}/yearn" ]; then
+    rm -f "${STAMP_DIR}/build-yearn"
+    BUILD_DEPENDS+="yearn "
+  fi
+
+  echo "Building the following depends: ${BUILD_DEPENDS}"
+
   make -C "${TOOL_DIR}" -j$(getconf _NPROCESSORS_ONLN) ${BUILD_DEPENDS}
 
   # Build C++ libraries
@@ -83,6 +94,10 @@ function depends-checkout() {
 
 function depends-build() {
   make -C "${TOOL_DIR}" build -j$(getconf _NPROCESSORS_ONLN)
+}
+
+function depends-test() {
+  make -C "${TOOL_DIR}" test
 }
 
 function depends-install() {

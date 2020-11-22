@@ -1,0 +1,23 @@
+From 69a05551e65cf6afc57ad3063635b3637c194136 Mon Sep 17 00:00:00 2001
+From: Marquise Stein <botocratic@gmail.com>
+Date: Tue, 24 Nov 2020 13:49:08 -0800
+Subject: [PATCH 2/2] feat: Add supplyRatePerBlock() to Compound interface
+
+---
+ interfaces/compound/Token.sol | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/interfaces/compound/Token.sol b/interfaces/compound/Token.sol
+index e3bc9c6..67859d6 100644
+--- a/interfaces/compound/Token.sol
++++ b/interfaces/compound/Token.sol
+@@ -18,4 +18,6 @@ interface cToken {
+     function balanceOf(address _owner) external view returns (uint256);
+ 
+     function underlying() external view returns (address);
++
++    function supplyRatePerBlock() external view returns (uint);
+ }
+-- 
+2.17.1
+
