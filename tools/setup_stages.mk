@@ -25,6 +25,7 @@ include setup_paths.mk
 # Phony targets for build stages
 .PHONY: checkout
 .PHONY: build
+.PHONY: test
 .PHONY: install
 .PHONY: all
 .PHONE: clean
@@ -67,6 +68,15 @@ $(S)/.prepatch:
 $(S)/.prebuild:
 	mkdir -p "$(S)"
 	mkdir -p "$(BUILD_DIR)"
+
+	touch "$@"
+
+#
+# Setup test stage
+#
+
+$(S)/.pretest:
+	mkdir -p "$(S)"
 
 	touch "$@"
 

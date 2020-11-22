@@ -73,6 +73,22 @@ const config /* HardhatUserConfig */ = {
           },
         },
       },
+      {
+        version: '0.5.17',
+        settings: {
+          evmVersion: 'istanbul',
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+            details: {
+              yul: true,
+              deduplicate: true,
+              cse: true,
+              constantOptimizer: true,
+            },
+          },
+        },
+      },
     ],
   },
   loggingEnabled: true,

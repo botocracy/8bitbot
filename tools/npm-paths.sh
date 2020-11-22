@@ -32,6 +32,12 @@ SOURCE_DIR="src"
 # Directory for generated source
 GENERATED_SOURCE_DIR="${SOURCE_DIR}/generated"
 
+# Smart contract source directory
+CONTRACTS_DIR="contracts"
+
+# Directory for generated contracts
+GENERATED_CONTRACTS_DIR="${CONTRACTS_DIR}/depends"
+
 # C++ libraries directory
 CPP_LIBRARY_DIR="lib"
 

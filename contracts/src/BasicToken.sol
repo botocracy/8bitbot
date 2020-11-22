@@ -9,13 +9,13 @@
  * See LICENSE.txt for more information.
  */
 
-pragma solidity ^0.6.0;
+pragma solidity ^0.5.17;
 
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 
 // Example class - a mock class using delivering from ERC20
 contract BasicToken is ERC20 {
-  constructor(uint256 initialBalance) public ERC20('Basic', 'BSC') {
+  constructor(uint256 initialBalance) public ERC20() {
     _mint(msg.sender, initialBalance);
   }
 }

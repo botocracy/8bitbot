@@ -20,7 +20,8 @@
 #   1. checkout
 #   2. patch
 #   3. build
-#   4. install (default if no stage is given)
+#   4. test
+#   5. install (default if no stage is given)
 #
 # Two stages are used for cleaning temoprary files:
 #
@@ -63,6 +64,7 @@ include depends/emscripten/package.mk
 include depends/google-flags/package.mk
 include depends/google-log/package.mk
 include depends/opencv/package.mk
+include depends/yearn/package.mk
 
 ################################################################################
 #
@@ -84,6 +86,7 @@ CHECKOUT_DEPENDS = \
   $(S)/checkout-gflags \
   $(S)/checkout-glog \
   $(S)/checkout-opencv \
+  $(S)/checkout-yearn \
   $(S)/patch-opencv
 
 ifeq ($(PLATFORM),darwin)
@@ -96,6 +99,14 @@ endif
 
 BUILD_DEPENDS = \
   $(S)/build-opencv \
+  $(S)/build-yearn \
+
+#
+# Define targets for "make test"
+#
+
+TEST_DEPENDS = \
+  $(S)/test-yearn \
 
 #
 # Define targets for "make install"
@@ -103,6 +114,7 @@ BUILD_DEPENDS = \
 
 INSTALL_DEPENDS = \
   $(S)/install-opencv \
+  $(S)/install-yearn \
 
 #
 # Inject targets
@@ -110,6 +122,7 @@ INSTALL_DEPENDS = \
 
 checkout: $(CHECKOUT_DEPENDS)
 build: $(BUILD_DEPENDS)
+test: $(TEST_DEPENDS)
 install: $(INSTALL_DEPENDS)
 
 #
@@ -123,6 +136,7 @@ install: $(INSTALL_DEPENDS)
 .PHONY: gflags
 .PHONY: glog
 .PHONY: opencv
+.PHONY: yearn
 
 ade: \
   $(S)/install-ade
@@ -144,6 +158,9 @@ glog: \
 
 opencv: \
   $(S)/install-opencv
+
+yearn: \
+  $(S)/install-yearn
 
 ################################################################################
 #
