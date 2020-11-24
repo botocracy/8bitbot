@@ -63,6 +63,7 @@ include depends/eigen/package.mk
 include depends/emscripten/package.mk
 include depends/google-flags/package.mk
 include depends/google-log/package.mk
+include depends/keep3r/package.mk
 include depends/opencv/package.mk
 include depends/yearn/package.mk
 
@@ -85,6 +86,7 @@ CHECKOUT_DEPENDS = \
   $(S)/checkout-emsdk \
   $(S)/checkout-gflags \
   $(S)/checkout-glog \
+  $(S)/checkout-keep3r \
   $(S)/checkout-opencv \
   $(S)/checkout-yearn \
   $(S)/patch-opencv
@@ -98,6 +100,7 @@ endif
 #
 
 BUILD_DEPENDS = \
+  $(S)/build-keep3r \
   $(S)/build-opencv \
   $(S)/build-yearn \
 
@@ -106,6 +109,7 @@ BUILD_DEPENDS = \
 #
 
 TEST_DEPENDS = \
+  $(S)/test-keep3r \
   $(S)/test-yearn \
 
 #
@@ -113,6 +117,7 @@ TEST_DEPENDS = \
 #
 
 INSTALL_DEPENDS = \
+  $(S)/install-keep3r \
   $(S)/install-opencv \
   $(S)/install-yearn \
 
@@ -135,6 +140,7 @@ install: $(INSTALL_DEPENDS)
 .PHONY: emscripten
 .PHONY: gflags
 .PHONY: glog
+.PHONY: keep3r
 .PHONY: opencv
 .PHONY: yearn
 
@@ -155,6 +161,9 @@ gflags: \
 
 glog: \
   $(S)/install-glog
+
+keep3r: \
+  $(S)/install-keep3r
 
 opencv: \
   $(S)/install-opencv

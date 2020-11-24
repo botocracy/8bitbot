@@ -121,6 +121,14 @@ jobs:
             tools/dist
           key: restore-library-depends-${{ matrix.os }}-${{ hashFiles('tools/depends/ade/*', 'tools/depends/ceres-solver/*', 'tools/depends/eigen/*', 'tools/depends/emscripten/*', 'tools/depends/google-flags/*', 'tools/depends/google-log/*', 'tools/depends/opencv/*') }}
 
+      - name: Restore Keep3r contracts
+        id: restore-keep3r
+        uses: actions/cache@v2
+        with:
+          path: |
+            contracts/depends/keep3r
+          key: restore-keep3r-${{ matrix.os }}-${{ hashFiles('tools/depends/keep3r/**') }}
+
       - name: Restore Yearn contracts
         id: restore-yearn
         uses: actions/cache@v2
@@ -130,7 +138,7 @@ jobs:
           key: restore-yearn-${{ matrix.os }}-${{ hashFiles('tools/depends/yearn/**') }}
 
       - name: apt update
-        if: matrix.os != 'macOS' && (steps.restore-toolchain.outputs.cache-hit != 'true' || steps.restore-yearn.outputs.cache-hit != 'true')
+        if: matrix.os != 'macOS' && (steps.restore-keep3r.outputs.cache-hit != 'true' || steps.restore-toolchain.outputs.cache-hit != 'true' || steps.restore-yearn.outputs.cache-hit != 'true')
         run: |
           (sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt update) || true
 

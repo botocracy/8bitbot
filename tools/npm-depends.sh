@@ -67,6 +67,12 @@ function depends-all() {
   # Dependencies to build
   BUILD_DEPENDS="emscripten "
 
+  # Build keep3r
+  if [ ! -d "${GENERATED_CONTRACTS_DIR}/keep3r" ]; then
+    rm -f "${STAMP_DIR}/build-keep3r"
+    BUILD_DEPENDS+="keep3r "
+  fi
+
   # Build OpenCV
   if [ ! -f "${GENERATED_SOURCE_DIR}/opencv.js" ] \
     || [ ! -f "${DISTRIBUTION_LIB_DIR}/libopencv_core.a" ]; then
