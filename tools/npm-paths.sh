@@ -44,6 +44,9 @@ CPP_LIBRARY_DIR="lib"
 # Tooling directory
 TOOL_DIR="tools"
 
+# Toolchain binary directory
+BINARY_DIR="${TOOL_DIR}/bin"
+
 # Depends directory
 DEPENDS_DIR="${TOOL_DIR}/depends"
 

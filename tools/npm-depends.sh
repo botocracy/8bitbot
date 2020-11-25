@@ -67,6 +67,12 @@ function depends-all() {
   # Dependencies to build
   BUILD_DEPENDS="emscripten "
 
+  # Build cross toolchain
+  if [ ! -d "${BINARY_DIR}" ]; then
+    rm -f "${STAMP_DIR}/build-cross-ng"
+    BUILD_DEPENDS+="crosstool-ng "
+  fi
+
   # Build OpenCV
   if [ ! -f "${GENERATED_SOURCE_DIR}/opencv.js" ] \
     || [ ! -f "${DISTRIBUTION_LIB_DIR}/libopencv_core.a" ]; then

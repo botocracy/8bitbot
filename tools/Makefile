@@ -59,6 +59,7 @@ SHELL := /bin/bash
 include depends/ade/package.mk
 include depends/android-sdk/package.mk
 include depends/ceres-solver/package.mk
+include depends/crosstool-ng/package.mk
 include depends/eigen/package.mk
 include depends/emscripten/package.mk
 include depends/google-flags/package.mk
@@ -81,6 +82,7 @@ include depends/yearn/package.mk
 CHECKOUT_DEPENDS = \
   $(S)/checkout-ade \
   $(S)/checkout-ceres \
+  $(S)/checkout-crosstool-ng \
   $(S)/checkout-eigen \
   $(S)/checkout-emsdk \
   $(S)/checkout-gflags \
@@ -131,6 +133,7 @@ install: $(INSTALL_DEPENDS)
 
 .PHONY: ade
 .PHONY: ceres
+.PHONY: crosstool-ng
 .PHONY: eigen
 .PHONY: emscripten
 .PHONY: gflags
@@ -143,6 +146,9 @@ ade: \
 
 ceres: \
   $(S)/install-ceres
+
+crosstool-ng: \
+  $(S)/install-crosstool-ng
 
 eigen: \
   $(S)/install-eigen

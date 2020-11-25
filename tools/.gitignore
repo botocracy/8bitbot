@@ -1,3 +1,6 @@
+# Toolchain binaries
+bin/
+
 # Dependency build files
 build/
 

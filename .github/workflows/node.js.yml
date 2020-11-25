@@ -121,6 +121,14 @@ jobs:
             tools/dist
           key: restore-library-depends-${{ matrix.os }}-${{ hashFiles('tools/depends/ade/*', 'tools/depends/ceres-solver/*', 'tools/depends/eigen/*', 'tools/depends/emscripten/*', 'tools/depends/google-flags/*', 'tools/depends/google-log/*', 'tools/depends/opencv/*') }}
 
+      - name: Restore toolchain binaries
+        id: restore-toolchain
+        uses: actions/cache@v2
+        with:
+          path: |
+            tools/bin
+          key: restore-toolchain-${{ matrix.os }}-${{ hashFiles('tools/depends/crosstool-ng/*') }}
+
       - name: Restore Yearn contracts
         id: restore-yearn
         uses: actions/cache@v2
@@ -134,15 +142,25 @@ jobs:
         run: |
           (sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt update) || true
 
+      - name: apt install <toolchain depends>
+        if: matrix.os != 'macOS' && (steps.restore-toolchain.outputs.cache-hit != 'true')
+        run: |
+          (dpkg -s flex && dpkg -s help2man && dpkg -s libncurses5-dev && dpkg -s libtool-bin && dpkg -s texinfo) || (sudo apt install -y flex help2man libncurses5-dev libtool-bin texinfo)
+
       - name: apt install <yearn depends>
         if: matrix.os != 'macOS' && (steps.restore-yearn.outputs.cache-hit != 'true')
         run: |
           (dpkg -s python3.9-dev && dpkg -s python3.9-venv) || (sudo apt install -y python3.9-dev python3.9-venv)
 
       - name: brew update
-        if: matrix.os == 'macOS' && (steps.restore-yearn.outputs.cache-hit != 'true')
+        if: matrix.os == 'macOS' && (steps.restore-toolchain.outputs.cache-hit != 'true' || steps.restore-yearn.outputs.cache-hit != 'true')
         run: |
           brew update
+
+      - name: brew install <toolchain depends>
+        if: matrix.os == 'macOS' && (steps.restore-toolchain.outputs.cache-hit != 'true')
+        run: |
+          brew install bash binutils coreutils gawk gettext gnu-sed help2man ncurses
 
       - name: brew install <yearn depends>
         if: matrix.os == 'macOS' && (steps.restore-yearn.outputs.cache-hit != 'true')
@@ -150,7 +168,7 @@ jobs:
           brew install python || true
 
       - name: Build depends
-        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true' || steps.restore-yearn.outputs.cache-hit != 'true'
+        if: steps.restore-libraries.outputs.cache-hit != 'true' || steps.restore-opencv.outputs.cache-hit != 'true' || steps.restore-toolchain.outputs.cache-hit != 'true' || steps.restore-yearn.outputs.cache-hit != 'true'
         run: npm run depends
         env:
           ETHERSCAN_TOKEN: ${{ secrets.ETHERSCAN_API_KEY }}
