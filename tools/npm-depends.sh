@@ -67,6 +67,12 @@ function depends-all() {
   # Dependencies to build
   BUILD_DEPENDS="emscripten "
 
+  # Build Cartesi VM
+  if [ ! -d "${GENERATED_CONTRACTS_DIR}/cartesi-vm" ]; then
+    rm -f "${STAMP_DIR}/build-cartesi-vm"
+    BUILD_DEPENDS+="cartesi-vm "
+  fi
+
   # Build cross toolchain
   if [ ! -d "${BINARY_DIR}" ]; then
     rm -f "${STAMP_DIR}/build-cross-ng"

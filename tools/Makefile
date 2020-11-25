@@ -58,6 +58,7 @@ SHELL := /bin/bash
 
 include depends/ade/package.mk
 include depends/android-sdk/package.mk
+include depends/cartesi-vm/package.mk
 include depends/ceres-solver/package.mk
 include depends/crosstool-ng/package.mk
 include depends/eigen/package.mk
@@ -82,6 +83,7 @@ include depends/yearn/package.mk
 
 CHECKOUT_DEPENDS = \
   $(S)/checkout-ade \
+  $(S)/checkout-cartesi-vm \
   $(S)/checkout-ceres \
   $(S)/checkout-crosstool-ng \
   $(S)/checkout-eigen \
@@ -102,6 +104,7 @@ endif
 #
 
 BUILD_DEPENDS = \
+  $(S)/build-cartesi-vm \
   $(S)/build-keep3r \
   $(S)/build-opencv \
   $(S)/build-yearn \
@@ -111,6 +114,7 @@ BUILD_DEPENDS = \
 #
 
 TEST_DEPENDS = \
+  $(S)/test-cartesi-vm \
   $(S)/test-keep3r \
   $(S)/test-yearn \
 
@@ -119,6 +123,7 @@ TEST_DEPENDS = \
 #
 
 INSTALL_DEPENDS = \
+  $(S)/install-cartesi-vm \
   $(S)/install-keep3r \
   $(S)/install-opencv \
   $(S)/install-yearn \
@@ -137,6 +142,7 @@ install: $(INSTALL_DEPENDS)
 #
 
 .PHONY: ade
+.PHONY: cartesi-vm
 .PHONY: ceres
 .PHONY: crosstool-ng
 .PHONY: eigen
@@ -149,6 +155,9 @@ install: $(INSTALL_DEPENDS)
 
 ade: \
   $(S)/install-ade
+
+cartesi-vm: \
+  $(S)/install-cartesi-vm
 
 ceres: \
   $(S)/install-ceres
