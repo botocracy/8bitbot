@@ -108,14 +108,6 @@ ifeq ($(YEARN_VERSION),develop)
 	  --no-backup-if-mismatch \
 	  < "$(TOOL_DIR)/depends/yearn/$(YEARN_VERSION)/0002-feat-Add-supplyRatePerBlock-to-Compound-interface.patch" \
 	  || :
-	patch \
-	  -p1 \
-	  --forward \
-	  --directory="$(BUILD_DIR_YEARN)" \
-	  --reject-file="/dev/null" \
-	  --no-backup-if-mismatch \
-	  < "$(TOOL_DIR)/depends/yearn/$(YEARN_VERSION)/0003-Move-interfaces-to-Solidity-0.6.11.patch" \
-	  || :
 endif
 
 	cd "$(BUILD_DIR_YEARN)" && \
@@ -160,8 +152,7 @@ $(S)/install-yearn: $(S)/.preinstall $(YEARN_INSTALL_DEPENDS)
 	mkdir -p "$(CONTRACTS_DIR)/yearn/contracts"
 	mkdir -p "$(CONTRACTS_DIR)/yearn/interfaces"
 
-	@# TODO: Port to Solidity 0.6
-	#cp -r "$(BUILD_DIR_YEARN)/contracts"/* "$(CONTRACTS_DIR)/yearn/contracts"
+	cp -r "$(BUILD_DIR_YEARN)/contracts"/* "$(CONTRACTS_DIR)/yearn/contracts"
 	cp -r "$(BUILD_DIR_YEARN)/interfaces"/* "$(CONTRACTS_DIR)/yearn/interfaces"
 
 	touch "$@"
