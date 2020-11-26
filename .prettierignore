@@ -11,6 +11,5 @@ package-lock.json
 web_modules
 
 # Other
-ipfs/
 lib/
 world/
