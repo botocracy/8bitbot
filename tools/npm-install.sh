@@ -12,7 +12,7 @@
 #
 # NPM script entry point for installation-related tasks
 #
-# This file has been separated from npm-scripts.sh to aid in change-detection
+# This file has been separated from npm-tasks.sh to aid in change-detection
 # for CI infrastructure.
 #
 # Call via:
