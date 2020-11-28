@@ -23,6 +23,9 @@ web_modules
 /cache
 /deployments
 
+# Work around hardhat import order problems
+/src/web3/hardhat.ts
+
 # Other
 lib/
 world/
