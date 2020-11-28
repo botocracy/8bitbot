@@ -66,6 +66,7 @@
     "p2p-media-loader-hlsjs": "^0.6.2",
     "path": "^0.12.7",
     "three": "^0.121.1",
+    "universalify": "^2.0.0",
     "video.js": "^7.8.4",
     "webtorrent": "^0.108.6"
   },
