@@ -6,8 +6,7 @@
  * See LICENSE.txt for more information.
  */
 
-import * as hardhat from 'hardhat';
-import 'hardhat-deploy';
+import { hardhat } from '../src/web3/hardhat';
 
 describe('Deployment', function () {
   beforeEach(async function () {

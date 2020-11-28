@@ -6,11 +6,10 @@
  * See LICENSE.txt for more information.
  */
 
-import '@nomiclabs/hardhat-ethers';
 import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
 import chai from 'chai';
 import * as ethers from 'ethers';
-import * as hardhat from 'hardhat';
+import { hardhat } from '../src/web3/hardhat';
 
 describe('Token contract', function () {
   let Token: ethers.ContractFactory;
