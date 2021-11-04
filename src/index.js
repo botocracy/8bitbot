@@ -53,9 +53,9 @@ async function loadUserInterface(node) {
     return;
   }
 
-  //const videoUri = await world.getVideoHlsUri();
+  const videoUri = await world.getVideoHlsUri();
 
-  //await loadHls(videoUri);
+  await loadHls(videoUri);
 
   const videoInfo = await loadVideoInfo(VIDEO_ID);
 
@@ -131,7 +131,7 @@ const motionTracker = new MotionTracker(window);
 
 // Handle volume selection
 function onVolumeSelect() {
-  const video = document.getElementById('vjs_video_3_html5_api');
+  const video = document.getElementById('videoBackground');
 
   const volumeMuteIcon = document.getElementById('volumeMuteIcon');
   const volumeUpIcon = document.getElementById('volumeUpIcon');

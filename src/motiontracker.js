@@ -106,6 +106,9 @@ class MotionTracker {
   start(video) {
     this.video = video;
 
+    // Reverence given to event handlers
+    let self = this;
+
     // Window events
     this.window.addEventListener('resize', () => {
       this.computeDimensions();
@@ -114,39 +117,44 @@ class MotionTracker {
       this.computeDimensions();
     });
 
-    // Video has started playing, update dimensions
-    this.computeDimensions();
+    // Video events
+    this.video.addEventListener('loadedmetadata', function () {
+      self.computeDimensions();
+    });
+    this.video.addEventListener(
+      'play',
+      async function () {
+        // Video has started playing, update dimensions
+        self.computeDimensions();
 
-    // Show overlay canvas
-    const viewOverlayIcon = document.getElementById('viewOverlayIcon');
-    const hideOverlayIcon = document.getElementById('hideOverlayIcon');
+        // Show overlay canvas
+        const viewOverlayIcon = document.getElementById('viewOverlayIcon');
+        const hideOverlayIcon = document.getElementById('hideOverlayIcon');
 
-    if (this.window.showOverlay) {
-      viewOverlayIcon.style.display = 'none';
-      hideOverlayIcon.style.display = 'block';
-      this.overlayCanvas2D.style.display = 'block';
-      this.overlayCanvas3D.style.display = 'block';
-    } else {
-      viewOverlayIcon.style.display = 'block';
-      hideOverlayIcon.style.display = 'none';
-      this.overlayCanvas2D.style.display = 'none';
-      this.overlayCanvas3D.style.display = 'none';
-    }
+        if (self.window.showOverlay) {
+          viewOverlayIcon.style.display = 'none';
+          hideOverlayIcon.style.display = 'block';
+          self.overlayCanvas2D.style.display = 'block';
+          self.overlayCanvas3D.style.display = 'block';
+        } else {
+          viewOverlayIcon.style.display = 'block';
+          hideOverlayIcon.style.display = 'none';
+          self.overlayCanvas2D.style.display = 'none';
+          self.overlayCanvas3D.style.display = 'none';
+        }
 
-    // Reverence given to event handlers
-    let self = this;
+        // Start animation loop
+        function animate() {
+          requestAnimationFrame(animate);
+          self.renderer.render(self.scene, self.camera);
+        }
+        animate();
 
-    // Start animation loop
-    function animate() {
-      requestAnimationFrame(animate);
-      if (self.camera) {
-        self.renderer.render(self.scene, self.camera);
-      }
-    }
-    animate();
-
-    // Start render loop
-    self.renderLoop();
+        // Start render loop
+        await self.renderLoop();
+      },
+      false
+    );
   }
 
   doUnload() {
